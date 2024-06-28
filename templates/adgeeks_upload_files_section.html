@@ -233,7 +233,7 @@ License: For each use you must have a valid license purchased only from above li
 															 <td>
 																{% if file.details %}
 																	<span>{{ file.details }}</span>
-																{% elif file.show_button %}
+																{% else %}
 																	<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Details</button>
 																{% endif %}
 															</td>

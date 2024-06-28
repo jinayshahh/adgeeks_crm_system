@@ -1241,15 +1241,47 @@ def creator_details_task_section(creator_id):
 @app.route('/creator_task_timeline/<file_name>')
 def creator_task_timeline(file_name):
     try:
-        mycur.execute(f'select * from work_details where file_name = "{file_name}" and status_detail = "passive"')
-        work_details = mycur.fetchall()
-        conn.commit()
-        mycur.execute(f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{work_details[0][3]}'")
-        creator_details = mycur.fetchone()
-        conn.commit()
-        print(work_details)
-        return render_template("adgeeks_creator_task_timeline.html", creator_details=creator_details,
-                               work_details=work_details)
+        # mycur.execute(f'select content_link from work_details where file_name = "{file_name}"')
+        try:
+            mycur.execute(f'select * from work_details where file_name = "{file_name}"'
+                          f'and content_link != "no link"')
+            work_details = mycur.fetchall()
+            conn.commit()
+            old_file_name = work_details[0][9]
+            mycur.execute(
+                f'select * from work_details where file_name = "{old_file_name}" and status_detail = "passive"')
+            work_details_old = mycur.fetchall()
+            conn.commit()
+            mycur.execute(f'select * from work_details where file_name = "{file_name}" and status_detail = "passive"')
+            work_details = mycur.fetchall()
+            conn.commit()
+            if work_details:
+                combined_details = work_details_old + work_details
+                print(combined_details)
+                mycur.execute(
+                    f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{work_details[0][3]}'")
+                creator_details = mycur.fetchone()
+                conn.commit()
+                return render_template("adgeeks_creator_task_timeline.html", creator_details=creator_details,
+                                       work_details=combined_details)
+            else:
+                mycur.execute(
+                    f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{work_details[0][3]}'")
+                creator_details = mycur.fetchone()
+                conn.commit()
+                return render_template("adgeeks_creator_task_timeline.html", creator_details=creator_details,
+                                       work_details=work_details_old)
+        except:
+            mycur.execute(f'select * from work_details where file_name = "{file_name}" and status_detail = "passive"')
+            work_details = mycur.fetchall()
+            conn.commit()
+            mycur.execute(
+                f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{work_details[0][3]}'")
+            creator_details = mycur.fetchone()
+            conn.commit()
+            print(work_details)
+            return render_template("adgeeks_creator_task_timeline.html", creator_details=creator_details,
+                                   work_details=work_details)
     except:
         folder_name = session.get('folder_name')
         return render_template('error-500.html', folder_name=folder_name)
@@ -1383,23 +1415,29 @@ def upload_files_section(folder_name):
                 if item[i] is not None:
                     combined[i] = item[i]  # Replace with non-None values
         final_data.append(tuple(combined))
+    mycur.execute("select content_link from work_details where content_link != 'no link'")
+    excluded_files = mycur.fetchall()
+    conn.commit()
+    excluded_filenames = {file[0] for file in excluded_files}
     files_with_details = []
     for file in files_fetched:
-        file_info = {
-            'name': file,
-            'details': None,
-            'reviews': None,
-            'show_button': True,
-            'show_review': True
-        }
-        for work in final_data:
-            if work[1] == file:
-                file_info['details'] = work[4]
-                file_info['reviews'] = work[5]
-                file_info['show_button'] = False
-                file_info['show_review'] = False
-                break
-        files_with_details.append(file_info)
+        if file not in excluded_filenames:  # Skip files that are in the excluded list
+            file_info = {
+                'name': file,
+                'details': None,
+                'reviews': None,
+                'show_button': True,
+                'show_review': True
+            }
+            for work in final_data:
+                if work[1] == file:
+                    file_info['details'] = work[4]
+                    file_info['reviews'] = work[5]
+                    file_info['show_button'] = False
+                    file_info['show_review'] = False
+                    break
+            files_with_details.append(file_info)
+    print(files_with_details)
     return render_template("adgeeks_upload_files_section.html", creator_details=creator_details,
                            files=files_with_details, folder_name=folder_name, services=services,
                            number_reels=number_reels,
@@ -1434,7 +1472,7 @@ def upload_details(file_name):
     last_id = mycur.fetchone()[0]
     conn.commit()
     mycur.execute(f'Update work_details set status_detail = "passive" where creator_username = "{creator_username}" '
-                  f'and client_username = "{client_username}" and detail_id < "{last_id}"')
+                  f'and client_username = "{client_username}" and detail_id < "{last_id}" and file_name = "{file_name}"')
     conn.commit()
     folder_name = session.get('folder_name')
     return redirect(url_for('upload_files_section', folder_name=folder_name))
@@ -1465,7 +1503,7 @@ def upload_task():
         creator_username = session.get('user_name')
         mycur.execute(f"INSERT INTO work_details (detail_id, file_name, client_username, "
                       f"creator_username, status_detail) VALUES ('{detail_id}', '{filename}', '{client_username}'"
-                      f", '{creator_username}', 'active')")
+                      f",'{creator_username}', 'active')")
         conn.commit()
         return jsonify(success=True, file_path=file_path)
 
@@ -1505,12 +1543,17 @@ def submit_task(client_username):
 def submit_task_review_upload():
     # upload_directory_to_drive(f'{directory_path}', PARENT_FOLDER_ID)
     file_name = request.form['file_name']
-    print("File Name:", file_name)
-    mycur.execute(f"select * from work_details WHERE detail_id = (SELECT MAX(detail_id) FROM work_details WHERE file_name = '{file_name}')")
-    values_detail = mycur.fetchall()
+    creator_username = session.get('user_name')
+    client_username = session.get('client_username')
+    mycur.execute("select file_name, detail_id from work_details where detail_id = ( select max(detail_id) from work_details)")
+    change_content = mycur.fetchall()[0]
     conn.commit()
-    # mycur.execute(f'Update work_details set status_detail = "old" where creator_username = "{creator_username}" '
-    #               f'and client_username = "{client_username}" and detail_id < "{last_id}"')
+    print(change_content)
+    mycur.execute(f"INSERT INTO work_details (detail_id, file_name, client_username, "
+                  f"creator_username, status_detail, content_link) VALUES ('{int(change_content[1]) + 1}', '{change_content[0]}', "
+                  f"'{client_username}', '{creator_username}', 'active', '{file_name}')")
+    conn.commit()
+    mycur.execute(f"UPDATE work_details set status_detail = 'passive' where file_name = '{file_name}'")
     conn.commit()
     folder_name = session.get('folder_name')
     return redirect(url_for('upload_files_section', folder_name=folder_name))
