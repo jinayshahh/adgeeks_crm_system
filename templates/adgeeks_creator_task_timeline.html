@@ -448,8 +448,10 @@ License: For each use you must have a valid license purchased only from above li
 															<div class="fw-mormal timeline-content text-muted ps-3">"{{work[4]}}" was the detail given by {{work[3]}}</div>
 															{% elif work[5] %}
 															<div class="fw-mormal timeline-content text-muted ps-3">"{{work[5]}}" was the review given by Admin</div>
+															{% elif work[9] != 'no link' %}
+															<div class="fw-mormal timeline-content text-muted ps-3"><strong>{{work[9]}}</strong> was replaced by <strong>{{work[1]}}</strong> by {{work[3]}}</div>
 															{% else %}
-															<div class="fw-mormal timeline-content text-muted ps-3"><strong>{{work[1]}}</strong> was created by {{work[3]}} for {{work[2]}}</div>
+															<div class="fw-mormal timeline-content text-muted ps-3"><strong>{{work[1]}}</strong> was created by {{work[3]}}for {{work[2]}}</div>
 															{% endif %}
 															<!--end::Text-->
 														</div>

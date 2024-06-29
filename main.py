@@ -1081,10 +1081,8 @@ def admin_creator_assign_button(creator_id):
 def admin_upload_files_section(folder_name):
     creator_username = session.get('user_name')
     client_username = session.get('client_username')
-    print(client_username)
     mycur.execute(f"UPDATE work_record set status_admin = 'no' where client_username = '{client_username}'")
     conn.commit()
-    print("done")
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
     creator_details = mycur.fetchall()
@@ -1115,23 +1113,26 @@ def admin_upload_files_section(folder_name):
                 if item[i] is not None:
                     combined[i] = item[i]  # Replace with non-None values
         final_data.append(tuple(combined))
-    print(final_data)
     files_with_details = []
     for file in files_fetched:
         file_info = {
             'name': file,
             'details': None,
             'reviews': None,
-            'show_button': True,
-            'show_review': True
+            'approve': None,
         }
         for work in final_data:
             if work[1] == file:
-                file_info['details'] = work[4]
-                file_info['reviews'] = work[5]
-                file_info['show_button'] = False
-                file_info['show_review'] = False
-                break
+                if work[10] == 'yes':
+                    print("blah")
+                    file_info['details'] = work[4]
+                    file_info['reviews'] = work[5]
+                    file_info['approve'] = 'yes'
+                    break
+                else:
+                    file_info['details'] = work[4]
+                    file_info['reviews'] = work[5]
+                    break
         files_with_details.append(file_info)
     return render_template("adgeeks_admin_upload_files_section.html", creator_details=creator_details,
                            files=files_with_details, folder_name=folder_name, services=services,
@@ -1160,6 +1161,16 @@ def upload_review(file_name):
     conn.commit()
     folder_name = session.get('folder_name')
     return redirect(url_for('admin_upload_files_section', folder_name=folder_name))
+
+
+
+@app.route('/admin_approve_task', methods=['POST'])
+def admin_approve_task():
+    file_name = request.json.get('file_name')
+    print(file_name)
+    mycur.execute(f"update work_details set admin_approve = 'yes' where file_name = '{file_name}'")
+    conn.commit()
+    return "Task approved", 200
 
 
 #
@@ -1426,16 +1437,20 @@ def upload_files_section(folder_name):
                 'name': file,
                 'details': None,
                 'reviews': None,
-                'show_button': True,
-                'show_review': True
+                'approve': None
             }
             for work in final_data:
                 if work[1] == file:
-                    file_info['details'] = work[4]
-                    file_info['reviews'] = work[5]
-                    file_info['show_button'] = False
-                    file_info['show_review'] = False
-                    break
+                    if work[10] == 'yes':
+                        print("blah")
+                        file_info['details'] = work[4]
+                        file_info['reviews'] = work[5]
+                        file_info['approve'] = 'yes'
+                        break
+                    else:
+                        file_info['details'] = work[4]
+                        file_info['reviews'] = work[5]
+                        break
             files_with_details.append(file_info)
     print(files_with_details)
     return render_template("adgeeks_upload_files_section.html", creator_details=creator_details,
