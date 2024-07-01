@@ -219,10 +219,8 @@ def log_in():
                 if user_password[0][4] == "Admin":
                     return redirect("/admin_dashboard")
                 elif user_password[0][4] == "client":
-                    print("client")
-                    pass
+                    return redirect(url_for('client_dashboard', user_name=input_login_username))
                 else:
-                    print(user_password[0][4])
                     return redirect(url_for('creator_dashboard', user_name=input_login_username))
             else:
                 error = "Incorrect credentials. Please try again."
@@ -324,7 +322,7 @@ def admin_dashboard():
 
 @app.route('/admin_target_section_individual/<creator_username>')
 def admin_target_section_individual(creator_username):
-    mycur.execute(f"SELECT * FROM work_record where creator_username = '{creator_username}'")
+    mycur.execute(f"SELECT * FROM work_record where creator_username = '{creator_username}' and admin_roll_out = 'no'")
     work_records = mycur.fetchall()
     conn.commit()
     print(work_records)
@@ -1079,14 +1077,18 @@ def admin_creator_assign_button(creator_id):
 
 @app.route('/admin_upload_files_section/<folder_name>')
 def admin_upload_files_section(folder_name):
-    creator_username = session.get('user_name')
-    client_username = session.get('client_username')
+    mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
+    username_list = mycur.fetchall()
+    conn.commit()
+    creator_username = username_list[0][0]
+    client_username = username_list[0][1]
     mycur.execute(f"UPDATE work_record set status_admin = 'no' where client_username = '{client_username}'")
     conn.commit()
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
+    print(creator_details)
     session['folder_name'] = folder_name
     files_fetched_check = fetch_files(folder_name)
     files_fetched = [('None')]
@@ -1117,7 +1119,6 @@ def admin_upload_files_section(folder_name):
     approved_work = mycur.fetchall()
     conn.commit()
     total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
-    print(total_work)
     files_with_details = []
     for file in files_fetched:
         file_info = {
@@ -1178,6 +1179,23 @@ def admin_approve_task():
     return "Task approved", 200
 
 
+@app.route('/roll_out/<folder_name>')
+def roll_out(folder_name):
+    print("run")
+    mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
+    username_list = mycur.fetchall()
+    conn.commit()
+    creator_username = username_list[0][0]
+    client_username = username_list[0][1]
+    mycur.execute(f"update work_details set admin_roll_out = 'yes' where client_username = '{client_username}' and "
+                  f"creator_username = '{creator_username}'")
+    conn.commit()
+    mycur.execute(f"update work_record set admin_roll_out = 'yes' where client_username = '{client_username}' and "
+                  f"creator_username = '{creator_username}'")
+    conn.commit()
+    return redirect(url_for('admin_target_section_individual', creator_username=creator_username))
+
+
 #
 #
 #
@@ -1195,12 +1213,10 @@ def admin_approve_task():
 
 @app.route('/creator_dashboard/<user_name>')
 def creator_dashboard(user_name):
-    print(user_name)
     session['user_name'] = user_name
     mycur.execute(f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{user_name}'")
     creator_details = mycur.fetchone()
     conn.commit()
-    print(creator_details)
     if creator_details:
         creator_details = [creator_details]
         mycur.execute("SELECT assigned_client from creator_information where assigned_client = 'yes'")
@@ -1218,6 +1234,7 @@ def creator_dashboard(user_name):
                     client_info = mycur.fetchall()
                     conn.commit()
                     client_info_list.append(client_info)
+                    print(client_info_list)
             return render_template("adgeeks_creator_dashboard.html", creator_details=creator_details,
                                    client_info_list=client_info_list)
     else:
@@ -1621,6 +1638,146 @@ def rename_file(folder_name, file_name):
         response = {'status': 'error', 'message': str(e)}
 
     return jsonify(response)
+#
+#
+#
+#
+#
+# client start
+#
+#
+#
+#
+#
+
+
+@app.route('/client_dashboard/<user_name>')
+def client_dashboard(user_name):
+    session['client_username'] = user_name
+    mycur.execute(f"SELECT * FROM adgeeks_crm_system.client_information WHERE username = '{user_name}'")
+    client_details = mycur.fetchone()
+    conn.commit()
+    if client_details:
+        client_details = [client_details]
+        mycur.execute("SELECT assigned_creator from client_information where assigned_creator = 'yes'")
+        creator_assigned = mycur.fetchall()
+        conn.commit()
+        if creator_assigned:
+            mycur.execute(f"SELECT creator_username, services from assign_admin where "
+                          f"client_username = '{client_details[0][2]}'")
+            assign_info = mycur.fetchall()
+            conn.commit()
+            creator_info_list = []
+            if assign_info:
+                for assign in assign_info:
+                    mycur.execute(f"SELECT * FROM creator_information where username = '{assign[0]}'")
+                    creator_info = mycur.fetchall()
+                    conn.commit()
+                    creator_info_list.append(creator_info)
+                    print(creator_info_list)
+            return render_template("adgeeks_client_dashboard.html", creator_details=client_details,
+                                   client_info_list=creator_info_list)
+    else:
+        flash('creator not found!', 'error')
+        return redirect(url_for('log_in'))
+
+
+@app.route('/client_upload_files_section')
+def client_upload_files_section():
+    client_username = session.get('client_username')
+    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+    mycur.execute(
+        f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = "
+        f"'{client_username}' and admin_roll_out = 'yes'")
+    creator_details = mycur.fetchall()
+    conn.commit()
+    if creator_details:
+        folder_name = creator_details[0][1]
+        print(folder_name)
+        files_fetched_check = fetch_files(folder_name)
+        files_fetched = [('None')]
+        if files_fetched_check:
+            files_fetched = files_fetched_check
+        services = creator_details[0][9].split(', ')
+        number_reels = creator_details[0][19] - creator_details[0][13]
+        number_posts = creator_details[0][20] - creator_details[0][15]
+        number_story = creator_details[0][21] - creator_details[0][17]
+        mycur.execute(f"select * from work_details where creator_username = '{creator_username}' and client_username "
+                      f"= '{client_username}' and status_detail = 'active'")
+        raw_data = mycur.fetchall()
+        conn.commit()
+        merged_data = defaultdict(list)
+        for item in raw_data:
+            merged_data[item[1]].append(item)
+
+        # Process to combine data entries
+        final_data = []
+        for file_name, items in merged_data.items():
+            combined = list(items[0])  # Start with the first item's data
+            for item in items[1:]:  # Start from the second item
+                for i in range(len(item)):
+                    if item[i] is not None:
+                        combined[i] = item[i]  # Replace with non-None values
+            final_data.append(tuple(combined))
+        mycur.execute('select detail_id from work_details where admin_approve = "yes"')
+        approved_work = mycur.fetchall()
+        conn.commit()
+        total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
+        print(total_work)
+        files_with_details = []
+        for file in files_fetched:
+            file_info = {
+                'name': file,
+                'details': None,
+                'reviews': None,
+                'approve': None,
+            }
+            for work in final_data:
+                if work[1] == file:
+                    if work[12] == 'yes':
+                        file_info['details'] = work[4]
+                        file_info['reviews'] = work[5]
+                        file_info['approve'] = 'yes'
+                        break
+                    else:
+                        file_info['details'] = work[4]
+                        file_info['reviews'] = work[5]
+                        break
+            files_with_details.append(file_info)
+        return render_template("adgeeks_client_upload_files_section.html", creator_details=creator_details,
+                               files=files_with_details, folder_name=folder_name, services=services,
+                               number_reels=number_reels, total_work=total_work,
+                               number_posts=number_posts, number_story=number_story, work_details=final_data)
+    else:
+        return "no tasks"
+
+
+@app.route('/upload_review_client/<file_name>', methods=['POST'])
+def upload_review_client(file_name):
+    information_upload = request.form['information']
+    mycur.execute("SELECT detail_id FROM work_details ORDER BY detail_id DESC LIMIT 1")
+    last_creator_id = mycur.fetchone()
+    if last_creator_id:
+        last_creator_id = int(last_creator_id[0])
+    try:
+        detail_id = last_creator_id + 1
+    except:
+        detail_id = 1
+    folder_name = session.get('folder_name')
+    mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
+    username_list = mycur.fetchall()
+    conn.commit()
+    creator_username = username_list[0][0]
+    client_username = username_list[0][1]
+    mycur.execute(f"INSERT INTO work_details (detail_id, file_name, client_username, "
+                  f"creator_username, review_client, status_client) VALUES ('{detail_id}', '{file_name}',"
+                  f" '{client_username}', '{creator_username}', '{information_upload}', 'active')")
+    conn.commit()
+    mycur.execute(f"UPDATE work_record set status_client = 'yes' where client_username = '{client_username}'")
+    conn.commit()
+    return redirect(url_for('client_upload_files_section'))
 
 
 if __name__ == '__main__':

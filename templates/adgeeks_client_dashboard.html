@@ -24,7 +24,7 @@ License: For each use you must have a valid license purchased only from above li
 		<meta property="og:url" content="https://keenthemes.com/metronic" />
 		<meta property="og:site_name" content="Keenthemes | Metronic" />
 		<link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
-		<link rel="shortcut icon" href="static/assets/media/logos/favicon.ico" />
+		<link rel="shortcut icon" href="static/assets/media/adgeeks_img/adgeeks_favicon.png" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
 		<!--end::Fonts-->
@@ -97,6 +97,7 @@ License: For each use you must have a valid license purchased only from above li
 					<!--end::Header container-->
 				</div>
 				<!--end::Header-->
+				{% for creator in creator_details %}
 				<!--begin::Wrapper-->
 				<div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
 					<!--begin::Sidebar-->
@@ -130,50 +131,120 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Menu-->
 								<div class="menu menu-column menu-rounded menu-sub-indention px-3" id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
 									<!--begin:Menu item-->
-									<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+									<div class="menu-item menu-accordion">
 										<!--begin:Menu link-->
-										<span class="menu-link">
-											<span class="menu-title">Admin Panel</span>
-										</span>
+										<a href="/creator_dashboard/{{creator[2]}}" class="menu-link">
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<rect x="2" y="2" width="9" height="9" rx="2" fill="currentColor" />
+														<rect opacity="0.3" x="13" y="2" width="9" height="9" rx="2" fill="currentColor" />
+														<rect opacity="0.3" x="13" y="13" width="9" height="9" rx="2" fill="currentColor" />
+														<rect opacity="0.3" x="2" y="13" width="9" height="9" rx="2" fill="currentColor" />
+													</svg>
+												</span>
+												<!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">Dashboards</span>
+										</a>
 										<!--end:Menu link-->
 									</div>
 									<!--end:Menu item-->
-								</div>
-								<!--end::Menu-->
-								<!--begin::Menu-->
-								<div class="menu menu-column menu-rounded menu-sub-indention px-3"  data-kt-menu="true" data-kt-menu-expand="false">
 									<!--begin:Menu item-->
-									<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+									<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
 										<!--begin:Menu link-->
 										<span class="menu-link">
-											<span class="menu-title">Client panel</span>
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/general/gen002.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path opacity="0.3" d="M4.05424 15.1982C8.34524 7.76818 13.5782 3.26318 20.9282 2.01418C21.0729 1.98837 21.2216 1.99789 21.3618 2.04193C21.502 2.08597 21.6294 2.16323 21.7333 2.26712C21.8372 2.37101 21.9144 2.49846 21.9585 2.63863C22.0025 2.7788 22.012 2.92754 21.9862 3.07218C20.7372 10.4222 16.2322 15.6552 8.80224 19.9462L4.05424 15.1982ZM3.81924 17.3372L2.63324 20.4482C2.58427 20.5765 2.5735 20.7163 2.6022 20.8507C2.63091 20.9851 2.69788 21.1082 2.79503 21.2054C2.89218 21.3025 3.01536 21.3695 3.14972 21.3982C3.28408 21.4269 3.42387 21.4161 3.55224 21.3672L6.66524 20.1802L3.81924 17.3372ZM16.5002 5.99818C16.2036 5.99818 15.9136 6.08615 15.6669 6.25097C15.4202 6.41579 15.228 6.65006 15.1144 6.92415C15.0009 7.19824 14.9712 7.49984 15.0291 7.79081C15.0869 8.08178 15.2298 8.34906 15.4396 8.55884C15.6494 8.76862 15.9166 8.91148 16.2076 8.96935C16.4986 9.02723 16.8002 8.99753 17.0743 8.884C17.3484 8.77046 17.5826 8.5782 17.7474 8.33153C17.9123 8.08486 18.0002 7.79485 18.0002 7.49818C18.0002 7.10035 17.8422 6.71882 17.5609 6.43752C17.2796 6.15621 16.8981 5.99818 16.5002 5.99818Z" fill="currentColor" />
+														<path d="M4.05423 15.1982L2.24723 13.3912C2.15505 13.299 2.08547 13.1867 2.04395 13.0632C2.00243 12.9396 1.9901 12.8081 2.00793 12.679C2.02575 12.5498 2.07325 12.4266 2.14669 12.3189C2.22013 12.2112 2.31752 12.1219 2.43123 12.0582L9.15323 8.28918C7.17353 10.3717 5.4607 12.6926 4.05423 15.1982ZM8.80023 19.9442L10.6072 21.7512C10.6994 21.8434 10.8117 21.9129 10.9352 21.9545C11.0588 21.996 11.1903 22.0083 11.3195 21.9905C11.4486 21.9727 11.5718 21.9252 11.6795 21.8517C11.7872 21.7783 11.8765 21.6809 11.9402 21.5672L15.7092 14.8442C13.6269 16.8245 11.3061 18.5377 8.80023 19.9442ZM7.04023 18.1832L12.5832 12.6402C12.7381 12.4759 12.8228 12.2577 12.8195 12.032C12.8161 11.8063 12.725 11.5907 12.5653 11.4311C12.4057 11.2714 12.1901 11.1803 11.9644 11.1769C11.7387 11.1736 11.5205 11.2583 11.3562 11.4132L5.81323 16.9562L7.04023 18.1832Z" fill="currentColor" />
+													</svg>
+												</span>
+												<!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">Tasks</span>
+											<span class="menu-arrow"></span>
 										</span>
+										<!--end:Menu link-->
+										<!--begin:Menu sub-->
+										<div class="menu-sub menu-sub-accordion">
+											<!--begin:Menu item-->
+											<div class="menu-item">
+												<!--begin:Menu link-->
+												<a class="menu-link" href="/task_section">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+													<span class="menu-title">All Tasks</span>
+<!--													<span class="menu-badge">-->
+<!--														<span class="badge badge-success">3</span>-->
+<!--													</span>-->
+												</a>
+												<!--end:Menu link-->
+											</div>
+											<!--end:Menu item-->
+											{% for client in client_info_list %}
+											<!--begin:Menu item-->
+											<div class="menu-item">
+												<!--begin:Menu link-->
+												<a class="menu-link" href="/task_schedule/{{client[0][0]}}">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+													<span class="menu-title">{{client[0][1]}}</span>
+													<span class="menu-badge">
+														<span class="badge badge-success">3</span>
+													</span>
+												</a>
+												<!--end:Menu link-->
+											</div>
+											<!--end:Menu item-->
+											{% endfor %}
+										</div>
+										<!--end:Menu sub-->
+									</div>
+									<!--end:Menu item-->
+									<!--begin:Menu item-->
+									<div class="menu-item">
+										<!--begin:Menu link-->
+										<a class="menu-link" href="/creator_details_task_section/{{ creator[0] }}">
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/communication/com005.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M20 14H18V10H20C20.6 10 21 10.4 21 11V13C21 13.6 20.6 14 20 14ZM21 19V17C21 16.4 20.6 16 20 16H18V20H20C20.6 20 21 19.6 21 19ZM21 7V5C21 4.4 20.6 4 20 4H18V8H20C20.6 8 21 7.6 21 7Z" fill="currentColor" />
+														<path opacity="0.3" d="M17 22H3C2.4 22 2 21.6 2 21V3C2 2.4 2.4 2 3 2H17C17.6 2 18 2.4 18 3V21C18 21.6 17.6 22 17 22ZM10 7C8.9 7 8 7.9 8 9C8 10.1 8.9 11 10 11C11.1 11 12 10.1 12 9C12 7.9 11.1 7 10 7ZM13.3 16C14 16 14.5 15.3 14.3 14.7C13.7 13.2 12 12 10.1 12C8.10001 12 6.49999 13.1 5.89999 14.7C5.59999 15.3 6.19999 16 7.39999 16H13.3Z" fill="currentColor" />
+													</svg>
+												</span>
+												<!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">My clients</span>
+										</a>
 										<!--end:Menu link-->
 									</div>
 									<!--end:Menu item-->
-								</div>
-								<!--end::Menu-->
-								<!--begin::Menu-->
-								<div class="menu menu-column menu-rounded menu-sub-indention px-3"  data-kt-menu="true" data-kt-menu-expand="false">
 									<!--begin:Menu item-->
-									<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+									<div class="menu-item">
 										<!--begin:Menu link-->
-										<span class="menu-link">
-											<span class="menu-title">Creators Panel</span>
-										</span>
-										<!--end:Menu link-->
-									</div>
-									<!--end:Menu item-->
-								</div>
-								<!--end::Menu-->
-								<!--begin::Menu-->
-								<div class="menu menu-column menu-rounded menu-sub-indention px-3"  data-kt-menu="true" data-kt-menu-expand="false">
-									<!--begin:Menu item-->
-									<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-										<!--begin:Menu link-->
-										<span class="menu-link">
-											<span class="menu-title">Service Panel</span>
-										</span>
+										<a class="menu-link" href="https://preview.keenthemes.com/html/metronic/docs" target="blank">
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/abstract/abs027.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path opacity="0.3" d="M21.25 18.525L13.05 21.825C12.35 22.125 11.65 22.125 10.95 21.825L2.75 18.525C1.75 18.125 1.75 16.725 2.75 16.325L4.04999 15.825L10.25 18.325C10.85 18.525 11.45 18.625 12.05 18.625C12.65 18.625 13.25 18.525 13.85 18.325L20.05 15.825L21.35 16.325C22.35 16.725 22.35 18.125 21.25 18.525ZM13.05 16.425L21.25 13.125C22.25 12.725 22.25 11.325 21.25 10.925L13.05 7.62502C12.35 7.32502 11.65 7.32502 10.95 7.62502L2.75 10.925C1.75 11.325 1.75 12.725 2.75 13.125L10.95 16.425C11.65 16.725 12.45 16.725 13.05 16.425Z" fill="currentColor" />
+														<path d="M11.05 11.025L2.84998 7.725C1.84998 7.325 1.84998 5.925 2.84998 5.525L11.05 2.225C11.75 1.925 12.45 1.925 13.15 2.225L21.35 5.525C22.35 5.925 22.35 7.325 21.35 7.725L13.05 11.025C12.45 11.325 11.65 11.325 11.05 11.025Z" fill="currentColor" />
+													</svg>
+												</span>
+												<!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">Reviews</span>
+											<span class="menu-badge">
+												<span class="badge badge-success">3</span>
+											</span>
+										</a>
 										<!--end:Menu link-->
 									</div>
 									<!--end:Menu item-->
@@ -214,13 +285,13 @@ License: For each use you must have a valid license purchased only from above li
 									<!--begin::Page title-->
 									<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
 										<!--begin::Title-->
-										<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Client's details</h1>
+										<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">{{creator[1]}}'s details</h1>
 										<!--end::Title-->
 										<!--begin::Breadcrumb-->
 										<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 											<!--begin::Item-->
 											<li class="breadcrumb-item text-muted">
-												<a href="../../demo1/dist/index.html" class="text-muted text-hover-primary">Client's panel</a>
+												<a href="../../demo1/dist/index.html" class="text-muted text-hover-primary">creator's panel</a>
 											</li>
 											<!--end::Item-->
 											<!--begin::Item-->
@@ -256,7 +327,7 @@ License: For each use you must have a valid license purchased only from above li
 														<div class="d-flex flex-column">
 															<!--begin::Name-->
 															<div class="d-flex align-items-center mb-2">
-																<a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bold me-1">Jinay Shah</a>
+																<a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bold me-1">{{creator[1]}}</a>
 																<a href="#">
 																	<!--begin::Svg Icon | path: icons/duotune/general/gen026.svg-->
 																	<span class="svg-icon svg-icon-1 svg-icon-primary">
@@ -289,7 +360,7 @@ License: For each use you must have a valid license purchased only from above li
 																		<path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="currentColor" />
 																	</svg>
 																</span>
-																<!--end::Svg Icon-->Mumbai, Maharashtra</a>
+																<!--end::Svg Icon-->{{creator[7]}}</a>
 																<a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary mb-2">
 																<!--begin::Svg Icon | path: icons/duotune/communication/com011.svg-->
 																<span class="svg-icon svg-icon-4 me-1">
@@ -298,19 +369,19 @@ License: For each use you must have a valid license purchased only from above li
 																		<path d="M21 5H2.99999C2.69999 5 2.49999 5.10005 2.29999 5.30005L11.2 13.3C11.7 13.7 12.4 13.7 12.8 13.3L21.7 5.30005C21.5 5.10005 21.3 5 21 5Z" fill="currentColor" />
 																	</svg>
 																</span>
-																<!--end::Svg Icon-->jinay07.shah@gmail.com</a>
+																<!--end::Svg Icon-->{{creator[4]}}</a>
 															</div>
 															<!--end::Info-->
 														</div>
 														<!--end::User-->
-														<!--begin::Actions-->
-														<div class="d-flex my-4">
-																<button class="btn btn-light-warning fw-bold px-4
-																py-3 block-btn" data-user-id="BLOCK">BLOCK</button>
-																<button class="btn btn-light-danger fw-bold px-4
-																py-3 block-btn" style="margin-left: 15px" data-user-id="DELETE">DELETE</button>
-														</div>
-														<!--end::Actions-->
+<!--														&lt;!&ndash;begin::Actions&ndash;&gt;-->
+<!--														<div class="d-flex my-4">-->
+<!--																<button class="btn btn-light-warning fw-bold px-4-->
+<!--																py-3 block-btn" data-user-id="BLOCK">BLOCK</button>-->
+<!--																<button class="btn btn-light-danger fw-bold px-4-->
+<!--																py-3 block-btn" data-user-id="DELETE">DELETE</button>-->
+<!--														</div>-->
+<!--														&lt;!&ndash;end::Actions&ndash;&gt;-->
 													</div>
 													<!--end::Title-->
 													<!--begin::Stats-->
@@ -331,11 +402,11 @@ License: For each use you must have a valid license purchased only from above li
 																			</svg>
 																		</span>
 																		<!--end::Svg Icon-->
-																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="32">0</div>
+																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="32" data-kt-countup-prefix="₹">0</div>
 																	</div>
 																	<!--end::Number-->
 																	<!--begin::Label-->
-																	<div class="fw-semibold fs-6 text-gray-400">Creatives</div>
+																	<div class="fw-semibold fs-6 text-gray-400">Balance</div>
 																	<!--end::Label-->
 																</div>
 																<!--end::Stat-->
@@ -404,12 +475,12 @@ License: For each use you must have a valid license purchased only from above li
 											<ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
 												<!--begin::Nav item-->
 												<li class="nav-item mt-2">
-													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details">Overview</a>
+													<a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="/creator_dashboard/{{ creator[2] }}">Overview</a>
 												</li>
 												<!--end::Nav item-->
 												<!--begin::Nav item-->
 												<li class="nav-item mt-2">
-													<a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="/admin_creator_details_task_section">Tasks</a>
+													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/client_upload_files_section">Tasks</a>
 												</li>
 												<!--end::Nav item-->
 <!--												&lt;!&ndash;begin::Nav item&ndash;&gt;-->
@@ -437,1034 +508,186 @@ License: For each use you must have a valid license purchased only from above li
 										</div>
 									</div>
 									<!--end::Navbar-->
-									<!--begin::Toolbar-->
-									<div class="d-flex flex-wrap flex-stack pt-10 pb-8">
-										<!--begin::Heading-->
-										<h3 class="fw-bold my-2">Project Targets
-										<span class="fs-6 text-gray-400 fw-semibold ms-1">by Recent Updates ↓</span></h3>
-										<!--end::Heading-->
-										<!--begin::Controls-->
-										<div class="d-flex flex-wrap my-1">
-											<!--begin::Tab nav-->
-											<ul class="nav nav-pills me-5">
-												<li class="nav-item m-0">
-													<a class="btn btn-sm btn-icon btn-light btn-color-muted btn-active-primary active me-3" data-bs-toggle="tab" href="#kt_project_targets_card_pane">
-														<!--begin::Svg Icon | path: icons/duotune/general/gen024.svg-->
-														<span class="svg-icon svg-icon-1">
-															<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-																<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-																	<rect x="5" y="5" width="5" height="5" rx="1" fill="currentColor" />
-																	<rect x="14" y="5" width="5" height="5" rx="1" fill="currentColor" opacity="0.3" />
-																	<rect x="5" y="14" width="5" height="5" rx="1" fill="currentColor" opacity="0.3" />
-																	<rect x="14" y="14" width="5" height="5" rx="1" fill="currentColor" opacity="0.3" />
-																</g>
-															</svg>
-														</span>
-														<!--end::Svg Icon-->
-													</a>
-												</li>
-												<li class="nav-item m-0">
-													<a class="btn btn-sm btn-icon btn-light btn-color-muted btn-active-primary" data-bs-toggle="tab" href="#kt_project_targets_table_pane">
-														<!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
-														<span class="svg-icon svg-icon-2">
-															<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																<path d="M21 7H3C2.4 7 2 6.6 2 6V4C2 3.4 2.4 3 3 3H21C21.6 3 22 3.4 22 4V6C22 6.6 21.6 7 21 7Z" fill="currentColor" />
-																<path opacity="0.3" d="M21 14H3C2.4 14 2 13.6 2 13V11C2 10.4 2.4 10 3 10H21C21.6 10 22 10.4 22 11V13C22 13.6 21.6 14 21 14ZM22 20V18C22 17.4 21.6 17 21 17H3C2.4 17 2 17.4 2 18V20C2 20.6 2.4 21 3 21H21C21.6 21 22 20.6 22 20Z" fill="currentColor" />
-															</svg>
-														</span>
-														<!--end::Svg Icon-->
-													</a>
-												</li>
-											</ul>
-											<!--end::Tab nav-->
+									<!--begin::details View-->
+									<div class="card mb-5 mb-xl-10">
+									<!--begin::Card header-->
+									<div class="card-header cursor-pointer">
+										<!--begin::Card title-->
+										<div class="card-title m-0">
+											<h3 class="fw-bold m-0">Profile Details</h3>
 										</div>
-										<!--end::Controls-->
+										<div class="card-title m-0">
+<!--											<a href="/admin_creator_details_update/{{creator[0]}}" class="btn btn-sm btn-success">Edit</a>-->
+										</div>
 									</div>
-									<!--end::Toolbar-->
-									{% for creator in creator_details %}
-									<!--begin::Card-->
-									<div class="card card-flush">
-										<!--begin::Card header-->
-										<div class="card-header pt-8">
-											<div class="card-title">
-												<!--begin::Search-->
-												<div class="d-flex align-items-center position-relative my-1">
-													<!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-													<span class="svg-icon svg-icon-1 position-absolute ms-6">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
-															<path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-													<input type="text" data-kt-filemanager-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search Files & Folders" />
+									<!--end::Card header-->
+									<!--begin::Card body-->
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Full Name</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800" id="service-text">{{creator[1]}}</span>
 												</div>
-												<!--end::Search-->
-											</div>
-											<!--begin::Card toolbar-->
-											<div class="card-toolbar">
-												<!--begin::Toolbar-->
-												<div class="d-flex justify-content-end" data-kt-filemanager-table-toolbar="base">
-												{% if total_work != 0 %}
-													<div class="badge badge-lg badge-primary">
-														<span>{{total_work}} tasks pending</span>
-													</div>
-												{% else %}
-													<!--begin::Add customer-->
-													<a href="/roll_out/{{creator[1]}}" class="btn btn-primary">
-													<!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
-													<span class="svg-icon svg-icon-2">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-															<path d="M10.4 3.60001L12 6H21C21.6 6 22 6.4 22 7V19C22 19.6 21.6 20 21 20H3C2.4 20 2 19.6 2 19V4C2 3.4 2.4 3 3 3H9.20001C9.70001 3 10.2 3.20001 10.4 3.60001ZM16 11.6L12.7 8.29999C12.3 7.89999 11.7 7.89999 11.3 8.29999L8 11.6H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H16Z" fill="currentColor" />
-															<path opacity="0.3" d="M11 11.6V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H11Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->Roll Out</a>
-												{% endif %}
-													<!--end::Add customer-->
-												</div>
-												<!--end::Toolbar-->
-												<!--begin::Group actions-->
-												<div class="d-flex justify-content-end align-items-center d-none" data-kt-filemanager-table-toolbar="selected">
-													<div class="fw-bold me-5">
-													<span class="me-2" data-kt-filemanager-table-select="selected_count"></span>Selected</div>
-													<button type="button" class="btn btn-danger" data-kt-filemanager-table-select="delete_selected">Delete Selected</button>
-												</div>
-												<!--end::Group actions-->
-											</div>
-											<!--end::Card toolbar-->
-										</div>
-										<!--end::Card header-->
-										<!--begin::Card body-->
-										<div class="card-body">
-											<!--begin::Table header-->
-											<div class="d-flex flex-stack">
-												<!--begin::Folder path-->
-												<div class="badge badge-lg badge-light-primary">
-													<div class="d-flex align-items-center flex-wrap">
-													<!--begin::Svg Icon | path: icons/duotune/abstract/abs039.svg-->
-													<span class="svg-icon svg-icon-2 svg-icon-primary me-3">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path opacity="0.3" d="M14.1 15.013C14.6 16.313 14.5 17.813 13.7 19.113C12.3 21.513 9.29999 22.313 6.89999 20.913C5.29999 20.013 4.39999 18.313 4.39999 16.613C5.09999 17.013 5.99999 17.313 6.89999 17.313C8.39999 17.313 9.69998 16.613 10.7 15.613C11.1 15.713 11.5 15.813 11.9 15.813C12.7 15.813 13.5 15.513 14.1 15.013ZM8.5 12.913C8.5 12.713 8.39999 12.513 8.39999 12.313C8.39999 11.213 8.89998 10.213 9.69998 9.613C9.19998 8.313 9.30001 6.813 10.1 5.513C10.6 4.713 11.2 4.11299 11.9 3.71299C10.4 2.81299 8.49999 2.71299 6.89999 3.71299C4.49999 5.11299 3.70001 8.113 5.10001 10.513C5.80001 11.813 7.1 12.613 8.5 12.913ZM16.9 7.313C15.4 7.313 14.1 8.013 13.1 9.013C14.3 9.413 15.1 10.513 15.3 11.713C16.7 12.013 17.9 12.813 18.7 14.113C19.2 14.913 19.3 15.713 19.3 16.613C20.8 15.713 21.8 14.113 21.8 12.313C21.9 9.513 19.7 7.313 16.9 7.313Z" fill="currentColor" />
-															<path d="M9.69998 9.61307C9.19998 8.31307 9.30001 6.81306 10.1 5.51306C11.5 3.11306 14.5 2.31306 16.9 3.71306C18.5 4.61306 19.4 6.31306 19.4 8.01306C18.7 7.61306 17.8 7.31306 16.9 7.31306C15.4 7.31306 14.1 8.01306 13.1 9.01306C12.7 8.91306 12.3 8.81306 11.9 8.81306C11.1 8.81306 10.3 9.11307 9.69998 9.61307ZM8.5 12.9131C7.1 12.6131 5.90001 11.8131 5.10001 10.5131C4.60001 9.71306 4.5 8.91306 4.5 8.01306C3 8.91306 2 10.5131 2 12.3131C2 15.1131 4.2 17.3131 7 17.3131C8.5 17.3131 9.79999 16.6131 10.8 15.6131C9.49999 15.1131 8.7 14.1131 8.5 12.9131ZM18.7 14.1131C17.9 12.8131 16.7 12.0131 15.3 11.7131C15.3 11.9131 15.4 12.1131 15.4 12.3131C15.4 13.4131 14.9 14.4131 14.1 15.0131C14.6 16.3131 14.5 17.8131 13.7 19.1131C13.2 19.9131 12.6 20.5131 11.9 20.9131C13.4 21.8131 15.3 21.9131 16.9 20.9131C19.3 19.6131 20.1 16.5131 18.7 14.1131Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-													<a href="#">{{creator[1]}}</a>
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr071.svg-->
-													<span class="svg-icon svg-icon-2 svg-icon-primary mx-1">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M12.6343 12.5657L8.45001 16.75C8.0358 17.1642 8.0358 17.8358 8.45001 18.25C8.86423 18.6642 9.5358 18.6642 9.95001 18.25L15.4929 12.7071C15.8834 12.3166 15.8834 11.6834 15.4929 11.2929L9.95001 5.75C9.5358 5.33579 8.86423 5.33579 8.45001 5.75C8.0358 6.16421 8.0358 6.83579 8.45001 7.25L12.6343 11.4343C12.9467 11.7467 12.9467 12.2533 12.6343 12.5657Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-													<a href="#">Upload files</a>
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr071.svg-->
-													<span class="svg-icon svg-icon-2 svg-icon-primary mx-1">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M12.6343 12.5657L8.45001 16.75C8.0358 17.1642 8.0358 17.8358 8.45001 18.25C8.86423 18.6642 9.5358 18.6642 9.95001 18.25L15.4929 12.7071C15.8834 12.3166 15.8834 11.6834 15.4929 11.2929L9.95001 5.75C9.5358 5.33579 8.86423 5.33579 8.45001 5.75C8.0358 6.16421 8.0358 6.83579 8.45001 7.25L12.6343 11.4343C12.9467 11.7467 12.9467 12.2533 12.6343 12.5657Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-													</div>
-												</div>
-												<!--end::Folder path-->
-											</div>
-											<!--end::Table header-->
-											<!--begin::Table-->
-											<table id="kt_file_manager_list" data-kt-filemanager-table="folders" class="table align-middle table-row-dashed fs-6 gy-5">
-												<!--begin::Table head-->
-												<thead>
-													<!--begin::Table row-->
-													<tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-														<th class="min-w-250px">Name</th>
-														<th >Additional Information</th>
-														<th >Review</th>
-														<th >Approve</th>
-														<th >Time Line</th>
-														<th class="w-125px">Actions</th>
-													</tr>
-													<!--end::Table row-->
-												</thead>
-												<!--end::Table head-->
-												<!--begin::Table body-->
-                                                <tbody class="fw-semibold text-gray-600">
-													{% for file in files %}
-													{% if file.details %}
-													{% if file.approve == 'yes' %}
-														<tr>
-															<!--begin::Name-->
-															<td data-order="account">
-																<div class="d-flex align-items-center">
-																	<a href="static/work/{{folder_name}}/{{file.name}}">
-																		{{ file.name }}
-																	</a>
-																</div>
-															</td>
-															<!--end::Name-->
-															 <td>
-																<span>-</span>
-															</td>
-															<!--begin::Actions-->
-															<td>
-																<span>-</span>
-															</td>
-															<td>
-																<span>Approved</span>
-															</td>
-															<td>
-																<span>
-																	<a href="/creator_task_timeline/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Timeline</a>
-																</span>
-															</td>
-															<!--begin::Actions-->
-															<td class="text-end" data-kt-filemanager-table="action_dropdown">
-															<div class="d-flex justify-content-end">
-																<!--begin::Share link-->
-																<!--begin::More-->
-																<div class="ms-2">
-																	<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary me-2" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-																		<!--begin::Svg Icon | path: icons/duotune/general/gen052.svg-->
-																		<span class="svg-icon svg-icon-5 m-0">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor" />
-																				<rect x="17" y="10" width="4" height="4" rx="2" fill="currentColor" />
-																				<rect x="3" y="10" width="4" height="4" rx="2" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->
-																	</button>
-																	<!--begin::Menu-->
-																	<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-150px py-4" data-kt-menu="true">
-																		<!--begin::Menu item-->
-																		<div class="menu-item px-3">
-																			<a href="static/work/{{folder_name}}/{{file}}" class="menu-link px-3">View</a>
-																		</div>
-																		<!--end::Menu item-->
-																		<!--begin::Menu item-->
-																		<div class="menu-item px-3">
-																			<a href="static/work/{{folder_name}}/{{file}}" download="{{file}}" class="menu-link px-3">Download file</a>
-																		</div>
-																	</div>
-																	<!--end::Menu-->
-																	<!--end::More-->
-																</div>
-															</div>
-														</td>
-														<!--end::Actions-->
-															<!--end::Actions-->
-														</tr>
-													{% else %}
-														<tr>
-															<!--begin::Name-->
-															<td data-order="account">
-																<div class="d-flex align-items-center">
-																	<a href="static/work/{{folder_name}}/{{file.name}}">
-																		{{ file.name }}
-																	</a>
-																</div>
-															</td>
-															<!--end::Name-->
-															 <td>
-																{% if file.details %}
-																	<span>{{ file.details }}</span>
-																{% endif %}
-															</td>
-															<!--begin::Actions-->
-															<td>
-																{% if file.reviews %}
-																	<span>{{ file.reviews }}</span>
-																{% else %}
-																	<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#add_review" data-file="{{ file.name }}">Add Review</button>
-																{% endif %}
-															</td>
-															<td>
-																<button id="approveBtn" type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#approve" data-file="{{ file.name }}">Approve</button>
-															</td>
-															<td>
-																<span>
-																	<a href="/creator_task_timeline/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Timeline</a>
-																</span>
-															</td>
-															<!--begin::Actions-->
-															<td class="text-end" data-kt-filemanager-table="action_dropdown">
-															<div class="d-flex justify-content-end">
-																<!--begin::Share link-->
-																<!--begin::More-->
-																<div class="ms-2">
-																	<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary me-2" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-																		<!--begin::Svg Icon | path: icons/duotune/general/gen052.svg-->
-																		<span class="svg-icon svg-icon-5 m-0">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor" />
-																				<rect x="17" y="10" width="4" height="4" rx="2" fill="currentColor" />
-																				<rect x="3" y="10" width="4" height="4" rx="2" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->
-																	</button>
-																	<!--begin::Menu-->
-																	<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-150px py-4" data-kt-menu="true">
-																		<!--begin::Menu item-->
-																		<div class="menu-item px-3">
-																			<a href="static/work/{{folder_name}}/{{file}}" class="menu-link px-3">View</a>
-																		</div>
-																		<!--end::Menu item-->
-																		<!--begin::Menu item-->
-																		<div class="menu-item px-3">
-																			<a href="static/work/{{folder_name}}/{{file}}" download="{{file}}" class="menu-link px-3">Download file</a>
-																		</div>
-																	</div>
-																	<!--end::Menu-->
-																	<!--end::More-->
-																</div>
-															</div>
-														</td>
-														<!--end::Actions-->
-															<!--end::Actions-->
-														</tr>
-													{% endif %}
-													{% endif %}
-													{% endfor %}
-                                                </tbody>
-												<!--end::Table body-->
-											</table>
-											<!--end::Table-->
-										</div>
-										<!--end::Card body-->
-									</div>
-									<!--end::Card-->
-									{% endfor %}
-									<!--begin::Upload template-->
-									<table class="d-none">
-										<tr id="kt_file_manager_new_folder_row" data-kt-filemanager-template="upload">
-											<td></td>
-											<td id="kt_file_manager_add_folder_form" class="fv-row">
-												<div class="d-flex align-items-center">
-													<!--begin::Folder icon-->
-													<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-													<span class="svg-icon svg-icon-2x svg-icon-primary me-4">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-															<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-													<!--end::Folder icon-->
-													<!--begin:Input-->
-													<input type="text" name="new_folder_name" placeholder="Enter the folder name" class="form-control mw-250px me-3" />
-													<!--end:Input-->
-													<!--begin:Submit button-->
-													<button class="btn btn-icon btn-light-primary me-3" id="kt_file_manager_add_folder">
-														<span class="indicator-label">
-															<!--begin::Svg Icon | path: icons/duotune/arrows/arr085.svg-->
-															<span class="svg-icon svg-icon-1">
-																<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																	<path d="M9.89557 13.4982L7.79487 11.2651C7.26967 10.7068 6.38251 10.7068 5.85731 11.2651C5.37559 11.7772 5.37559 12.5757 5.85731 13.0878L9.74989 17.2257C10.1448 17.6455 10.8118 17.6455 11.2066 17.2257L18.1427 9.85252C18.6244 9.34044 18.6244 8.54191 18.1427 8.02984C17.6175 7.47154 16.7303 7.47154 16.2051 8.02984L11.061 13.4982C10.7451 13.834 10.2115 13.834 9.89557 13.4982Z" fill="currentColor" />
-																</svg>
-															</span>
-															<!--end::Svg Icon-->
-														</span>
-														<span class="indicator-progress">
-															<span class="spinner-border spinner-border-sm align-middle"></span>
-														</span>
-													</button>
-													<!--end:Submit button-->
-													<!--begin:Cancel button-->
-													<button class="btn btn-icon btn-light-danger" id="kt_file_manager_cancel_folder">
-														<span class="indicator-label">
-															<!--begin::Svg Icon | path: icons/duotune/arrows/arr088.svg-->
-															<span class="svg-icon svg-icon-1">
-																<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																	<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor" />
-																	<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor" />
-																</svg>
-															</span>
-															<!--end::Svg Icon-->
-														</span>
-														<span class="indicator-progress">
-															<span class="spinner-border spinner-border-sm align-middle"></span>
-														</span>
-													</button>
-													<!--end:Cancel button-->
-												</div>
-											</td>
-											<td></td>
-											<td></td>
-											<td></td>
-										</tr>
-									</table>
-									<!--end::Upload template-->
-									<!--begin::Rename template-->
-									<div class="d-none" data-kt-filemanager-template="rename">
-										<div class="fv-row">
-											<div class="d-flex align-items-center">
-												<span id="kt_file_manager_rename_folder_icon"></span>
-												<input type="text" id="kt_file_manager_rename_input" name="rename_folder_name" placeholder="Enter the new folder name" class="form-control mw-250px me-3" value="" />
-												<button class="btn btn-icon btn-light-primary me-3" id="kt_file_manager_rename_folder">
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr085.svg-->
-													<span class="svg-icon svg-icon-1">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M9.89557 13.4982L7.79487 11.2651C7.26967 10.7068 6.38251 10.7068 5.85731 11.2651C5.37559 11.7772 5.37559 12.5757 5.85731 13.0878L9.74989 17.2257C10.1448 17.6455 10.8118 17.6455 11.2066 17.2257L18.1427 9.85252C18.6244 9.34044 18.6244 8.54191 18.1427 8.02984C17.6175 7.47154 16.7303 7.47154 16.2051 8.02984L11.061 13.4982C10.7451 13.834 10.2115 13.834 9.89557 13.4982Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-												</button>
-												<button class="btn btn-icon btn-light-danger" id="kt_file_manager_rename_folder_cancel">
-													<span class="indicator-label">
-														<!--begin::Svg Icon | path: icons/duotune/arrows/arr088.svg-->
-														<span class="svg-icon svg-icon-1">
-															<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor" />
-																<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor" />
-															</svg>
-														</span>
-														<!--end::Svg Icon-->
-													</span>
-													<span class="indicator-progress">
-														<span class="spinner-border spinner-border-sm align-middle"></span>
-													</span>
-												</button>
 											</div>
 										</div>
 									</div>
-									<!--end::Rename template-->
-									<!--begin::Action template-->
-									<div class="d-none" data-kt-filemanager-template="action">
-										<div class="d-flex justify-content-end">
-											<!--begin::Share link-->
-											<div class="ms-2" data-kt-filemanger-table="copy_link">
-												<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-													<!--begin::Svg Icon | path: icons/duotune/coding/cod007.svg-->
-													<span class="svg-icon svg-icon-5 m-0">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path opacity="0.3" d="M18.4 5.59998C18.7766 5.9772 18.9881 6.48846 18.9881 7.02148C18.9881 7.55451 18.7766 8.06577 18.4 8.44299L14.843 12C14.466 12.377 13.9547 12.5887 13.4215 12.5887C12.8883 12.5887 12.377 12.377 12 12C11.623 11.623 11.4112 11.1117 11.4112 10.5785C11.4112 10.0453 11.623 9.53399 12 9.15698L15.553 5.604C15.9302 5.22741 16.4415 5.01587 16.9745 5.01587C17.5075 5.01587 18.0188 5.22741 18.396 5.604L18.4 5.59998ZM20.528 3.47205C20.0614 3.00535 19.5074 2.63503 18.8977 2.38245C18.288 2.12987 17.6344 1.99988 16.9745 1.99988C16.3145 1.99988 15.661 2.12987 15.0513 2.38245C14.4416 2.63503 13.8876 3.00535 13.421 3.47205L9.86801 7.02502C9.40136 7.49168 9.03118 8.04568 8.77863 8.6554C8.52608 9.26511 8.39609 9.91855 8.39609 10.5785C8.39609 11.2384 8.52608 11.8919 8.77863 12.5016C9.03118 13.1113 9.40136 13.6653 9.86801 14.132C10.3347 14.5986 10.8886 14.9688 11.4984 15.2213C12.1081 15.4739 12.7616 15.6039 13.4215 15.6039C14.0815 15.6039 14.7349 15.4739 15.3446 15.2213C15.9543 14.9688 16.5084 14.5986 16.975 14.132L20.528 10.579C20.9947 10.1124 21.3649 9.55844 21.6175 8.94873C21.8701 8.33902 22.0001 7.68547 22.0001 7.02551C22.0001 6.36555 21.8701 5.71201 21.6175 5.10229C21.3649 4.49258 20.9947 3.93867 20.528 3.47205Z" fill="currentColor" />
-															<path d="M14.132 9.86804C13.6421 9.37931 13.0561 8.99749 12.411 8.74695L12 9.15698C11.6234 9.53421 11.4119 10.0455 11.4119 10.5785C11.4119 11.1115 11.6234 11.6228 12 12C12.3766 12.3772 12.5881 12.8885 12.5881 13.4215C12.5881 13.9545 12.3766 14.4658 12 14.843L8.44699 18.396C8.06999 18.773 7.55868 18.9849 7.02551 18.9849C6.49235 18.9849 5.98101 18.773 5.604 18.396C5.227 18.019 5.0152 17.5077 5.0152 16.9745C5.0152 16.4413 5.227 15.93 5.604 15.553L8.74701 12.411C8.28705 11.233 8.28705 9.92498 8.74701 8.74695C8.10159 8.99737 7.5152 9.37919 7.02499 9.86804L3.47198 13.421C2.52954 14.3635 2.00009 15.6417 2.00009 16.9745C2.00009 18.3073 2.52957 19.5855 3.47202 20.528C4.41446 21.4704 5.69269 21.9999 7.02551 21.9999C8.35833 21.9999 9.63656 21.4704 10.579 20.528L14.132 16.975C14.5987 16.5084 14.9689 15.9544 15.2215 15.3447C15.4741 14.735 15.6041 14.0815 15.6041 13.4215C15.6041 12.7615 15.4741 12.108 15.2215 11.4983C14.9689 10.8886 14.5987 10.3347 14.132 9.86804Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-												</button>
-												<!--begin::Menu-->
-												<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-300px" data-kt-menu="true">
-													<!--begin::Card-->
-													<div class="card card-flush">
-														<div class="card-body p-5">
-															<!--begin::Loader-->
-															<div class="d-flex" data-kt-filemanger-table="copy_link_generator">
-																<!--begin::Spinner-->
-																<div class="me-5" data-kt-indicator="on">
-																	<span class="indicator-progress">
-																		<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-																	</span>
-																</div>
-																<!--end::Spinner-->
-																<!--begin::Label-->
-																<div class="fs-6 text-dark">Generating Share Link...</div>
-																<!--end::Label-->
-															</div>
-															<!--end::Loader-->
-															<!--begin::Link-->
-															<div class="d-flex flex-column text-start d-none" data-kt-filemanger-table="copy_link_result">
-																<div class="d-flex mb-3">
-																	<!--begin::Svg Icon | path: icons/duotune/arrows/arr085.svg-->
-																	<span class="svg-icon svg-icon-2 svg-icon-success me-3">
-																		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																			<path d="M9.89557 13.4982L7.79487 11.2651C7.26967 10.7068 6.38251 10.7068 5.85731 11.2651C5.37559 11.7772 5.37559 12.5757 5.85731 13.0878L9.74989 17.2257C10.1448 17.6455 10.8118 17.6455 11.2066 17.2257L18.1427 9.85252C18.6244 9.34044 18.6244 8.54191 18.1427 8.02984C17.6175 7.47154 16.7303 7.47154 16.2051 8.02984L11.061 13.4982C10.7451 13.834 10.2115 13.834 9.89557 13.4982Z" fill="currentColor" />
-																		</svg>
-																	</span>
-																	<!--end::Svg Icon-->
-																	<div class="fs-6 text-dark">Share Link Generated</div>
-																</div>
-																<input type="text" class="form-control form-control-sm" value="https://path/to/file/or/folder/" />
-																<div class="text-muted fw-normal mt-2 fs-8 px-3">Read only.
-																<a href="../../demo1/dist/apps/file-manager/settings/.html" class="ms-2">Change permissions</a></div>
-															</div>
-															<!--end::Link-->
-														</div>
-													</div>
-													<!--end::Card-->
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">User Name</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[2]}}</span>
 												</div>
-												<!--end::Menu-->
 											</div>
-											<!--end::Share link-->
-											<!--begin::More-->
-											<div class="ms-2">
-												<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-													<!--begin::Svg Icon | path: icons/duotune/general/gen052.svg-->
-													<span class="svg-icon svg-icon-5 m-0">
-														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor" />
-															<rect x="17" y="10" width="4" height="4" rx="2" fill="currentColor" />
-															<rect x="3" y="10" width="4" height="4" rx="2" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-												</button>
-												<!--begin::Menu-->
-												<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-150px py-4" data-kt-menu="true">
-													<!--begin::Menu item-->
-													<div class="menu-item px-3">
-														<a href="#" class="menu-link px-3">Download File</a>
-													</div>
-													<!--end::Menu item-->
-													<!--begin::Menu item-->
-													<div class="menu-item px-3">
-														<a href="#" class="menu-link px-3" data-kt-filemanager-table="rename">Rename</a>
-													</div>
-													<!--end::Menu item-->
-													<!--begin::Menu item-->
-													<div class="menu-item px-3">
-														<a href="#" class="menu-link px-3" data-kt-filemanager-table-filter="move_row" data-bs-toggle="modal" data-bs-target="#kt_modal_move_to_folder">Move to folder</a>
-													</div>
-													<!--end::Menu item-->
-													<!--begin::Menu item-->
-													<div class="menu-item px-3">
-														<a href="#" class="menu-link text-danger px-3" data-kt-filemanager-table-filter="delete_row">Delete</a>
-													</div>
-													<!--end::Menu item-->
+										</div>
+										<!--end::Input group-->
+									</div>
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Password</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[3]}}</span>
 												</div>
-												<!--end::Menu-->
 											</div>
-											<!--end::More-->
 										</div>
+										<!--end::Input group-->
 									</div>
-									<!--end::Action template-->
-									<!--begin::Checkbox template-->
-									<div class="d-none" data-kt-filemanager-template="checkbox">
-										<div class="form-check form-check-sm form-check-custom form-check-solid">
-											<input class="form-check-input" type="checkbox" value="1" />
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Email</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[4]}}</span>
+												</div>
+											</div>
 										</div>
+										<!--end::Input group-->
 									</div>
-									<!--end::Checkbox template-->
-									<!--begin::Modals-->
-									<!--begin::Modal - Upload File-->
-									<div class="modal fade" id="kt_modal_upload" tabindex="-1" aria-hidden="true">
-										<!--begin::Modal dialog-->
-										<div class="modal-dialog modal-dialog-centered mw-650px">
-											<!--begin::Modal content-->
-											<div class="modal-content">
-												<!--begin::Form-->
-												{% for creator in creator_details %}
-												<form action="Submit_task/{{creator[10]}}" class="form mb-15" id="invoice-dropzone" method="post" enctype="multipart/form-data">
-													<!--begin::Modal header-->
-													<div class="modal-header">
-														<h2 class="fw-bold">Upload files</h2>
-														<!--begin::Close-->
-														<div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-															<!--begin::Svg Icon-->
-															<span class="svg-icon svg-icon-1">
-																<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																	<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
-																	<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
-																</svg>
-															</span>
-															<!--end::Svg Icon-->
-														</div>
-														<!--end::Close-->
-													</div>
-													<!--end::Modal header-->
-													<!--begin::Modal body-->
-													<div class="modal-body pt-10 pb-15 px-lg-17">
-														<div>
-														<label class="form-label">Services</label>
-														<select class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" multiple="multiple" id="service-select" name="service">
-															<option></option>
-															{% for service in services %}
-															<option value="{{ service }}">{{ service }}</option>
-															{% endfor %}
-														</select>
-														<div class="text-muted fs-7 mb-7">Add services.</div>
-														<div class="d-flex flex-column mb-8 d-none" id="performance-marketing-group">
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="required fs-5 fw-semibold mb-2">Funds to be used</label>
-																<input type="text" class="form-control form-control-solid" placeholder="for example: ₹ 2000" name="performance_exp" />
-															</div>
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="required fs-5 fw-semibold mb-2">Additional information</label>
-																<input type="text" class="form-control form-control-solid" placeholder="more..." name="info_performance" />
-															</div>
-														</div>
-														<div class="d-flex flex-column mb-8 d-none" id="Creatives-group">
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-																	<span class="required">Number of reels to be uploaded</span>
-																	<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Your payment statements may vary based on selected position"></i>
-																</label>
-																<select data-control="select2" data-placeholder="Select a position..." class="form-select form-select-solid" name="reels_creative">
-																	{% if number_reels|int >= 0 %}
-																		{% for i in range(0, number_reels|int + 1) %}
-																			<option value="{{ i }}">{{ i }} reel{{ '' if i == 1 else 's' }}</option>
-																		{% endfor %}
-																	{% endif %}
-																</select>
-															</div>
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-																	<span class="required">Number of Posts to be uploaded</span>
-																	<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Your payment statements may vary based on selected position"></i>
-																</label>
-																<select data-control="select2" data-placeholder="Select a position..." name="posts_creative" class="form-select form-select-solid">
-																	{% if number_posts|int >= 0 %}
-																		{% for i in range(0, number_posts|int + 1) %}
-																			<option value="{{ i }}">{{ i }} post{{ '' if i == 1 else 's' }}</option>
-																		{% endfor %}
-																	{% endif %}
-																</select>
-															</div>
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-																	<span class="required">Number of stories to be uploaded</span>
-																	<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Your payment statements may vary based on selected position"></i>
-																</label>
-																<select data-control="select2" data-placeholder="Select a position..." class="form-select form-select-solid" name="story_creative">
-																	{% if number_story|int >= 0 %}
-																		{% for i in range(0, number_story|int + 1) %}
-																			<option value="{{ i }}">{{ i }} stor{{ 'y' if i == 1 else 'ies' }}</option>
-																		{% endfor %}
-																	{% endif %}
-																</select>
-															</div>
-														</div>
-														<div class="d-flex flex-column mb-8 d-none" id="Strategy-group">
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="form-label">Strategy</label>
-																<select class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" multiple="multiple" id="strategy-select" name="strategy">
-																	<option></option>
-																	<option value="Marketing strategy">Marketing strategy</option>
-																	<option value="Brand positioning strategy">Brand positioning strategy</option>
-																</select>
-															</div>
-															<div class="d-flex flex-column mb-5 fv-row">
-																<label class="required fs-5 fw-semibold mb-2">Overview for Strategy</label>
-																<input type="text" class="form-control form-control-solid" placeholder="Overview" name="overview_strategy" />
-															</div>
-														</div>
-													</div>
-														<!--begin::Input group-->
-														<div class="form-group">
-															<!--begin::Dropzone-->
-															<div class="dropzone" id="dropzone">
-																<!--begin::Controls-->
-																<div class="dz-message">
-																	<span style="color: black;">Drag and drop the folder here or click to upload.</span>
-																</div>
-															</div>
-															<!--end::Dropzone-->
-															<!--begin::Hint-->
-															<span class="form-text fs-6 text-muted">Max file size is 1MB per file.</span>
-															<br>
-															<br>
-															<!--end::Hint-->
-															<button type="submit" class="btn btn-primary" id="kt_careers_submit_button" data-some-key="YourDataValue">
-																<span class="indicator-label">Upload Now</span>
-																<span class="indicator-progress">Please wait...
-																	<span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-																</span>
-															</button>
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Mobile No.</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[5]}}</span>
+												</div>
+											</div>
+										</div>
+										<!--end::Input group-->
+									</div>
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">City</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[6]}}</span>
+												</div>
+											</div>
+										</div>
+										<!--end::Input group-->
+									</div>
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Address</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[7]}}</span>
+												</div>
+											</div>
+										</div>
+										<!--end::Input group-->
+									</div>
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Creator Type</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[8]}}</span>
+												</div>
+											</div>
+										</div>
+										<!--end::Input group-->
+									</div>
+									<div class="card-body p-9">
+										<!--begin::Input group-->
+										<div class="row mb-5">
+											<div class="d-flex flex-column mb-5 fv-row">
+												<!--begin::Label-->
+												<label class="required fs-5 fw-semibold mb-2">Access Level</label>
+												<!--end::Label-->
+												<div class="col-lg-8">
+													<span class="fw-bold fs-6 text-gray-800">{{creator[9]}}</span>
+												</div>
+											</div>
+										</div>
+										<!--end::Input group-->
+									</div>
 
-														</div>
-														<!--end::Input group-->
-													</div>
-													<!--end::Modal body-->
-												</form>
-												<!--end::Form-->
-												{% endfor %}
-											</div>
-										</div>
-									</div>
-									<!--end::Modal - Upload File-->
-									<!--begin::Modal - New Product-->
-									<div class="modal fade" id="kt_modal_move_to_folder" tabindex="-1" aria-hidden="true">
-										<!--begin::Modal dialog-->
-										<div class="modal-dialog modal-dialog-centered mw-650px">
-											<!--begin::Modal content-->
-											<div class="modal-content">
-												<!--begin::Form-->
-												<form class="form" action="#" id="kt_modal_move_to_folder_form">
-													<!--begin::Modal header-->
-													<div class="modal-header">
-														<!--begin::Modal title-->
-														<h2 class="fw-bold">Move to folder</h2>
-														<!--end::Modal title-->
-														<!--begin::Close-->
-														<div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-															<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-															<span class="svg-icon svg-icon-1">
-																<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																	<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
-																	<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
-																</svg>
-															</span>
-															<!--end::Svg Icon-->
-														</div>
-														<!--end::Close-->
-													</div>
-													<!--end::Modal header-->
-													<!--begin::Modal body-->
-													<div class="modal-body pt-10 pb-15 px-lg-17">
-														<!--begin::Input group-->
-														<div class="form-group fv-row">
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="0" id="kt_modal_move_to_folder_0" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_0">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->account</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="1" id="kt_modal_move_to_folder_1" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_1">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->apps</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="2" id="kt_modal_move_to_folder_2" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_2">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->widgets</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="3" id="kt_modal_move_to_folder_3" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_3">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->assets</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="4" id="kt_modal_move_to_folder_4" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_4">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->documentation</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="5" id="kt_modal_move_to_folder_5" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_5">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->layouts</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="6" id="kt_modal_move_to_folder_6" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_6">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->modals</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="7" id="kt_modal_move_to_folder_7" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_7">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->authentication</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="8" id="kt_modal_move_to_folder_8" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_8">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->dashboards</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-															<div class='separator separator-dashed my-5'></div>
-															<!--begin::Item-->
-															<div class="d-flex">
-																<!--begin::Checkbox-->
-																<div class="form-check form-check-custom form-check-solid">
-																	<!--begin::Input-->
-																	<input class="form-check-input me-3" name="move_to_folder" type="radio" value="9" id="kt_modal_move_to_folder_9" />
-																	<!--end::Input-->
-																	<!--begin::Label-->
-																	<label class="form-check-label" for="kt_modal_move_to_folder_9">
-																		<div class="fw-bold">
-																		<!--begin::Svg Icon | path: icons/duotune/files/fil012.svg-->
-																		<span class="svg-icon svg-icon-2 svg-icon-primary me-2">
-																			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																				<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-																				<path d="M9.2 3H3C2.4 3 2 3.4 2 4V19C2 19.6 2.4 20 3 20H21C21.6 20 22 19.6 22 19V7C22 6.4 21.6 6 21 6H12L10.4 3.60001C10.2 3.20001 9.7 3 9.2 3Z" fill="currentColor" />
-																			</svg>
-																		</span>
-																		<!--end::Svg Icon-->pages</div>
-																	</label>
-																	<!--end::Label-->
-																</div>
-																<!--end::Checkbox-->
-															</div>
-															<!--end::Item-->
-														</div>
-														<!--end::Input group-->
-														<!--begin::Action buttons-->
-														<div class="d-flex flex-center mt-12">
-															<!--begin::Button-->
-															<button type="button" class="btn btn-primary" id="kt_modal_move_to_folder_submit">
-																<span class="indicator-label">Save</span>
-																<span class="indicator-progress">Please wait...
-																<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-															</button>
-															<!--end::Button-->
-														</div>
-														<!--begin::Action buttons-->
-													</div>
-													<!--end::Modal body-->
-												</form>
-												<!--end::Form-->
-											</div>
-										</div>
-									</div>
-									<!--end::Modal - Move file-->
-									<!--begin::Modal-->
-									<div class="modal fade" tabindex="-1" id="kt_modal_1">
-										<div class="modal-dialog">
-											<div class="modal-content">
-												<form action="" class="form mb-15" method="post" enctype="multipart/form-data">
-													<div class="modal-header">
-														<h5 class="modal-title">Additional details</h5>
-														<div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-															<span class="svg-icon fs-2x"></span>
-														</div>
-													</div>
-													<div class="modal-body">
-														<div class="input-group mb-5">
-															<span class="input-group-text">Information</span>
-															<input type="text" name="information" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"/>
-														</div>
-													</div>
-													<div class="modal-footer">
-														<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-														<button type="submit" class="btn btn-primary">Post</button>
-													</div>
-												</form>
-											</div>
-										</div>
-									</div>
-									<!--end::Modal-->
-									<!--begin::Modal-->
-									<div class="modal fade" tabindex="-1" id="add_review">
-										<div class="modal-dialog">
-											<div class="modal-content">
-												<form action="" class="form mb-15" method="post" enctype="multipart/form-data">
-													<div class="modal-header">
-														<h5 class="modal-title">Any changes?</h5>
-														<div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-															<span class="svg-icon fs-2x"></span>
-														</div>
-													</div>
-													<div class="modal-body">
-														<div class="input-group mb-5">
-															<span class="input-group-text">Review</span>
-															<input type="text" name="information" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"/>
-														</div>
-													</div>
-													<div class="modal-footer">
-														<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-														<button type="submit" class="btn btn-primary">Post</button>
-													</div>
-												</form>
-											</div>
-										</div>
-									</div>
-									<!--end::Modal-->
-									<!--end::Modals-->
+									<!--end::details View-->
 								</div>
 								<!--end::Content container-->
 							</div>
 							<!--end::Content-->
 						</div>
-						<!--end::Content wrapper-->
-						<!--begin::Footer-->
-						<div id="kt_app_footer" class="app-footer">
-							<!--begin::Footer container-->
-							<div class="app-container container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3">
-								<!--begin::Copyright-->
-								<div class="text-dark order-2 order-md-1">
-									<span class="text-muted fw-semibold me-1">2022&copy;</span>
-									<a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
+							<!--end::Content wrapper-->
+							<!--begin::Footer-->
+							<div id="kt_app_footer" class="app-footer">
+								<!--begin::Footer container-->
+								<div class="app-container container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3">
+									<!--begin::Copyright-->
+									<div class="text-dark order-2 order-md-1">
+										<span class="text-muted fw-semibold me-1">2022&copy;</span>
+										<a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
+									</div>
+									<!--end::Copyright-->
+									<!--begin::Menu-->
+									<ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
+										<li class="menu-item">
+											<a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
+										</li>
+										<li class="menu-item">
+											<a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
+										</li>
+										<li class="menu-item">
+											<a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a>
+										</li>
+									</ul>
+									<!--end::Menu-->
 								</div>
-								<!--end::Copyright-->
-								<!--begin::Menu-->
-								<ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
-									<li class="menu-item">
-										<a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
-									</li>
-									<li class="menu-item">
-										<a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
-									</li>
-									<li class="menu-item">
-										<a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a>
-									</li>
-								</ul>
-								<!--end::Menu-->
+								<!--end::Footer container-->
 							</div>
-							<!--end::Footer container-->
+							<!--end::Footer-->
 						</div>
-						<!--end::Footer-->
 					</div>
 					<!--end:::Main-->
 				</div>
 				<!--end::Wrapper-->
+				{% endfor %}
 			</div>
 			<!--end::Page-->
 		</div>
@@ -1573,7 +796,7 @@ License: For each use you must have a valid license purchased only from above li
 											</div>
 											<!--end::Progress-->
 											<!--begin::Action-->
-											<a href="../../demo1/dist/apps/projects/project.html" class="btn btn-sm btn-light btn-active-light-primary">View</a>
+											<a href="/admin_target_section_individual" class="btn btn-sm btn-light btn-active-light-primary">View</a>
 											<!--end::Action-->
 										</div>
 										<!--end::Record-->
@@ -1607,7 +830,7 @@ License: For each use you must have a valid license purchased only from above li
 											</div>
 											<!--end::Progress-->
 											<!--begin::Action-->
-											<a href="../../demo1/dist/apps/projects/project.html" class="btn btn-sm btn-light btn-active-light-primary">View</a>
+											<a href="/admin_target_section_individual" class="btn btn-sm btn-light btn-active-light-primary">View</a>
 											<!--end::Action-->
 										</div>
 										<!--end::Record-->
@@ -1729,7 +952,7 @@ License: For each use you must have a valid license purchased only from above li
 												<!--begin::Info-->
 												<div class="ms-1 fw-semibold">
 													<!--begin::Desc-->
-													<a href="#" class="fs-6 text-hover-primary fw-bold">Client UAT Testing Results</a>
+													<a href="#" class="fs-6 text-hover-primary fw-bold">creator UAT Testing Results</a>
 													<!--end::Desc-->
 													<!--begin::Number-->
 													<div class="text-gray-400">18kb</div>
@@ -2500,9 +1723,9 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="d-flex flex-column">
 										<div class="d-flex align-items-center mb-1">
 											<div class="fs-6 fw-semibold text-gray-800 fw-semibold mb-0 me-1">Regular License</div>
-											<i class="text-gray-400 fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="popover" data-bs-custom-class="popover-inverse" data-bs-trigger="hover" data-bs-placement="top" data-bs-content="Use, by you or one client in a single end product which end users are not charged for"></i>
+											<i class="text-gray-400 fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="popover" data-bs-custom-class="popover-inverse" data-bs-trigger="hover" data-bs-placement="top" data-bs-content="Use, by you or one creator in a single end product which end users are not charged for"></i>
 										</div>
-										<div class="fs-7 text-muted">For single end product used by you or one client</div>
+										<div class="fs-7 text-muted">For single end product used by you or one creator</div>
 									</div>
 									<div class="text-nowrap">
 										<span class="text-muted fs-7 fw-semibold me-n1">$</span>
@@ -2517,7 +1740,7 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="d-flex flex-column">
 										<div class="d-flex align-items-center mb-1">
 											<div class="fs-6 fw-semibold text-gray-800 fw-semibold mb-0 me-1">Extended License</div>
-											<i class="text-gray-400 fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="popover" data-bs-custom-class="popover-inverse" data-bs-trigger="hover" data-bs-placement="top" data-bs-content="Use, by you or one client, in a single end product which end users can be charged for."></i>
+											<i class="text-gray-400 fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="popover" data-bs-custom-class="popover-inverse" data-bs-trigger="hover" data-bs-placement="top" data-bs-content="Use, by you or one creator, in a single end product which end users can be charged for."></i>
 										</div>
 										<div class="fs-7 text-muted">For single SaaS app with paying users</div>
 									</div>
@@ -5873,34 +5096,29 @@ License: For each use you must have a valid license purchased only from above li
 		<!--begin::Javascript-->
 		<script>var hostUrl = "static/assets/";</script>
 		<script>
-    var modal = document.getElementById('add_review');
-    modal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;  // Button that triggered the modal
-        var file = button.getAttribute('data-file');  // Extract data-file attribute
-        var form = modal.querySelector('.form');  // Find the form inside the modal
-        form.action = '/upload_review/' + file;  // Update the form action
-    });
-</script>
-		<script>
-        document.getElementById('approveBtn').addEventListener('click', function() {
-
-            // Get the file name from the data-file attribute
-            const fileName = this.getAttribute('data-file');
-
-            // Send AJAX request to the Flask server
-            $.ajax({
-                url: '/admin_approve_task',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ file_name: fileName }),
-                success: function(response) {
-                    console.log('hey'); // This prints "hey" to the console
-                    location.reload();
-                },
-                error: function(error) {
-                    console.error('Error:', error);
+        document.getElementById('edit-button').addEventListener('click', function() {
+            const elements = document.querySelectorAll('.card-body .row');
+            elements.forEach(element => {
+                const span = element.querySelector('span');
+                const input = element.querySelector('input');
+                if (span && input) {
+                    span.classList.toggle('d-none');
+                    input.classList.toggle('d-none');
                 }
             });
+            if (this.textContent === 'Edit') {
+                this.textContent = 'Save';
+            } else {
+                this.textContent = 'Edit';
+                // Optionally, you can add code here to save the data to a server or local storage
+                elements.forEach(element => {
+                    const span = element.querySelector('span');
+                    const input = element.querySelector('input');
+                    if (span && input) {
+                        span.textContent = input.value;
+                    }
+                });
+            }
         });
     </script>
 		<!--begin::Global Javascript Bundle(used by all pages)-->
@@ -5919,6 +5137,10 @@ License: For each use you must have a valid license purchased only from above li
 		<script src="static/assets/js/custom/utilities/modals/users-search.js"></script>
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
+
 	</body>
 	<!--end::Body-->
 </html>
+
+
+
