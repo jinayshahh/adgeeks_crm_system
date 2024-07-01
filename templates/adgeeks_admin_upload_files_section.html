@@ -505,6 +505,11 @@ License: For each use you must have a valid license purchased only from above li
 											<div class="card-toolbar">
 												<!--begin::Toolbar-->
 												<div class="d-flex justify-content-end" data-kt-filemanager-table-toolbar="base">
+												{% if total_work != 0 %}
+													<div class="badge badge-lg badge-primary">
+														<span>{{total_work}} tasks pending</span>
+													</div>
+												{% else %}
 													<!--begin::Add customer-->
 													<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">
 													<!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
@@ -516,6 +521,7 @@ License: For each use you must have a valid license purchased only from above li
 														</svg>
 													</span>
 													<!--end::Svg Icon-->Roll Out</button>
+												{% endif %}
 													<!--end::Add customer-->
 												</div>
 												<!--end::Toolbar-->
@@ -564,11 +570,6 @@ License: For each use you must have a valid license purchased only from above li
 													</div>
 												</div>
 												<!--end::Folder path-->
-												<!--begin::Folder Stats-->
-												<div class="badge badge-lg badge-primary">
-													<span id="kt_file_manager_items_counter">82 items</span>
-												</div>
-												<!--end::Folder Stats-->
 											</div>
 											<!--end::Table header-->
 											<!--begin::Table-->
@@ -5882,7 +5883,6 @@ License: For each use you must have a valid license purchased only from above li
 </script>
 		<script>
         document.getElementById('approveBtn').addEventListener('click', function() {
-            this.style.backgroundColor = 'green';
 
             // Get the file name from the data-file attribute
             const fileName = this.getAttribute('data-file');
@@ -5895,6 +5895,7 @@ License: For each use you must have a valid license purchased only from above li
                 data: JSON.stringify({ file_name: fileName }),
                 success: function(response) {
                     console.log('hey'); // This prints "hey" to the console
+                    location.reload();
                 },
                 error: function(error) {
                     console.error('Error:', error);

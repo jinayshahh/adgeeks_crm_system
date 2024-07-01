@@ -1113,6 +1113,11 @@ def admin_upload_files_section(folder_name):
                 if item[i] is not None:
                     combined[i] = item[i]  # Replace with non-None values
         final_data.append(tuple(combined))
+    mycur.execute('select detail_id from work_details where admin_approve = "yes"')
+    approved_work = mycur.fetchall()
+    conn.commit()
+    total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
+    print(total_work)
     files_with_details = []
     for file in files_fetched:
         file_info = {
@@ -1124,7 +1129,6 @@ def admin_upload_files_section(folder_name):
         for work in final_data:
             if work[1] == file:
                 if work[10] == 'yes':
-                    print("blah")
                     file_info['details'] = work[4]
                     file_info['reviews'] = work[5]
                     file_info['approve'] = 'yes'
@@ -1136,7 +1140,7 @@ def admin_upload_files_section(folder_name):
         files_with_details.append(file_info)
     return render_template("adgeeks_admin_upload_files_section.html", creator_details=creator_details,
                            files=files_with_details, folder_name=folder_name, services=services,
-                           number_reels=number_reels,
+                           number_reels=number_reels, total_work=total_work,
                            number_posts=number_posts, number_story=number_story, work_details=final_data)
 
 
@@ -1168,7 +1172,8 @@ def upload_review(file_name):
 def admin_approve_task():
     file_name = request.json.get('file_name')
     print(file_name)
-    mycur.execute(f"update work_details set admin_approve = 'yes' where file_name = '{file_name}'")
+    mycur.execute(f"update work_details set admin_approve = 'yes' where file_name = '{file_name}' and status_detail = "
+                  f"'active'")
     conn.commit()
     return "Task approved", 200
 
@@ -1497,7 +1502,7 @@ def upload_details(file_name):
 def upload_task():
     if 'file' not in request.files:
         return jsonify(success=False, message="No file part"), 400
-    time.sleep(6)
+    time.sleep(10)
     file = request.files['file']
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1607,7 +1612,8 @@ def rename_file(folder_name, file_name):
     new_file_name = request.form['new_file_name']
     old_path = os.path.join('static', 'work', folder_name, file_name)
     new_path = os.path.join('static', 'work', folder_name, new_file_name)
-
+    mycur.execute(f"update work_details set file_name = '{new_file_name}' where file_name = '{file_name}'")
+    conn.commit()
     try:
         os.rename(old_path, new_path)
         response = {'status': 'success', 'message': 'File renamed successfully!'}
