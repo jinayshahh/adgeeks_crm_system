@@ -1438,10 +1438,20 @@ def upload_files_section(folder_name):
                       f"= '{client_username}' and status_detail = 'active'")
         raw_data = mycur.fetchall()
         conn.commit()
+        print(raw_data)
         merged_data = defaultdict(list)
         for item in raw_data:
             merged_data[item[1]].append(item)
         final_data = []
+        for file_name, items in merged_data.items():
+            combined = list(items[0])  # Start with the first item's data
+            for item in items[1:]:  # Start from the second item
+                for i in range(len(item)):
+                    if item[i] is not None:
+                        combined[i] = item[i]  # Replace with non-None values
+            final_data.append(tuple(combined))
+        # print(final_data)
+
         mycur.execute(f"select detail_id from work_details where admin_approve = 'yes' and "
                       f"client_username = '{client_username}' and creator_username = '{creator_username}'")
         approved_work = mycur.fetchall()
@@ -1452,13 +1462,7 @@ def upload_files_section(folder_name):
         uploaded_work = mycur.fetchall()
         conn.commit()
         total_uploaded = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(uploaded_work)
-        for file_name, items in merged_data.items():
-            combined = list(items[0])  # Start with the first item's data
-            for item in items[1:]:  # Start from the second item
-                for i in range(len(item)):
-                    if item[i] is not None:
-                        combined[i] = item[i]  # Replace with non-None values
-            final_data.append(tuple(combined))
+
         mycur.execute("select content_link from work_details where content_link != 'no link'")
         excluded_files = mycur.fetchall()
         conn.commit()
@@ -1478,26 +1482,31 @@ def upload_files_section(folder_name):
                 for work in final_data:
                     if work[1] == file:
                         if work[14] == 'yes':
+                            print("1")
                             file_info['uploaded_work'] = 'yes'
                             break
-                        elif work[10] == 'yes':
-                            file_info['details'] = work[4]
-                            file_info['reviews'] = work[5]
-                            file_info['approve'] = 'yes'
-                            file_info['client_review'] = work[6]
-                            break
                         elif work[12] == 'yes':
+                            print("3")
                             file_info['details'] = work[4]
                             file_info['reviews'] = work[5]
                             file_info['client_approve'] = 'yes'
                             file_info['client_review'] = work[6]
                             break
+                        elif work[10] == 'yes':
+                            print("2")
+                            file_info['details'] = work[4]
+                            file_info['reviews'] = work[5]
+                            file_info['approve'] = 'yes'
+                            file_info['client_review'] = work[6]
+                            break
                         else:
+                            print("4")
                             file_info['details'] = work[4]
                             file_info['reviews'] = work[5]
                             file_info['client_review'] = work[6]
                             break
                 files_with_details.append(file_info)
+                # print(files_with_details)
         return render_template("adgeeks_upload_files_section.html", creator_details=creator_details,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work, total_uploaded=total_uploaded,
@@ -1680,11 +1689,9 @@ def work_over(folder_name):
     mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()
     conn.commit()
-    print(creator_name)
     mycur.execute(f"select creator_id from creator_information where username = '{creator_name[0][0]}'")
     creator_id = mycur.fetchall()
     conn.commit()
-    print(creator_name, creator_id)
     return redirect(url_for('creator_details_task_section', creator_id=creator_id[0][0]))
 #
 #
@@ -1828,14 +1835,13 @@ def upload_review_client(file_name):
     return redirect(url_for('client_upload_files_section'))
 
 
-@app.route('/client_approve_task', methods=['POST'])
-def client_approve_task():
-    file_name = request.json.get('file_name')
+@app.route('/client_approve_task/<file_name>', methods=['POST', 'GET'])
+def client_approve_task(file_name):
     print(file_name)
     mycur.execute(f"update work_details set client_approve = 'yes' where file_name = '{file_name}' and status_detail = "
                   f"'active'")
     conn.commit()
-    return ("Task approved", 200)
+    return redirect(url_for('client_upload_files_section'))
 
 
 if __name__ == '__main__':

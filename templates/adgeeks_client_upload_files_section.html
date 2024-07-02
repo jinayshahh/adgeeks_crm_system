@@ -660,7 +660,9 @@ License: For each use you must have a valid license purchased only from above li
 																{% endif %}
 															</td>
 															<td>
-																<button id="approveBtn" type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#approve" data-file="{{ file.name }}">Approve</button>
+																<span>
+																	<a href="/client_approve_task/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Approve</a>
+																</span>
 															</td>
 															<td>
 																<span>
@@ -5862,7 +5864,7 @@ License: For each use you must have a valid license purchased only from above li
     });
 </script>
 		<script>
-        document.getElementById('approveBtn').addEventListener('click', function() {
+        document.getElementById('clientapproveBtn').addEventListener('click', function() {
 
             // Get the file name from the data-file attribute
             const fileName = this.getAttribute('data-file');
