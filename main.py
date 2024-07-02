@@ -1422,72 +1422,86 @@ def upload_files_section(folder_name):
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
-    session['folder_name'] = folder_name
-    files_fetched_check = fetch_files(folder_name)
-    files_fetched = [('None')]
-    if files_fetched_check:
-        files_fetched = files_fetched_check
-    services = creator_details[0][9].split(', ')
-    number_reels = creator_details[0][19] - creator_details[0][13]
-    number_posts = creator_details[0][20] - creator_details[0][15]
-    number_story = creator_details[0][21] - creator_details[0][17]
-    mycur.execute(f"select * from work_details where creator_username = '{creator_username}' and client_username "
-                  f"= '{client_username}' and status_detail = 'active'")
-    raw_data = mycur.fetchall()
-    conn.commit()
-    merged_data = defaultdict(list)
-    for item in raw_data:
-        merged_data[item[1]].append(item)
-
-    # Process to combine data entries
-    final_data = []
-    for file_name, items in merged_data.items():
-        combined = list(items[0])  # Start with the first item's data
-        for item in items[1:]:  # Start from the second item
-            for i in range(len(item)):
-                if item[i] is not None:
-                    combined[i] = item[i]  # Replace with non-None values
-        final_data.append(tuple(combined))
-    mycur.execute("select content_link from work_details where content_link != 'no link'")
-    excluded_files = mycur.fetchall()
-    conn.commit()
-    excluded_filenames = {file[0] for file in excluded_files}
-    files_with_details = []
-    for file in files_fetched:
-        if file not in excluded_filenames:  # Skip files that are in the excluded list
-            file_info = {
-                'name': file,
-                'details': None,
-                'reviews': None,
-                'approve': None,
-                'client_approve': None,
-                'client_review': None
-            }
-            for work in final_data:
-                if work[1] == file:
-                    if work[10] == 'yes':
-                        file_info['details'] = work[4]
-                        file_info['reviews'] = work[5]
-                        file_info['approve'] = 'yes'
-                        file_info['client_review'] = work[6]
-                        break
-                    elif work[12] == 'yes':
-                        file_info['details'] = work[4]
-                        file_info['reviews'] = work[5]
-                        file_info['client_approve'] = 'yes'
-                        file_info['client_review'] = work[6]
-                        break
-                    else:
-                        file_info['details'] = work[4]
-                        file_info['reviews'] = work[5]
-                        file_info['client_review'] = work[6]
-                        break
-            files_with_details.append(file_info)
-    print(files_with_details)
-    return render_template("adgeeks_upload_files_section.html", creator_details=creator_details,
-                           files=files_with_details, folder_name=folder_name, services=services,
-                           number_reels=number_reels,
-                           number_posts=number_posts, number_story=number_story, work_details=final_data)
+    if creator_details[0][26] == 'yes':
+        return render_template('folder_complete.html', folder_name=folder_name)
+    else:
+        session['folder_name'] = folder_name
+        files_fetched_check = fetch_files(folder_name)
+        files_fetched = [('None')]
+        if files_fetched_check:
+            files_fetched = files_fetched_check
+        services = creator_details[0][9].split(', ')
+        number_reels = creator_details[0][19] - creator_details[0][13]
+        number_posts = creator_details[0][20] - creator_details[0][15]
+        number_story = creator_details[0][21] - creator_details[0][17]
+        mycur.execute(f"select * from work_details where creator_username = '{creator_username}' and client_username "
+                      f"= '{client_username}' and status_detail = 'active'")
+        raw_data = mycur.fetchall()
+        conn.commit()
+        merged_data = defaultdict(list)
+        for item in raw_data:
+            merged_data[item[1]].append(item)
+        final_data = []
+        mycur.execute(f"select detail_id from work_details where admin_approve = 'yes' and "
+                      f"client_username = '{client_username}' and creator_username = '{creator_username}'")
+        approved_work = mycur.fetchall()
+        conn.commit()
+        total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
+        mycur.execute(f"select detail_id from work_details where content_uploaded = 'yes' and "
+                      f"client_username = '{client_username}' and creator_username = '{creator_username}'")
+        uploaded_work = mycur.fetchall()
+        conn.commit()
+        total_uploaded = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(uploaded_work)
+        for file_name, items in merged_data.items():
+            combined = list(items[0])  # Start with the first item's data
+            for item in items[1:]:  # Start from the second item
+                for i in range(len(item)):
+                    if item[i] is not None:
+                        combined[i] = item[i]  # Replace with non-None values
+            final_data.append(tuple(combined))
+        mycur.execute("select content_link from work_details where content_link != 'no link'")
+        excluded_files = mycur.fetchall()
+        conn.commit()
+        excluded_filenames = {file[0] for file in excluded_files}
+        files_with_details = []
+        for file in files_fetched:
+            if file not in excluded_filenames:  # Skip files that are in the excluded list
+                file_info = {
+                    'name': file,
+                    'details': None,
+                    'reviews': None,
+                    'approve': None,
+                    'client_approve': None,
+                    'client_review': None,
+                    'uploaded_work': None
+                }
+                for work in final_data:
+                    if work[1] == file:
+                        if work[14] == 'yes':
+                            file_info['uploaded_work'] = 'yes'
+                            break
+                        elif work[10] == 'yes':
+                            file_info['details'] = work[4]
+                            file_info['reviews'] = work[5]
+                            file_info['approve'] = 'yes'
+                            file_info['client_review'] = work[6]
+                            break
+                        elif work[12] == 'yes':
+                            file_info['details'] = work[4]
+                            file_info['reviews'] = work[5]
+                            file_info['client_approve'] = 'yes'
+                            file_info['client_review'] = work[6]
+                            break
+                        else:
+                            file_info['details'] = work[4]
+                            file_info['reviews'] = work[5]
+                            file_info['client_review'] = work[6]
+                            break
+                files_with_details.append(file_info)
+        return render_template("adgeeks_upload_files_section.html", creator_details=creator_details,
+                               files=files_with_details, folder_name=folder_name, services=services,
+                               number_reels=number_reels, total_work=total_work, total_uploaded=total_uploaded,
+                               number_posts=number_posts, number_story=number_story, work_details=final_data)
 
 
 @app.route('/upload_details/<file_name>', methods=['POST'])
@@ -1606,7 +1620,7 @@ def submit_task_review_upload():
 
 
 @app.route('/work_upload_details/<client_username>')
-def admin_work_upload_details(client_username):
+def work_upload_details(client_username):
     creator_username = session.get('user_name')
     session['client_username'] = client_username
     mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
@@ -1659,6 +1673,19 @@ def uploaded_creator():
     return "Task approved", 200
 
 
+@app.route('/work_over/<folder_name>', methods=['POST', 'GET'])
+def work_over(folder_name):
+    mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes' where title = '{folder_name}'")
+    conn.commit()
+    mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
+    creator_name = mycur.fetchall()
+    conn.commit()
+    print(creator_name)
+    mycur.execute(f"select creator_id from creator_information where username = '{creator_name[0][0]}'")
+    creator_id = mycur.fetchall()
+    conn.commit()
+    print(creator_name, creator_id)
+    return redirect(url_for('creator_details_task_section', creator_id=creator_id[0][0]))
 #
 #
 #
