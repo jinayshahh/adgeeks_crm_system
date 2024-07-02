@@ -1459,19 +1459,28 @@ def upload_files_section(folder_name):
                 'name': file,
                 'details': None,
                 'reviews': None,
-                'approve': None
+                'approve': None,
+                'client_approve': None,
+                'client_review': None
             }
             for work in final_data:
                 if work[1] == file:
                     if work[10] == 'yes':
-                        print("blah")
                         file_info['details'] = work[4]
                         file_info['reviews'] = work[5]
                         file_info['approve'] = 'yes'
+                        file_info['client_review'] = work[6]
+                        break
+                    elif work[12] == 'yes':
+                        file_info['details'] = work[4]
+                        file_info['reviews'] = work[5]
+                        file_info['client_approve'] = 'yes'
+                        file_info['client_review'] = work[6]
                         break
                     else:
                         file_info['details'] = work[4]
                         file_info['reviews'] = work[5]
+                        file_info['client_review'] = work[6]
                         break
             files_with_details.append(file_info)
     print(files_with_details)
@@ -1638,6 +1647,18 @@ def rename_file(folder_name, file_name):
         response = {'status': 'error', 'message': str(e)}
 
     return jsonify(response)
+
+
+@app.route('/uploaded_creator', methods=['POST'])
+def uploaded_creator():
+    file_name = request.json.get('file_name')
+    print(file_name)
+    mycur.execute(f"update work_details set content_uploaded = 'yes' where file_name = '{file_name}' and status_detail = "
+                  f"'active'")
+    conn.commit()
+    return "Task approved", 200
+
+
 #
 #
 #
@@ -1695,7 +1716,6 @@ def client_upload_files_section():
     conn.commit()
     if creator_details:
         folder_name = creator_details[0][1]
-        print(folder_name)
         files_fetched_check = fetch_files(folder_name)
         files_fetched = [('None')]
         if files_fetched_check:
@@ -1725,7 +1745,6 @@ def client_upload_files_section():
         approved_work = mycur.fetchall()
         conn.commit()
         total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
-        print(total_work)
         files_with_details = []
         for file in files_fetched:
             file_info = {
@@ -1738,14 +1757,16 @@ def client_upload_files_section():
                 if work[1] == file:
                     if work[12] == 'yes':
                         file_info['details'] = work[4]
-                        file_info['reviews'] = work[5]
+                        file_info['reviews'] = work[6]
                         file_info['approve'] = 'yes'
                         break
                     else:
                         file_info['details'] = work[4]
-                        file_info['reviews'] = work[5]
+                        file_info['reviews'] = work[6]
                         break
             files_with_details.append(file_info)
+            print(files_with_details)
+        print(final_data)
         return render_template("adgeeks_client_upload_files_section.html", creator_details=creator_details,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work,
@@ -1772,12 +1793,22 @@ def upload_review_client(file_name):
     creator_username = username_list[0][0]
     client_username = username_list[0][1]
     mycur.execute(f"INSERT INTO work_details (detail_id, file_name, client_username, "
-                  f"creator_username, review_client, status_client) VALUES ('{detail_id}', '{file_name}',"
+                  f"creator_username, review_client, status_detail) VALUES ('{detail_id}', '{file_name}',"
                   f" '{client_username}', '{creator_username}', '{information_upload}', 'active')")
     conn.commit()
     mycur.execute(f"UPDATE work_record set status_client = 'yes' where client_username = '{client_username}'")
     conn.commit()
     return redirect(url_for('client_upload_files_section'))
+
+
+@app.route('/client_approve_task', methods=['POST'])
+def client_approve_task():
+    file_name = request.json.get('file_name')
+    print(file_name)
+    mycur.execute(f"update work_details set client_approve = 'yes' where file_name = '{file_name}' and status_detail = "
+                  f"'active'")
+    conn.commit()
+    return ("Task approved", 200)
 
 
 if __name__ == '__main__':
