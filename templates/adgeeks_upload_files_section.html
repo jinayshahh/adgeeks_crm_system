@@ -136,7 +136,7 @@ License: For each use you must have a valid license purchased only from above li
 												<div class="d-flex justify-content-end" data-kt-filemanager-table-toolbar="base">
 													<!--begin::Add customer-->
 													{% if total_uploaded != 0 %}
-													<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">
+													<button type="button" class="btn btn-success hover-scale" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">
 													<!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
 													<span class="svg-icon svg-icon-2">
 														<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -210,9 +210,6 @@ License: For each use you must have a valid license purchased only from above li
 											<table id="kt_file_manager_list" data-kt-filemanager-table="folders" class="table align-middle table-row-dashed fs-6 gy-5">
 												<!--begin::Table head-->
 												<thead>
-													<!--begin::Table row-->
-													{% for file in files %}
-													{% if file.name != 'None' %}
 													<tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
 														<th class="min-w-150px">Name</th>
 														<th class="min-w-100px">Captions/Info</th>
@@ -220,9 +217,6 @@ License: For each use you must have a valid license purchased only from above li
 														<th class="w-150px">Replace file</th>
 														<th class="w-150px">Update Info</th>
 													</tr>
-													{% endif %}
-													{% endfor %}
-													<!--end::Table row-->
 												</thead>
 												<!--end::Table head-->
 												<!--begin::Table body-->
@@ -241,7 +235,7 @@ License: For each use you must have a valid license purchased only from above li
 																	</td>
 																	<!--end::Name-->
 																	 <td>
-																		<span>Uploaded</span>
+																		<span class="text-success">Uploaded</span>
 																	</td>
 																	<!--begin::Actions-->
 																	<td>
@@ -407,7 +401,7 @@ License: For each use you must have a valid license purchased only from above li
 																	</td>
 																	<!--end::Name-->
 																	 <td>
-																		<span>Sent to the client</span>
+																		<span class="text-success">Sent to the client</span>
 																	</td>
 																	<!--begin::Actions-->
 																	<td>
@@ -479,7 +473,7 @@ License: For each use you must have a valid license purchased only from above li
 																	</td>
 																	<!--end::Name-->
 																	 <td>
-																		<span>Approved, please post it.</span>
+																		<span class="text-success">Approved, please post it.</span>
 																	</td>
 																	<!--begin::Actions-->
 																	<td>
@@ -553,7 +547,7 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if file.details %}
 																			<span>{{ file.details }}</span>
 																		{% else %}
-																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Caption/Info</button>
+																			<button type="button" class="btn btn-light-info btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Caption/Info</button>
 																		{% endif %}
 																	</td>
 																	<!--begin::Actions-->
@@ -569,14 +563,14 @@ License: For each use you must have a valid license purchased only from above li
 																	{% if file.reviews or file.client_review %}
 																	<td>
 																		<span>
-																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_upload_review" data-file="{{ file.name }}" onclick="setFileName(this.getAttribute('data-file'))">
+																			<button type="button" class="btn btn-light-info btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_upload_review" data-file="{{ file.name }}" onclick="setFileName(this.getAttribute('data-file'))">
 																				Upload Files
 																			</button>
 																		</span>
 																	</td>
 																	<td>
 																		<span>
-																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Update Caption/Info</button>
+																			<button type="button" class="btn btn-light-info btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Update Info</button>
 																		</span>
 																	</td>
 																	{% else %}

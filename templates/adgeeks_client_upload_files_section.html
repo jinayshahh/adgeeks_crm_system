@@ -562,8 +562,6 @@ License: For each use you must have a valid license purchased only from above li
 														<th >Additional Information</th>
 														<th >Review</th>
 														<th >Approve</th>
-														<th >Time Line</th>
-														<th class="w-125px">Actions</th>
 													</tr>
 													<!--end::Table row-->
 												</thead>
@@ -591,12 +589,7 @@ License: For each use you must have a valid license purchased only from above li
 																<span>-</span>
 															</td>
 															<td>
-																<span>Approved</span>
-															</td>
-															<td>
-																<span>
-																	<a href="/creator_task_timeline/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Timeline</a>
-																</span>
+																<span class="text-success">Approved</span>
 															</td>
 															<!--begin::Actions-->
 															<td class="text-end" data-kt-filemanager-table="action_dropdown">
@@ -626,6 +619,11 @@ License: For each use you must have a valid license purchased only from above li
 																		<div class="menu-item px-3">
 																			<a href="static/work/{{folder_name}}/{{file}}" download="{{file}}" class="menu-link px-3">Download file</a>
 																		</div>
+																		<!--begin::Menu item-->
+																		<div class="menu-item px-3">
+																			<a href="/creator_task_timeline/{{file.name}}" class="menu-link px-3">Timeline</a>
+																		</div>
+																		<!--end::Menu item-->
 																	</div>
 																	<!--end::Menu-->
 																	<!--end::More-->
@@ -664,11 +662,6 @@ License: For each use you must have a valid license purchased only from above li
 																	<a href="/client_approve_task/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Approve</a>
 																</span>
 															</td>
-															<td>
-																<span>
-																	<a href="/creator_task_timeline/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Timeline</a>
-																</span>
-															</td>
 															<!--begin::Actions-->
 															<td class="text-end" data-kt-filemanager-table="action_dropdown">
 															<div class="d-flex justify-content-end">
@@ -697,6 +690,11 @@ License: For each use you must have a valid license purchased only from above li
 																		<div class="menu-item px-3">
 																			<a href="static/work/{{folder_name}}/{{file}}" download="{{file}}" class="menu-link px-3">Download file</a>
 																		</div>
+																		<!--begin::Menu item-->
+																		<div class="menu-item px-3">
+																			<a href="/creator_task_timeline/{{file.name}}" class="menu-link px-3">Timeline</a>
+																		</div>
+																		<!--end::Menu item-->
 																	</div>
 																	<!--end::Menu-->
 																	<!--end::More-->

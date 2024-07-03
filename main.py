@@ -1749,6 +1749,7 @@ def client_dashboard(user_name):
 @app.route('/client_upload_files_section')
 def client_upload_files_section():
     client_username = session.get('client_username')
+    print("check")
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
@@ -1757,11 +1758,15 @@ def client_upload_files_section():
         f"'{client_username}' and admin_roll_out = 'yes'")
     creator_details = mycur.fetchall()
     conn.commit()
+    print(creator_details)
+
     if creator_details:
+        print("check")
         folder_name = creator_details[0][1]
         files_fetched_check = fetch_files(folder_name)
         files_fetched = [('None')]
         if files_fetched_check:
+            print("check")
             files_fetched = files_fetched_check
         services = creator_details[0][9].split(', ')
         number_reels = creator_details[0][19] - creator_details[0][13]
@@ -1815,7 +1820,7 @@ def client_upload_files_section():
                                number_reels=number_reels, total_work=total_work,
                                number_posts=number_posts, number_story=number_story, work_details=final_data)
     else:
-        return "no tasks"
+        return render_template('adgeeks_no_task.html', client_username=client_username)
 
 
 @app.route('/upload_review_client/<file_name>', methods=['POST'])
