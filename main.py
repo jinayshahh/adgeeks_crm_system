@@ -329,6 +329,15 @@ def admin_target_section_individual(creator_username):
     return render_template("adgeeks_admin_target_section_individual.html", work_records=work_records)
 
 
+@app.route('/admin_target_section_all')
+def admin_target_section_all():
+    mycur.execute(f"SELECT * FROM work_record where admin_roll_out = 'no'")
+    work_records = mycur.fetchall()
+    conn.commit()
+    print(work_records)
+    return render_template("adgeeks_admin_target_section_all.html", work_records=work_records)
+
+
 # client section
 @app.route('/admin_client_panel', methods=['GET', 'POST'])
 def admin_client_panel():
