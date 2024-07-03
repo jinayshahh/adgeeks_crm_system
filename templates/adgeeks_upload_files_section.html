@@ -81,7 +81,7 @@ License: For each use you must have a valid license purchased only from above li
 									<!--begin::Page title-->
 									<div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
 										<!--begin::Title-->
-										<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">File Manager - Folders</h1>
+										<h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Tasks Manager</h1>
 										<!--end::Title-->
 										<!--begin::Breadcrumb-->
 										<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -96,7 +96,7 @@ License: For each use you must have a valid license purchased only from above li
 											</li>
 											<!--end::Item-->
 											<!--begin::Item-->
-											<li class="breadcrumb-item text-muted">File Manager</li>
+											<li class="breadcrumb-item text-muted">Files</li>
 											<!--end::Item-->
 										</ul>
 										<!--end::Breadcrumb-->
@@ -215,11 +215,10 @@ License: For each use you must have a valid license purchased only from above li
 													{% if file.name != 'None' %}
 													<tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
 														<th class="min-w-150px">Name</th>
-														<th class="min-w-100px">Additional Information</th>
+														<th class="min-w-100px">Captions/Info</th>
 														<th class="min-w-100px">Review</th>
-														<th class="w-150px">Upload files</th>
-														<th class="w-150px">Update Details</th>
-														<th>Actions</th>
+														<th class="w-150px">Replace file</th>
+														<th class="w-150px">Update Info</th>
 													</tr>
 													{% endif %}
 													{% endfor %}
@@ -317,7 +316,7 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if file.details %}
 																			<span>{{ file.details }}</span>
 																		{% else %}
-																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Details</button>
+																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Caption/Info</button>
 																		{% endif %}
 																	</td>
 																	<!--begin::Actions-->
@@ -325,7 +324,7 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if file.client_review %}
 																		<span>{{file.client_review}}</span>
 																		{% else %}
-																		<span>N/A</span>
+																		<span>-</span>
 																		{% endif %}
 																	</td>
 																	{% if file.client_review %}
@@ -343,10 +342,10 @@ License: For each use you must have a valid license purchased only from above li
 																	</td>
 																	{% else %}
 																	<td>
-																		<span>N/A</span>
+																		<span>-</span>
 																	</td>
 																	<td>
-																		<span>N/A</span>
+																		<span>-</span>
 																	</td>
 																	{%  endif %}
 																	<!--begin::Actions-->
@@ -554,7 +553,7 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if file.details %}
 																			<span>{{ file.details }}</span>
 																		{% else %}
-																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Details</button>
+																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Add Caption/Info</button>
 																		{% endif %}
 																	</td>
 																	<!--begin::Actions-->
@@ -564,7 +563,7 @@ License: For each use you must have a valid license purchased only from above li
 																		{% elif file.client_review %}
 																		<span>{{file.client_review}}</span>
 																		{% else %}
-																		<span>N/A</span>
+																		<span>-</span>
 																		{% endif %}
 																	</td>
 																	{% if file.reviews or file.client_review %}
@@ -577,15 +576,15 @@ License: For each use you must have a valid license purchased only from above li
 																	</td>
 																	<td>
 																		<span>
-																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Update Details</button>
+																			<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#kt_modal_1" data-file="{{ file.name }}">Update Caption/Info</button>
 																		</span>
 																	</td>
 																	{% else %}
 																	<td>
-																		<span>N/A</span>
+																		<span>-</span>
 																	</td>
 																	<td>
-																		<span>N/A</span>
+																		<span>-</span>
 																	</td>
 																	{%  endif %}
 																	<!--begin::Actions-->
