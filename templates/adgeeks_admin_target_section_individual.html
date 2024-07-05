@@ -593,6 +593,7 @@ License: For each use you must have a valid license purchased only from above li
 													</div>
 													<!--end::Col header-->
 													{% for record in work_records %}
+													{% if record[1] %}
 													{% if record[4] != 'yes' %}
 													<!--begin::Card-->
 													<div class="card mb-6 mb-xl-9">
@@ -631,6 +632,7 @@ License: For each use you must have a valid license purchased only from above li
 														<!--end::Card body-->
 													</div>
 													<!--end::Card-->
+													{% endif %}
 													{% endif %}
 													{% endfor %}
 													<!--end::Card-->

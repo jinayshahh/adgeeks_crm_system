@@ -1124,10 +1124,12 @@ def admin_upload_files_section(folder_name):
                 if item[i] is not None:
                     combined[i] = item[i]  # Replace with non-None values
         final_data.append(tuple(combined))
-    mycur.execute('select detail_id from work_details where admin_approve = "yes"')
+    mycur.execute(f'select detail_id from work_details where admin_approve = "yes" and '
+                  f'creator_username = "{creator_username}" and client_username = "{client_username}"')
     approved_work = mycur.fetchall()
     conn.commit()
     total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
+    print(creator_details[0][19], creator_details[0][20], creator_details[0][21], len(approved_work))
     files_with_details = []
     for file in files_fetched:
         file_info = {
@@ -1395,7 +1397,7 @@ def target_section_initial_form():
         target_section_initial_form_additionalinfo = request.form['additionalinfo']
         client_username = session.get('client_username')
         mycur.execute(f"select client_id, services, reels_creative, posts_creative, story_creative from "
-                      f"client_information where username = '{client_username}'")
+                      f"client_information, month, start_date where username = '{client_username}'")
         client_info = mycur.fetchall()
         conn.commit()
         print(client_info)

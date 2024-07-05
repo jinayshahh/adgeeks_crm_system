@@ -654,12 +654,12 @@ License: For each use you must have a valid license purchased only from above li
 																{% if file.reviews %}
 																	<span>{{ file.reviews }}</span>
 																{% else %}
-																	<button type="button" class="btn btn-primary btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#add_review" data-file="{{ file.name }}">Add Review</button>
+																	<button type="button" class="btn btn-light-info btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#add_review" data-file="{{ file.name }}">Add Review</button>
 																{% endif %}
 															</td>
 															<td>
 																<span>
-																	<a href="/client_approve_task/{{file.name}}" class="btn btn-primary btn-sm fw-bolder">Approve</a>
+																	<a href="/client_approve_task/{{file.name}}" class="btn btn-success btn-sm fw-bolder">Approve</a>
 																</span>
 															</td>
 															<!--begin::Actions-->
