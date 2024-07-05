@@ -134,13 +134,22 @@ def make_folder(username):
 
 def select_folder(username):
     mycur.execute(
-        f"select username, months, start_date, end_date from client_information where username = '{username}'")
+        f"select username, months, start_date, end_date, work_status from client_information where username = '{username}'")
     client_details = mycur.fetchall()
     conn.commit()
     month_service = client_details[0][1]
     month_start = client_details[0][2]
     today_date_format = datetime.now()  # or datetime(2024, 6, 30) for testing with a specific date
-    current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month + 1)
+    mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status = 'Completed'")
+    no_folders = mycur.fetchall()
+    conn.commit()
+    print(len(no_folders), "this")
+    if len(no_folders) == 0:
+        current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month
+                         + 1)
+    else:
+        current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month
+                         + 1 + len(no_folders))
     if 0 < current_month <= month_service:
         directory_path_folder = f"static/work/{client_details[0][0]} Raw month {current_month}"
         folder_name = f"{client_details[0][0]} Raw month {current_month}"
@@ -173,7 +182,8 @@ def task_listing(directory_path_sql, client_username):
     time.sleep(2)
     try:
         # Use parameterized queries to prevent SQL injection
-        sql_query = "UPDATE work_record SET title = %s WHERE client_username = %s"
+        sql_query = ("UPDATE work_record SET title = %s WHERE client_username = %s and work_status != 'Completed'"
+                     " ORDER BY work_id ASC LIMIT 1")
         mycur.execute(sql_query, (directory_path_sql, client_username))
         conn.commit()
     except Exception as e:
@@ -726,20 +736,22 @@ def admin_client_creation_form():
                       f"('{password_id}', 'Client', '{client_form_user_name}', '{client_form_password}', 'client')")
         conn.commit()
         make_folder(client_form_user_name)
-        mycur.execute("SELECT work_id FROM work_record ORDER BY work_id DESC LIMIT 1")
-        last_creator_id = mycur.fetchone()
-        if last_creator_id:
-            last_creator_id = int(last_creator_id[0])
-        try:
-            work_id = last_creator_id + 1
-        except:
-            work_id = 1
-        mycur.execute(
-            f"INSERT INTO work_record (work_id, client_username, services, total_reels, total_posts,"
-            f" total_stories) VALUES ('{work_id}', '{client_form_user_name}', '{client_form_service_data}', "
-            f"'{client_form_reels_creative_data}', '{client_form_posts_creative_data}', "
-            f"'{client_form_story_creative_data}')")
-        conn.commit()
+        print(range(int(client_form_payment_period_data)))
+        for _ in range(int(client_form_payment_period_data)):
+            mycur.execute("SELECT work_id FROM work_record ORDER BY work_id DESC LIMIT 1")
+            last_creator_id = mycur.fetchone()
+            if last_creator_id:
+                last_creator_id = int(last_creator_id[0])
+            try:
+                work_id = last_creator_id + 1
+            except:
+                work_id = 1
+            mycur.execute(
+                f"INSERT INTO work_record (work_id, client_username, services, total_reels, total_posts,"
+                f" total_stories) VALUES ('{work_id}', '{client_form_user_name}', '{client_form_service_data}', "
+                f"'{client_form_reels_creative_data}', '{client_form_posts_creative_data}', "
+                f"'{client_form_story_creative_data}')")
+            conn.commit()
         return redirect("/admin_client_panel")
     return render_template("adgeeks_admin_client_creation_form.html")
 
@@ -1095,7 +1107,7 @@ def admin_upload_files_section(folder_name):
     conn.commit()
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
-    creator_details = mycur.fetchall()
+    creator_details = [mycur.fetchone()]
     conn.commit()
     print(creator_details)
     session['folder_name'] = folder_name
@@ -1260,10 +1272,7 @@ def creator_details_task_section(creator_id):
     conn.commit()
     if creator_details:
         creator_details = [creator_details]
-        mycur.execute("SELECT assigned_client from creator_information where assigned_client = 'yes'")
-        client_assigned = mycur.fetchall()
-        conn.commit()
-        if client_assigned:
+        if creator_details[0][10]:
             mycur.execute(f"SELECT client_username, services from assign_admin where "
                           f"creator_username = '{creator_details[0][2]}'")
             assign_info = mycur.fetchall()
@@ -1271,6 +1280,15 @@ def creator_details_task_section(creator_id):
             client_info_list = []
             if assign_info:
                 for assign in assign_info:
+                    mycur.execute(
+                        f"select work_status from work_record where creator_username = '{creator_details[0][2]}' and"
+                        f" client_username = '{assign[0]}'")
+                    status_work = mycur.fetchall()
+                    conn.commit()
+                    print(status_work)
+                    mycur.execute(
+                        f"update client_information set work_status = '{status_work[0][0]}' where username = '{assign[0]}'")
+                    conn.commit()
                     mycur.execute(f"SELECT * FROM client_information where username = '{assign[0]}'")
                     client_info = mycur.fetchall()
                     conn.commit()
@@ -1340,9 +1358,10 @@ def task_schedule(client_id):
     mycur.execute(f"SELECT * FROM client_information where client_id = '{client_id}'")
     client_info = mycur.fetchall()
     conn.commit()
-    mycur.execute(f"SELECT * FROM work_record where client_username = '{client_info[0][3]}'")
-    work_record = mycur.fetchall()
+    mycur.execute(f"SELECT * FROM work_record where client_username = '{client_info[0][3]}' and work_status != 'Completed'")
+    work_record = [mycur.fetchone()]
     conn.commit()
+    print(work_record)
     start_date = client_info[0][25]
     due_date = start_date + timedelta(days=7)
     formatted_due_date = due_date.strftime("%d-%m-%y")
@@ -1430,8 +1449,9 @@ def upload_files_section(folder_name):
     client_username = session.get('client_username')
     creator_username = session.get('user_name')
     mycur.execute(
-        f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
-    creator_details = mycur.fetchall()
+        f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and "
+        f"client_username = '{client_username}' and work_status != 'Completed'")
+    creator_details = [mycur.fetchone()]
     conn.commit()
     if creator_details[0][26] == 'yes':
         return render_template('folder_complete.html', folder_name=folder_name)
@@ -1585,6 +1605,8 @@ def upload_task():
                       f"creator_username, status_detail) VALUES ('{detail_id}', '{filename}', '{client_username}'"
                       f",'{creator_username}', 'active')")
         conn.commit()
+        mycur.execute(f"update work_record set work_status = 'In progress' where client_username = '{client_username}'"
+                      f" and creator_username = '{creator_username}' and work_status != 'Completed' ORDER BY work_id ASC LIMIT 1")
         return jsonify(success=True, file_path=file_path)
 
     return jsonify(success=False, message="File not allowed"), 400
@@ -1594,7 +1616,8 @@ def upload_task():
 def submit_task(client_username):
     # upload_directory_to_drive(f'{directory_path}', PARENT_FOLDER_ID)
     mycur.execute(
-        f"select reel_count, post_count, story_count from work_record where client_username = '{client_username}'")
+        f"select reel_count, post_count, story_count from work_record where client_username = '{client_username}' and"
+        f" work_status != 'Completed' ORDER BY work_id ASC LIMIT 1")
     count_task = mycur.fetchall()
     client_form_reels_creative = request.form['reels_creative']
     if client_form_reels_creative:
@@ -1613,7 +1636,7 @@ def submit_task(client_username):
         client_form_story_creative_data = 'N/A'
     mycur.execute(f'UPDATE work_record SET reel_count = "{client_form_reels_creative_data}", post_count = '
                   f'"{client_form_posts_creative_data}", story_count = "{client_form_story_creative_data}"'
-                  f' where client_username = "{client_username}"')
+                  f' where client_username = "{client_username}" and work_status != "Completed" ORDER BY work_id ASC LIMIT 1')
     conn.commit()
     folder_name = session.get('folder_name')
     return redirect(url_for('upload_files_section', folder_name=folder_name))
@@ -1704,6 +1727,13 @@ def work_over(folder_name):
     creator_id = mycur.fetchall()
     conn.commit()
     return redirect(url_for('creator_details_task_section', creator_id=creator_id[0][0]))
+
+
+@app.route('/new_task/<creator_id>', methods=['POST', 'GET'])
+def new_task(creator_id):
+    return render_template('adgeeks_new_task.html', creator_id=creator_id)
+
+
 #
 #
 #
