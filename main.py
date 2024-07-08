@@ -1214,7 +1214,7 @@ def roll_out(folder_name):
                   f"creator_username = '{creator_username}'")
     conn.commit()
     mycur.execute(f"update work_record set admin_roll_out = 'yes' where client_username = '{client_username}' and "
-                  f"creator_username = '{creator_username}'")
+                  f"creator_username = '{creator_username}' and work_status != 'Completed' ORDER BY work_id ASC LIMIT 1")
     conn.commit()
     return redirect(url_for('admin_target_section_individual', creator_username=creator_username))
 
@@ -1692,13 +1692,14 @@ def delete_file(folder_name, file_name):
 
 @app.route('/rename_file/<folder_name>/<file_name>', methods=['POST'])
 def rename_file(folder_name, file_name):
-    new_file_name = request.form['new_file_name']
+    new_file_name = secure_filename(request.form['new_file_name'])  # Ensure the filename is secure
     old_path = os.path.join('static', 'work', folder_name, file_name)
     new_path = os.path.join('static', 'work', folder_name, new_file_name)
-    mycur.execute(f"update work_details set file_name = '{new_file_name}' where file_name = '{file_name}'")
-    conn.commit()
+
     try:
-        os.rename(old_path, new_path)
+        os.rename(old_path, new_path)  # Attempt to rename the file
+        mycur.execute(f"update work_details set file_name = %s where file_name = %s", (new_file_name, file_name))
+        conn.commit()
         response = {'status': 'success', 'message': 'File renamed successfully!'}
     except Exception as e:
         response = {'status': 'error', 'message': str(e)}
@@ -1781,7 +1782,6 @@ def client_dashboard(user_name):
 @app.route('/client_upload_files_section')
 def client_upload_files_section():
     client_username = session.get('client_username')
-    print("check")
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
@@ -1790,15 +1790,12 @@ def client_upload_files_section():
         f"'{client_username}' and admin_roll_out = 'yes'")
     creator_details = mycur.fetchall()
     conn.commit()
-    print(creator_details)
 
     if creator_details:
-        print("check")
         folder_name = creator_details[0][1]
         files_fetched_check = fetch_files(folder_name)
         files_fetched = [('None')]
         if files_fetched_check:
-            print("check")
             files_fetched = files_fetched_check
         services = creator_details[0][9].split(', ')
         number_reels = creator_details[0][19] - creator_details[0][13]
@@ -1845,8 +1842,6 @@ def client_upload_files_section():
                         file_info['reviews'] = work[6]
                         break
             files_with_details.append(file_info)
-            print(files_with_details)
-        print(final_data)
         return render_template("adgeeks_client_upload_files_section.html", creator_details=creator_details,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work,
@@ -1887,6 +1882,37 @@ def client_approve_task(file_name):
     mycur.execute(f"update work_details set client_approve = 'yes' where file_name = '{file_name}' and status_detail = "
                   f"'active'")
     conn.commit()
+    client_username = session.get('client_username')
+    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+    mycur.execute(
+        f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = "
+        f"'{client_username}' and admin_roll_out = 'yes' and work_status != 'Completed'")
+    creator_details = mycur.fetchall()
+    conn.commit()
+    creator_string = creator_details[0][1]
+    print(creator_string)
+    final_folder_name = creator_string.replace("Raw", "Final")
+    # Construct the final directory path
+    final_directory_path = f"static/work/{final_folder_name}"
+
+    # Ensure the directory exists, if not, create it
+    if not os.path.exists(final_directory_path):
+        os.makedirs(final_directory_path)
+
+    # Assuming 'file_name' includes the current relative or absolute path to the file
+    current_file_path = f"static/work/{creator_string}/{file_name}"  # Update this if 'file_name' doesn't contain the path
+
+    # Construct the new file path where the file will be moved
+    new_file_path = os.path.join(final_directory_path, file_name)
+
+    # Move the file to the new directory
+    try:
+        shutil.copy(current_file_path, new_file_path)
+        print(f"File has been successfully moved to: {new_file_path}")
+    except Exception as e:
+        print(f"An error occurred while moving the file: {e}")
     return redirect(url_for('client_upload_files_section'))
 
 

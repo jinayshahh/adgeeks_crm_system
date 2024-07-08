@@ -6405,8 +6405,13 @@ document.getElementById('kt_careers_submit_button_review').addEventListener('cli
     </script>
 		<script>
 function promptRename(folderName, fileName) {
-    const newFileName = prompt("Enter new file name:", fileName);
-    if (newFileName) {
+    const fileExtension = fileName.slice(fileName.lastIndexOf('.')); // Extract file extension
+    const initialNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.')); // Initial name without extension
+    const newFileNameBase = prompt("Enter new file name:", initialNameWithoutExtension); // Prompt without extension
+
+    if (newFileNameBase) {
+        const newFileName = newFileNameBase + fileExtension; // Append the original file extension to the new base name
+
         const formData = new FormData();
         formData.append('new_file_name', newFileName);
 
@@ -6427,6 +6432,7 @@ function promptRename(folderName, fileName) {
     }
 }
 </script>
+
 		<script>
 			function setFileName(fileName) {
     document.getElementById('hiddenFileName').value = fileName;
