@@ -1,5 +1,4 @@
 from collections import defaultdict
-
 from flask import Flask, request, redirect, session, render_template, jsonify, url_for, flash, send_from_directory
 import mysql.connector
 from datetime import datetime, time, timedelta
@@ -58,10 +57,9 @@ def upload_file_to_drive(filename, mime_type, parent_id):
     return file.get('id')
 
 
-def upload_directory_to_drive(directory_path, parent_id):
+def upload_directory_to_drive(directory_path, parent_id, folder_name):
     # Assume directory_path is a directory
     folder_id = create_drive_folder(os.path.basename(directory_path), [parent_id])
-
     for item in os.listdir(directory_path):
         item_path = os.path.join(directory_path, item)
         if os.path.isfile(item_path):
@@ -72,11 +70,16 @@ def upload_directory_to_drive(directory_path, parent_id):
             upload_directory_to_drive(item_path, folder_id)
     # Generate and return the URL to access the folder
     folder_url = f"https://drive.google.com/drive/folders/{folder_id}"
-    mycur.execute("SELECT work_id FROM work_record ORDER BY work_id DESC LIMIT 1")
+    new_folder_name = folder_name.replace("Final", "Raw")
+    mycur.execute(f"SELECT work_id FROM work_record where title = '{folder_name}'")
     last_creator_id = mycur.fetchone()
     if last_creator_id:
         mycur.execute(
-            f"UPDATE work_record SET initial_task_link = '{folder_url}' WHERE work_id = '{last_creator_id[0]}'")
+            f"UPDATE work_record SET initial_task_link = '{folder_url}' WHERE title = '{folder_name}'")
+        conn.commit()
+    else:
+        mycur.execute(
+            f"UPDATE work_record SET final_task_link = '{folder_url}' WHERE title = '{new_folder_name}'")
         conn.commit()
     # shutil.rmtree(directory_path)
     return folder_url
@@ -1718,6 +1721,8 @@ def uploaded_creator():
 
 @app.route('/work_over/<folder_name>', methods=['POST', 'GET'])
 def work_over(folder_name):
+    final_folder_name = folder_name.replace("Raw", "Final")
+    upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
     mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes' and work_status = 'Completed' where title = '{folder_name}'")
     conn.commit()
     mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
