@@ -321,7 +321,6 @@ License: For each use you must have a valid license purchased only from above li
 															<!--begin::Table body-->
 														<tbody class="fs-6">
 															{% for record in work_records %}
-															{% if record[4] != 'yes' %}
 															{% if record[1] %}
 															<!--begin::Table row-->
 															<tr>
@@ -341,11 +340,7 @@ License: For each use you must have a valid license purchased only from above li
 																</td>
 																<td>
 																	<!--begin::Badge-->
-																	{% if record[24] == 'yes' %}
-																	<div class="badge badge-light-success">Updates</div>
-																	{% else %}
-																	<div class="badge badge-light-primary">In progress</div>
-																	{% endif %}
+																	<div class="badge badge-light-success">{{record[27]}}</div>
 																	<!--end::Badge-->
 																</td>
 																<td class="text-end">
@@ -353,7 +348,6 @@ License: For each use you must have a valid license purchased only from above li
 																</td>
 															</tr>
 															<!--end::Table row-->
-															{% endif %}
 															{% endif %}
 															{% endfor %}
 														</tbody>

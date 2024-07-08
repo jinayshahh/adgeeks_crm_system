@@ -341,7 +341,7 @@ def admin_target_section_individual(creator_username):
 
 @app.route('/admin_target_section_all')
 def admin_target_section_all():
-    mycur.execute(f"SELECT * FROM work_record where admin_roll_out = 'no'")
+    mycur.execute(f"SELECT * FROM work_record")
     work_records = mycur.fetchall()
     conn.commit()
     print(work_records)
@@ -1192,14 +1192,13 @@ def upload_review(file_name):
 
 
 
-@app.route('/admin_approve_task', methods=['POST'])
-def admin_approve_task():
-    file_name = request.json.get('file_name')
-    print(file_name)
+@app.route('/admin_approve_task/<file_name>', methods=['POST', 'GET'])
+def admin_approve_task(file_name):
     mycur.execute(f"update work_details set admin_approve = 'yes' where file_name = '{file_name}' and status_detail = "
                   f"'active'")
     conn.commit()
-    return "Task approved", 200
+    folder_name = session.get('folder_name')
+    return redirect(url_for('admin_upload_files_section', folder_name=folder_name))
 
 
 @app.route('/roll_out/<folder_name>')
@@ -1719,7 +1718,7 @@ def uploaded_creator():
 
 @app.route('/work_over/<folder_name>', methods=['POST', 'GET'])
 def work_over(folder_name):
-    mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes' where title = '{folder_name}'")
+    mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes' and work_status = 'Completed' where title = '{folder_name}'")
     conn.commit()
     mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()

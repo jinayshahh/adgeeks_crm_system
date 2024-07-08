@@ -679,7 +679,9 @@ License: For each use you must have a valid license purchased only from above li
 																{% endif %}
 															</td>
 															<td>
-																<button id="approveBtn" type="button" class="btn btn-success btn-sm fw-bolder" data-bs-toggle="modal" data-bs-target="#approve" data-file="{{ file.name }}">Approve</button>
+																<span>
+																	<a href="/admin_approve_task/{{file.name}}" class="btn btn-success btn-sm fw-bolder">Approve</a>
+																</span>
 															</td>
 															<!--begin::Actions-->
 															<td class="text-end" data-kt-filemanager-table="action_dropdown">
