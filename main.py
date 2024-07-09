@@ -1207,6 +1207,7 @@ def admin_approve_task(file_name):
 @app.route('/roll_out/<folder_name>')
 def roll_out(folder_name):
     print("run")
+    upload_directory_to_drive(f'static/work/{folder_name}', PARENT_FOLDER_ID, folder_name)
     mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
     username_list = mycur.fetchall()
     conn.commit()
@@ -1723,7 +1724,7 @@ def uploaded_creator():
 def work_over(folder_name):
     final_folder_name = folder_name.replace("Raw", "Final")
     upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
-    mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes' and work_status = 'Completed' where title = '{folder_name}'")
+    mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed' where title = '{folder_name}'")
     conn.commit()
     mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()
