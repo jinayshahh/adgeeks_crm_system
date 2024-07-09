@@ -1,5 +1,15 @@
 "use strict";
 
+function fetchEvents() {
+    fetch('/api/events')
+        .then(response => response.json())
+        .then(data => {
+            // Load events into FullCalendar
+            calendar.addEventSource(data);
+        })
+        .catch(error => console.error('Error fetching events:', error));
+}
+
 // Class definition
 var KTAppCalendar = function () {
     // Shared variables
@@ -50,6 +60,9 @@ var KTAppCalendar = function () {
 
     // Private functions
     var initCalendarApp = function () {
+
+        fetchEvents();
+
         // Define variables
         var calendarEl = document.getElementById('kt_calendar_app');
         var todayDate = moment().startOf('day');
@@ -438,7 +451,32 @@ var KTAppCalendar = function () {
                 });
             }
         });
+      if (formValid) {
+            const eventData = {
+                title: eventName.value,
+                description: eventDescription.value,
+                start: startDatepicker.selectedDates[0].toISOString(),
+                end: endDatepicker.selectedDates[0].toISOString(),
+                className: eventClassName.value,
+                location: eventLocation.value
+            };
+
+            fetch('/api/events', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(eventData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add the event to the calendar
+                calendar.addEvent(eventData);
+            })
+            .catch(error => console.error('Error adding event:', error));
+        }
     }
+
 
     // Handle edit event
     const handleEditEvent = () => {

@@ -206,9 +206,77 @@ def fetch_files(folder_name_fetch):
         pass
 
 
+
+
+
+#
+#
+#
+# trying calendar
+#
+#
+#
 @app.route('/tester')
 def tester():
     return render_template("tester.html")
+
+
+@app.route('/api/events', methods=['GET'])
+def get_events():
+    mycur.execute("SELECT * FROM calendar_data")
+    events = mycur.fetchall()
+    conn.commit()
+    result = []
+    for event in events:
+        result.append({
+            'id': event[0],
+            'title': event[1],
+            'description': event[2],
+            'start': event[3].isoformat(),
+            'end': event[4].isoformat(),
+            'className': event[5],
+            'location': event[6]
+        })
+    return jsonify(result)
+
+
+@app.route('/api/events/add', methods=['POST'])
+def add_event():
+    print("/api/events add")
+    data = request.get_json()
+    mycur.execute("INSERT INTO calendar_data (title, description, start, end, className, location) VALUES (%s, %s, %s, %s, %s, %s)",
+                (data['title'], data['description'], data['start'], data['end'], data.get('className'), data.get('location')))
+    conn.commit()
+    return jsonify({'message': 'Event added successfully'}), 201
+
+
+@app.route('/api/events/<int:id>', methods=['PUT'])
+def update_event(id):
+    print("/api/events update")
+    data = request.get_json()
+    mycur.execute("UPDATE calendar_data SET title=%s, description=%s, start=%s, end=%s, className=%s, location=%s WHERE id=%s",
+                (data['title'], data['description'], data['start'], data['end'], data.get('className'), data.get('location'), id))
+    conn.commit()
+    return jsonify({'message': 'Event updated successfully'})
+
+@app.route('/api/events/<int:id>', methods=['DELETE'])
+def delete_event(id):
+    print("/api/events delete")
+    mycur.execute("DELETE FROM calendar_data WHERE id=%s", (id,))
+    conn.commit()
+    return jsonify({'message': 'Event deleted successfully'})
+
+#
+#
+#
+# trying calendar
+#
+#
+#
+
+
+
+
 
 
 #
