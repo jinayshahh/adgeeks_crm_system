@@ -7,31 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
 </head>
 <body>
-<form action="/test" class="dropzone" id="kt_ecommerce_add_product_media" enctype="multipart/form-data">
-    <div class="dz-message needsclick">
-        <i class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
-        <div class="ms-4">
-            <h3 class="fs-5 fw-bold text-gray-900 mb-1">Drop file here or click to upload.</h3>
-            <span class="fs-7 fw-semibold text-gray-400">Upload an invoice file</span>
-        </div>
-    </div>
-</form>
-<script>
-    Dropzone.options.ktEcommerceAddProductMedia = {
-        paramName: "invoice", // The name that will be used to transfer the file
-        maxFilesize: 2, // Maximum file size in MB
-        acceptedFiles: ".jpeg,.jpg,.png,.pdf", // Accepted file types
-        init: function() {
-            this.on("success", function(file, response) {
-                // Handle the response from the server
-                console.log("File uploaded successfully");
-            });
-            this.on("error", function(file, response) {
-                // Handle the error response from the server
-                console.log("File upload failed");
-            });
-        }
-    };
-</script>
+<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Asia%2FKolkata&bgcolor=%23ffffff&src=bWFuYWdlLmJ1aWx0YnlnZWVrc0BnbWFpbC5jb20&src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4uaW5kaWFuI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%23039BE5&color=%2333B679&color=%230B8043" style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 </body>
 </html>

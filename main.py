@@ -208,7 +208,7 @@ def fetch_files(folder_name_fetch):
 
 @app.route('/tester')
 def tester():
-    return render_template("dark-header.html")
+    return render_template("tester.html")
 
 
 #
@@ -1379,7 +1379,7 @@ def task_schedule(client_id):
     for service_check in services:
         if service_check == 'Creatives':
             service_target_creatives = (f"{client_info[0][14]} reels, {client_info[0][16]} posts and "
-                                        f"{client_info[0][18]} stories in a week")
+                                        f"{client_info[0][18]} stories in a month")
         elif service_check == 'Performance marketing':
             service_target_performance_marketing = (f"{client_info[0][3]} has a budget of "
                                                     f"{client_info[0][11]} for {client_info[0][12]}"
