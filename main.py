@@ -223,9 +223,8 @@ def tester():
     return render_template("tester.html")
 
 
-@app.route('/api/events', methods=['GET'])
+@app.route('/fetch_events', methods=['GET'])
 def get_events():
-    print("kwbenadlsn")
     mycur.execute("SELECT * FROM calendar_data")
     events = mycur.fetchall()
     conn.commit()
@@ -243,9 +242,8 @@ def get_events():
     return jsonify(result)
 
 
-@app.route('/api/events/add', methods=['POST'])
+@app.route('/creation_events', methods=['POST'])
 def add_event():
-    print("/api/events add")
     data = request.get_json()
     mycur.execute("INSERT INTO calendar_data (title, description, start, end, className, location) VALUES (%s, %s, %s, %s, %s, %s)",
                 (data['title'], data['description'], data['start'], data['end'], data.get('className'), data.get('location')))

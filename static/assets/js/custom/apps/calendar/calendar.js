@@ -50,9 +50,12 @@ var KTAppCalendar = function () {
 
     // Private functions
     function fetchEvents() {
-        fetch('/api/events')
+        fetch('/fetch_events')
             .then(response => response.json())
             .then(data => {
+                // Clear existing events before adding new ones
+                calendar.removeAllEvents();
+
                 // Load events into FullCalendar
                 calendar.addEventSource(data);
             })
@@ -60,8 +63,6 @@ var KTAppCalendar = function () {
     }
 
     var initCalendarApp = function () {
-        // Fetch events from the backend
-        fetchEvents();
 
         // Define variables
         var calendarEl = document.getElementById('kt_calendar_app');
@@ -106,17 +107,7 @@ var KTAppCalendar = function () {
 
             editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
-            events: [
-                {
-                    id: uid(),
-                    title: 'Site visit',
-                    start: YM + '-28',
-                    end: YM + '-29',
-                    className: "fc-event-solid-info fc-event-light",
-                    description: 'Lorem ipsum dolor sit amet, labore',
-                    location: '271, Spring Street'
-                }
-            ],
+            events: fetchEvents(),
 
             // Handle changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
             datesSet: function(){
@@ -308,7 +299,7 @@ var KTAppCalendar = function () {
                                         allDay: allDayEvent
                                     };
 
-                                    fetch('/api/events/add', {
+                                    fetch('/creation_events', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
