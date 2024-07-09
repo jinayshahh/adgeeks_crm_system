@@ -1,6 +1,7 @@
 from collections import defaultdict
 from flask import Flask, request, redirect, session, render_template, jsonify, url_for, flash, send_from_directory
 import mysql.connector
+from flask_cors import CORS
 from datetime import datetime, time, timedelta
 import time
 import random
@@ -94,6 +95,7 @@ conn = mysql.connector.connect(
 )
 mycur = conn.cursor(buffered=True)
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'your_secret_key'  # Set a secret key for session management
 
 # Configure the upload folder
@@ -223,6 +225,7 @@ def tester():
 
 @app.route('/api/events', methods=['GET'])
 def get_events():
+    print("kwbenadlsn")
     mycur.execute("SELECT * FROM calendar_data")
     events = mycur.fetchall()
     conn.commit()

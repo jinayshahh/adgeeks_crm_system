@@ -1,15 +1,5 @@
 "use strict";
 
-function fetchEvents() {
-    fetch('/api/events')
-        .then(response => response.json())
-        .then(data => {
-            // Load events into FullCalendar
-            calendar.addEventSource(data);
-        })
-        .catch(error => console.error('Error fetching events:', error));
-}
-
 // Class definition
 var KTAppCalendar = function () {
     // Shared variables
@@ -59,8 +49,18 @@ var KTAppCalendar = function () {
 
 
     // Private functions
-    var initCalendarApp = function () {
+    function fetchEvents() {
+        fetch('/api/events')
+            .then(response => response.json())
+            .then(data => {
+                // Load events into FullCalendar
+                calendar.addEventSource(data);
+            })
+            .catch(error => console.error('Error fetching events:', error));
+    }
 
+    var initCalendarApp = function () {
+        // Fetch events from the backend
         fetchEvents();
 
         // Define variables
@@ -126,6 +126,11 @@ var KTAppCalendar = function () {
 
         calendar.render();
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initCalendarApp();
+    });
+
 
     // Init validator
     const initValidator = () => {
