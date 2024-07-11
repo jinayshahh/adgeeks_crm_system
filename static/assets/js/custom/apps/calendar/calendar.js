@@ -449,16 +449,10 @@ var KTAppCalendar = function () {
                                     })
                                     .then(response => response.json())
                                     .then(data => {
-                                        // Print the updated event data in the console
                                         console.log(updatedEventData);
-
-                                        // Add the updated event to the calendar
-                                        calendar.addEvent(updatedEventData);
-                                        calendar.render();
-
-                                        // Reset form for demo purposes only
-                                        form.reset();
+                                        form.reset(); // Reset form for demo purposes only
                                     })
+
                                     .catch(error => console.error('Error updating event:', error));
                                 }
                             });
@@ -515,7 +509,6 @@ var KTAppCalendar = function () {
     const handleDeleteEvent = () => {
         viewDeleteButton.addEventListener('click', e => {
             e.preventDefault();
-
             Swal.fire({
                 text: "Are you sure you would like to delete this event?",
                 icon: "warning",
@@ -529,6 +522,18 @@ var KTAppCalendar = function () {
                 }
             }).then(function (result) {
                 if (result.value) {
+                    fetch('/delete_events', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                        calendar.getEventById(data.id).remove();
+                        viewModal.hide(); // Hide modal
+                    })
                     calendar.getEventById(data.id).remove();
 
                     viewModal.hide(); // Hide modal

@@ -265,11 +265,12 @@ def update_event():
 
 
 
-@app.route('/api/events/<int:id>', methods=['DELETE'])
-def delete_event(id):
-    print("/api/events delete")
-    mycur.execute("DELETE FROM calendar_data WHERE id=%s", (id,))
-    conn.commit()
+@app.route('/delete_events', methods=['DELETE'])
+def delete_event():
+    data = request.get_json()
+    print(data)
+    # mycur.execute("DELETE FROM calendar_data WHERE id=%s", (id,))
+    # conn.commit()
     return jsonify({'message': 'Event deleted successfully'})
 
 #
