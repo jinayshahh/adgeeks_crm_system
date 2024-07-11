@@ -226,20 +226,30 @@ def create_calendar():
     mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
-    mycur.execute(f"SELECT total_reels, total_posts, total_stories FROM work_record where creator_username ="
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username FROM work_record where creator_username ="
                   f" '{creator_username}' ORDER BY work_id DESC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
     service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
                                 f"{work_record[2]} story in a month")
-    print(service_target_creatives)
+    client_username = work_record[3]
+    session['client_username'] = client_username
+    mycur.execute(f"select id from calendar_data where client_username = '{client_username}' and creator_username = '{creator_username}'")
+    calendar_entry = mycur.fetchall()
+    conn.commit()
+    send_client = False
+    if calendar_entry:
+        send_client = True
     return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
-                           service_target_creatives=service_target_creatives)
+                           service_target_creatives=service_target_creatives, send_client=send_client)
 
 
 @app.route('/fetch_events', methods=['GET'])
 def get_events():
-    mycur.execute("SELECT * FROM calendar_data")
+    creator_username = session.get('user_name')
+    client_username = session.get('client_username')
+    mycur.execute(f"SELECT * FROM calendar_data where client_username = '{client_username}' and creator_username = "
+                  f"'{creator_username}'")
     events = mycur.fetchall()
     conn.commit()
     result = []
@@ -250,8 +260,6 @@ def get_events():
             'description': event[2],
             'start': event[3].isoformat(),
             'end': event[4].isoformat(),
-            'className': event[5],
-            'location': event[6]
         })
     return jsonify(result)
 
@@ -259,8 +267,11 @@ def get_events():
 @app.route('/creation_events', methods=['POST'])
 def add_event():
     data = request.get_json()
-    mycur.execute("INSERT INTO calendar_data (title, description, start, end, className, location) VALUES (%s, %s, %s, %s, %s, %s)",
-                (data['title'], data['description'], data['start'], data['end'], data.get('className'), data.get('location')))
+    creator_username = session.get('user_name')
+    client_username = session.get('client_username')
+    mycur.execute("INSERT INTO calendar_data (title, description, start, end, client_username"
+                  ", creator_username) VALUES (%s, %s, %s, %s, %s, %s)",(data['title'], data['description'],
+                  data['start'], data['end'], client_username, creator_username))
     conn.commit()
     return jsonify({'message': 'Event added successfully'}), 201
 
@@ -270,10 +281,9 @@ def update_event():
     data = request.get_json()
     mycur.execute("""
         UPDATE calendar_data
-        SET title=%s, description=%s, start=%s, end=%s, location=%s
+        SET title=%s, description=%s, start=%s, end=%s
         WHERE id=%s
-    """, (data['title'], data['description'], data['start'], data['end'],
-          data['location'], data['id']))
+    """, (data['title'], data['description'], data['start'], data['end'], data['id']))
     conn.commit()
     return jsonify({'message': 'Event updated successfully'})
 
@@ -293,12 +303,6 @@ def delete_event():
 #
 #
 #
-
-
-
-
-
-
 #
 #
 #

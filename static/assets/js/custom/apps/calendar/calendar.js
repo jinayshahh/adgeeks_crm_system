@@ -9,7 +9,6 @@ var KTAppCalendar = function () {
         id: '',
         eventName: '',
         eventDescription: '',
-        eventLocation: '',
         startDate: '',
         endDate: '',
         allDay: false
@@ -18,7 +17,6 @@ var KTAppCalendar = function () {
     // Add event variables
     var eventName;
     var eventDescription;
-    var eventLocation;
     var startDatepicker;
     var startFlatpickr;
     var endDatepicker;
@@ -209,7 +207,7 @@ var KTAppCalendar = function () {
     // Handle add new event
     const handleNewEvent = () => {
         // Update modal title
-        modalTitle.innerText = "Add a New Event";
+        modalTitle.innerText = "Add a New Task";
 
         modal.show();
 
@@ -293,7 +291,6 @@ var KTAppCalendar = function () {
                                     const eventData = {
                                         title: eventName.value,
                                         description: eventDescription.value,
-                                        location: eventLocation.value,
                                         start: startDateTime,
                                         end: endDateTime,
                                         allDay: allDayEvent
@@ -311,6 +308,7 @@ var KTAppCalendar = function () {
                                         // Add the event to the calendar
                                         calendar.addEvent(eventData);
                                         calendar.render();
+                                        location.reload()
 
                                         // Reset form for demo purposes only
                                         form.reset();
@@ -426,7 +424,6 @@ var KTAppCalendar = function () {
                                         id: data.id,  // Ensure you have the event id here
                                         title: eventName.value,
                                         description: eventDescription.value,
-                                        location: eventLocation.value,
                                         start: startDateTime,
                                         end: endDateTime,
                                         allDay: allDayEvent
@@ -500,7 +497,6 @@ var KTAppCalendar = function () {
         viewEventName.innerText = data.eventName;
         viewAllDay.innerText = eventNameMod;
         viewEventDescription.innerText = data.eventDescription ? data.eventDescription : '--';
-        viewEventLocation.innerText = data.eventLocation ? data.eventLocation : '--';
         viewStartDate.innerText = startDateMod;
         viewEndDate.innerText = endDateMod;
     }
@@ -668,7 +664,6 @@ var KTAppCalendar = function () {
     const populateForm = () => {
         eventName.value = data.eventName ? data.eventName : '';
         eventDescription.value = data.eventDescription ? data.eventDescription : '';
-        eventLocation.value = data.eventLocation ? data.eventLocation : '';
         startFlatpickr.setDate(data.startDate, true, 'Y-m-d');
 
         // Handle null end dates
@@ -698,7 +693,6 @@ var KTAppCalendar = function () {
         data.id = res.id;
         data.eventName = res.title;
         data.eventDescription = res.description;
-        data.eventLocation = res.location;
         data.startDate = res.startStr;
         data.endDate = res.endStr;
         data.allDay = res.allDay;
@@ -718,7 +712,6 @@ var KTAppCalendar = function () {
             form = element.querySelector('#kt_modal_add_event_form');
             eventName = form.querySelector('[name="calendar_event_name"]');
             eventDescription = form.querySelector('[name="calendar_event_description"]');
-            eventLocation = form.querySelector('[name="calendar_event_location"]');
             startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
             endDatepicker = form.querySelector('#kt_calendar_datepicker_end_date');
             startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
