@@ -251,14 +251,19 @@ def add_event():
     return jsonify({'message': 'Event added successfully'}), 201
 
 
-@app.route('/api/events/<int:id>', methods=['PUT'])
-def update_event(id):
-    print("/api/events update")
+@app.route('/edit_events', methods=['PUT'])
+def update_event():
     data = request.get_json()
-    mycur.execute("UPDATE calendar_data SET title=%s, description=%s, start=%s, end=%s, className=%s, location=%s WHERE id=%s",
-                (data['title'], data['description'], data['start'], data['end'], data.get('className'), data.get('location'), id))
+    mycur.execute("""
+        UPDATE calendar_data
+        SET title=%s, description=%s, start=%s, end=%s, location=%s
+        WHERE id=%s
+    """, (data['title'], data['description'], data['start'], data['end'],
+          data['location'], data['id']))
     conn.commit()
     return jsonify({'message': 'Event updated successfully'})
+
+
 
 @app.route('/api/events/<int:id>', methods=['DELETE'])
 def delete_event(id):

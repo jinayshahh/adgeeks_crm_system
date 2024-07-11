@@ -403,10 +403,7 @@ var KTAppCalendar = function () {
                                     // Enable submit button after loading
                                     submitButton.disabled = false;
 
-                                    // Remove old event
-                                    calendar.getEventById(data.id).remove();
-
-                                    // Detect if is all day event
+                                    // Detect if it is an all-day event
                                     let allDayEvent = false;
                                     if (allDayToggle.checked) { allDayEvent = true; }
                                     if (startTimeFlatpickr.selectedDates.length === 0) { allDayEvent = true; }
@@ -424,24 +421,48 @@ var KTAppCalendar = function () {
                                         endDateTime = endDate + 'T' + endTime;
                                     }
 
-                                    // Add new event to calendar
-                                    calendar.addEvent({
-                                        id: uid(),
+                                    // Create updated event data
+                                    const updatedEventData = {
+                                        id: data.id,  // Ensure you have the event id here
                                         title: eventName.value,
                                         description: eventDescription.value,
                                         location: eventLocation.value,
                                         start: startDateTime,
                                         end: endDateTime,
                                         allDay: allDayEvent
-                                    });
+                                    };
+
+                                    // Remove old event
+                                    calendar.getEventById(data.id).remove();
+
+                                    // Add new event to calendar
+                                    calendar.addEvent(updatedEventData);
                                     calendar.render();
 
-                                    // Reset form for demo purposes only
-                                    form.reset();
+                                    // Update event in the database
+                                    fetch('/edit_events', {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(updatedEventData)
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        // Print the updated event data in the console
+                                        console.log(updatedEventData);
+
+                                        // Add the updated event to the calendar
+                                        calendar.addEvent(updatedEventData);
+                                        calendar.render();
+
+                                        // Reset form for demo purposes only
+                                        form.reset();
+                                    })
+                                    .catch(error => console.error('Error updating event:', error));
                                 }
                             });
 
-                            //form.submit(); // Submit form
                         }, 2000);
                     } else {
                         // Show popup warning
@@ -458,6 +479,7 @@ var KTAppCalendar = function () {
                 });
             }
         });
+
     }
 
     // Handle view event
