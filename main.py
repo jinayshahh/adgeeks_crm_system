@@ -208,7 +208,9 @@ def fetch_files(folder_name_fetch):
         pass
 
 
-
+@app.route('/tester')
+def tester():
+    return render_template("tester.html")
 
 
 #
@@ -218,9 +220,21 @@ def fetch_files(folder_name_fetch):
 #
 #
 #
-@app.route('/tester')
-def tester():
-    return render_template("tester.html")
+@app.route('/create_calendar')
+def create_calendar():
+    creator_username = session.get('user_name')
+    mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
+    creator_details = mycur.fetchall()
+    conn.commit()
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories FROM work_record where creator_username ="
+                  f" '{creator_username}' ORDER BY work_id DESC LIMIT 1")
+    work_record = mycur.fetchone()
+    conn.commit()
+    service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
+                                f"{work_record[2]} story in a month")
+    print(service_target_creatives)
+    return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
+                           service_target_creatives=service_target_creatives)
 
 
 @app.route('/fetch_events', methods=['GET'])
@@ -268,7 +282,6 @@ def update_event():
 @app.route('/delete_events', methods=['PUT'])
 def delete_event():
     data = request.get_json()
-    print(data)
     mycur.execute("DELETE FROM calendar_data WHERE id=%s", (data['id'],))
     conn.commit()
     return jsonify({'message': 'Event deleted successfully'})
@@ -1436,36 +1449,40 @@ def task_schedule(client_id):
     mycur.execute(f"SELECT * FROM client_information where client_id = '{client_id}'")
     client_info = mycur.fetchall()
     conn.commit()
-    mycur.execute(f"SELECT * FROM work_record where client_username = '{client_info[0][3]}' and work_status != 'Completed'")
-    work_record = [mycur.fetchone()]
+    mycur.execute(f"SELECT * FROM work_record where client_username = '{client_info[0][3]}' and work_status != "
+                  f"'Completed' and calendar_status = 'yes'")
+    work_record = mycur.fetchone()
     conn.commit()
-    print(work_record)
-    start_date = client_info[0][25]
-    due_date = start_date + timedelta(days=7)
-    formatted_due_date = due_date.strftime("%d-%m-%y")
-    services = client_info[0][10].split(', ')
-    service_target_creatives = None
-    service_target_performance_marketing = None
-    service_target_strategy = None
-    directory_path, folder_name = select_folder(client_info[0][3])
-    print(folder_name)
-    session['folder_name'] = folder_name
-    session['client_username'] = client_info[0][3]
-    for service_check in services:
-        if service_check == 'Creatives':
-            service_target_creatives = (f"{client_info[0][14]} reels, {client_info[0][16]} posts and "
-                                        f"{client_info[0][18]} stories in a month")
-        elif service_check == 'Performance marketing':
-            service_target_performance_marketing = (f"{client_info[0][3]} has a budget of "
-                                                    f"{client_info[0][11]} for {client_info[0][12]}"
-                                                    f" months")
-        else:
-            service_target_strategy = f"we have to make a {client_info[0][20]} for {client_info[0][3]}"
-    return render_template("adgeeks_task_schedule.html", creator_details=creator_details,
-                           todays_date=todays_date, client_info=client_info, work_record=work_record,
-                           service_target_creatives=service_target_creatives, folder_name=folder_name,
-                           service_target_performance_marketing=service_target_performance_marketing,
-                           service_target_strategy=service_target_strategy, formatted_due_date=formatted_due_date)
+    if work_record:
+        print("ashbdinso")
+        work_record = [work_record]
+        start_date = client_info[0][25]
+        due_date = start_date + timedelta(days=7)
+        formatted_due_date = due_date.strftime("%d-%m-%y")
+        services = client_info[0][10].split(', ')
+        service_target_creatives = None
+        service_target_performance_marketing = None
+        service_target_strategy = None
+        directory_path, folder_name = select_folder(client_info[0][3])
+        session['folder_name'] = folder_name
+        session['client_username'] = client_info[0][3]
+        for service_check in services:
+            if service_check == 'Creatives':
+                service_target_creatives = (f"{client_info[0][14]} reels, {client_info[0][16]} posts and "
+                                            f"{client_info[0][18]} stories in a month")
+            elif service_check == 'Performance marketing':
+                service_target_performance_marketing = (f"{client_info[0][3]} has a budget of "
+                                                        f"{client_info[0][11]} for {client_info[0][12]}"
+                                                        f" months")
+            else:
+                service_target_strategy = f"we have to make a {client_info[0][20]} for {client_info[0][3]}"
+        return render_template("adgeeks_task_schedule.html", creator_details=creator_details,
+                               client_info=client_info, work_record=work_record,
+                               service_target_creatives=service_target_creatives, folder_name=folder_name,
+                               service_target_performance_marketing=service_target_performance_marketing,
+                               service_target_strategy=service_target_strategy, formatted_due_date=formatted_due_date)
+    else:
+        return render_template('adgeeks_creator_schedule_making.html')
 
 
 @app.route('/task_section', methods=['GET', 'POST'])

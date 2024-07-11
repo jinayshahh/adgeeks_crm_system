@@ -269,28 +269,12 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="d-flex flex-wrap flex-stack pt-10 pb-8">
 										<!--begin::Heading-->
 										<h3 class="fw-bold my-2">Project Targets</h3>
-<!--										{% for work in work_record %}-->
-<!--										<a href="/upload_files_section/{{work[1]}}" class="btn btn-primary" style="margin-right: 10px;">-->
-<!--										{% endfor %}-->
-										<!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
-<!--										<span class="svg-icon svg-icon-2">-->
-<!--											<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-<!--												<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />-->
-<!--												<path d="M10.4 3.60001L12 6H21C21.6 6 22 6.4 22 7V19C22 19.6 21.6 20 21 20H3C2.4 20 2 19.6 2 19V4C2 3.4 2.4 3 3 3H9.20001C9.70001 3 10.2 3.20001 10.4 3.60001ZM16 11.6L12.7 8.29999C12.3 7.89999 11.7 7.89999 11.3 8.29999L8 11.6H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H16Z" fill="currentColor" />-->
-<!--												<path opacity="0.3" d="M11 11.6V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H11Z" fill="currentColor" />-->
-<!--											</svg>-->
-<!--										</span>-->
-<!--										&lt;!&ndash;end::Svg Icon&ndash;&gt;View Folder</a>-->
 									</div>
 									<!--end::Toolbar-->
 									<!--begin::Timeline-->
 									<div class="card">
 										<!--begin::Card head-->
 										<div class="card-header card-header-stretch">
-											<!--begin::Title-->
-											<div class="card-title d-flex align-items-center">
-												<h3 class="fw-bold m-0 text-gray-800">Today: {{todays_date}}</h3>
-											</div>
 											<!--end::Title-->
 											<!--begin::Toolbar-->
 											<div class="card-toolbar m-0">
@@ -324,7 +308,7 @@ License: For each use you must have a valid license purchased only from above li
 											<div class="tab-content">
 												<!--begin::Tab panel-->
 												<div id="kt_activity_today" class="card-body p-0 tab-pane fade show" role="tabpanel" aria-labelledby="kt_activity_today_tab">
-													<h3>{{service_target_performance_marketing}}</h3>
+													<h3>Target: {{service_target_performance_marketing}}</h3>
 													<br>
 													{% for client in client_info %}
 													<!--begin::Timeline-->
@@ -513,7 +497,25 @@ License: For each use you must have a valid license purchased only from above li
 												<!--end::Tab panel-->
 												<!--begin::Tab panel-->
 												<div id="kt_activity_week" class="card-body p-0 tab-pane fade show active" role="tabpanel" aria-labelledby="kt_activity_week_tab">
-													<h3>{{service_target_creatives}}</h3>
+													<!--begin::Alert-->
+													<div class="alert alert-primary d-flex align-items-center p-5">
+														<!--begin::Icon-->
+														<i class="ki-duotone ki-shield-tick fs-2hx text-success me-4"><span class="path1"></span><span class="path2"></span></i>
+														<!--end::Icon-->
+
+														<!--begin::Wrapper-->
+														<div class="d-flex flex-column">
+															<!--begin::Title-->
+															<h4 class="mb-1 text-dark">Target</h4>
+															<!--end::Title-->
+
+															<!--begin::Content-->
+															<span>{{service_target_creatives}}</span>
+															<!--end::Content-->
+														</div>
+														<!--end::Wrapper-->
+													</div>
+													<!--end::Alert-->
 													<br>
 													{% for client in client_info %}
 													<!--begin::Timeline-->
