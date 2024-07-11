@@ -1798,8 +1798,11 @@ def send_client_btn():
 
 @app.route('/fetch_events', methods=['GET'])
 def get_events():
-    creator_username = session.get('user_name')
     client_username = session.get('client_username')
+    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+    print(creator_username, client_username)
     mycur.execute(f"SELECT * FROM calendar_data where client_username = '{client_username}' and creator_username = "
                   f"'{creator_username}'")
     events = mycur.fetchall()
@@ -1818,8 +1821,10 @@ def get_events():
 @app.route('/creation_events', methods=['POST'])
 def add_event():
     data = request.get_json()
-    creator_username = session.get('user_name')
     client_username = session.get('client_username')
+    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
     mycur.execute("INSERT INTO calendar_data (title, description, start, client_username"
                   ", creator_username) VALUES (%s, %s, %s, %s, %s)",(data['title'], data['description'],
                   data['start'], client_username, creator_username))
@@ -1908,11 +1913,11 @@ def client_upload_files_section():
     conn.commit()
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = "
-        f"'{client_username}' and admin_roll_out = 'yes'")
+        f"'{client_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
 
-    if creator_details:
+    if creator_details[0][25] == 'yes':
         folder_name = creator_details[0][1]
         files_fetched_check = fetch_files(folder_name)
         files_fetched = [('None')]
@@ -1967,6 +1972,8 @@ def client_upload_files_section():
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work,
                                number_posts=number_posts, number_story=number_story, work_details=final_data)
+    elif creator_details[0][4] == 'yes':
+        return redirect(url_for('client_calendar', client_username=client_username))
     else:
         return render_template('adgeeks_no_task.html', client_username=client_username)
 
@@ -2036,6 +2043,45 @@ def client_approve_task(file_name):
         print(f"An error occurred while moving the file: {e}")
     return redirect(url_for('client_upload_files_section'))
 
+
+#
+#
+#
+#
+#  client calendar
+#
+#
+#
+#
+
+@app.route('/client_calendar/<client_username>')
+def client_calendar(client_username):
+    mycur.execute(f"SELECT * from client_information where username = '{client_username}'")
+    client_details = mycur.fetchall()
+    conn.commit()
+    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_details[0][3]}"')
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status FROM work_record "
+                  f"where creator_username = '{creator_username}' and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
+    work_record = mycur.fetchone()
+    conn.commit()
+    service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
+                                f"{work_record[2]} story in a month")
+    client_username = work_record[3]
+    session['client_username'] = client_username
+    mycur.execute(f"select id from calendar_data where client_username = '{client_username}' and creator_username = '{creator_username}'")
+    calendar_entry = mycur.fetchall()
+    conn.commit()
+    send_client = False
+    if calendar_entry:
+        send_client = True
+    calendar_status = work_record[4]
+    # if calendar_status == 'yes':
+    #     return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
+    # else:
+    return render_template("adgeeks_client_calendar.html", creator_details=client_details,
+                           service_target_creatives=service_target_creatives, send_client=send_client)
 
 if __name__ == '__main__':
     app.run(debug=True)
