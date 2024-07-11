@@ -19,12 +19,8 @@ var KTAppCalendar = function () {
     var eventDescription;
     var startDatepicker;
     var startFlatpickr;
-    var endDatepicker;
-    var endFlatpickr;
     var startTimepicker;
     var startTimeFlatpickr;
-    var endTimepicker
-    var endTimeFlatpickr;
     var modal;
     var modalTitle;
     var form;
@@ -170,10 +166,6 @@ var KTAppCalendar = function () {
             dateFormat: "Y-m-d",
         });
 
-        endFlatpickr = flatpickr(endDatepicker, {
-            enableTime: false,
-            dateFormat: "Y-m-d",
-        });
 
         startTimeFlatpickr = flatpickr(startTimepicker, {
             enableTime: true,
@@ -181,11 +173,6 @@ var KTAppCalendar = function () {
             dateFormat: "H:i",
         });
 
-        endTimeFlatpickr = flatpickr(endTimepicker, {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-        });
     }
 
     // Handle add button
@@ -222,7 +209,6 @@ var KTAppCalendar = function () {
                     dw.classList.add('d-none');
                 });
             } else {
-                endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
                 datepickerWrappers.forEach(dw => {
                     dw.classList.remove('d-none');
                 });
@@ -276,15 +262,11 @@ var KTAppCalendar = function () {
 
                                     // Merge date & time
                                     var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
-                                    var endDateTime = moment(endFlatpickr.selectedDates[endFlatpickr.selectedDates.length - 1]).format();
                                     if (!allDayEvent) {
                                         const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const endDate = startDate;
                                         const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-                                        const endTime = moment(endTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
 
                                         startDateTime = startDate + 'T' + startTime;
-                                        endDateTime = endDate + 'T' + endTime;
                                     }
 
                                     // Add new event to calendar
@@ -292,7 +274,6 @@ var KTAppCalendar = function () {
                                         title: eventName.value,
                                         description: eventDescription.value,
                                         start: startDateTime,
-                                        end: endDateTime,
                                         allDay: allDayEvent
                                     };
 
@@ -354,7 +335,6 @@ var KTAppCalendar = function () {
                     dw.classList.add('d-none');
                 });
             } else {
-                endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
                 datepickerWrappers.forEach(dw => {
                     dw.classList.remove('d-none');
                 });
@@ -408,15 +388,12 @@ var KTAppCalendar = function () {
 
                                     // Merge date & time
                                     var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
-                                    var endDateTime = moment(endFlatpickr.selectedDates[endFlatpickr.selectedDates.length - 1]).format();
                                     if (!allDayEvent) {
                                         const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const endDate = startDate;
                                         const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
                                         const endTime = moment(endTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
 
                                         startDateTime = startDate + 'T' + startTime;
-                                        endDateTime = endDate + 'T' + endTime;
                                     }
 
                                     // Create updated event data
@@ -425,7 +402,6 @@ var KTAppCalendar = function () {
                                         title: eventName.value,
                                         description: eventDescription.value,
                                         start: startDateTime,
-                                        end: endDateTime,
                                         allDay: allDayEvent
                                     };
 
@@ -668,7 +644,6 @@ var KTAppCalendar = function () {
 
         // Handle null end dates
         const endDate = data.endDate ? data.endDate : moment(data.startDate).format();
-        endFlatpickr.setDate(endDate, true, 'Y-m-d');
 
         const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
         const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
@@ -679,8 +654,6 @@ var KTAppCalendar = function () {
             });
         } else {
             startTimeFlatpickr.setDate(data.startDate, true, 'Y-m-d H:i');
-            endTimeFlatpickr.setDate(data.endDate, true, 'Y-m-d H:i');
-            endFlatpickr.setDate(data.startDate, true, 'Y-m-d');
             allDayToggle.checked = false;
             datepickerWrappers.forEach(dw => {
                 dw.classList.remove('d-none');
@@ -713,9 +686,7 @@ var KTAppCalendar = function () {
             eventName = form.querySelector('[name="calendar_event_name"]');
             eventDescription = form.querySelector('[name="calendar_event_description"]');
             startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
-            endDatepicker = form.querySelector('#kt_calendar_datepicker_end_date');
             startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
-            endTimepicker = form.querySelector('#kt_calendar_datepicker_end_time');
             addButton = document.querySelector('[data-kt-calendar="add"]');
             submitButton = form.querySelector('#kt_modal_add_event_submit');
             cancelButton = form.querySelector('#kt_modal_add_event_cancel');

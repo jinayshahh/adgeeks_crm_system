@@ -259,7 +259,6 @@ def get_events():
             'title': event[1],
             'description': event[2],
             'start': event[3].isoformat(),
-            'end': event[4].isoformat(),
         })
     return jsonify(result)
 
@@ -269,9 +268,9 @@ def add_event():
     data = request.get_json()
     creator_username = session.get('user_name')
     client_username = session.get('client_username')
-    mycur.execute("INSERT INTO calendar_data (title, description, start, end, client_username"
-                  ", creator_username) VALUES (%s, %s, %s, %s, %s, %s)",(data['title'], data['description'],
-                  data['start'], data['end'], client_username, creator_username))
+    mycur.execute("INSERT INTO calendar_data (title, description, start, client_username"
+                  ", creator_username) VALUES (%s, %s, %s, %s, %s)",(data['title'], data['description'],
+                  data['start'], client_username, creator_username))
     conn.commit()
     return jsonify({'message': 'Event added successfully'}), 201
 
@@ -281,9 +280,9 @@ def update_event():
     data = request.get_json()
     mycur.execute("""
         UPDATE calendar_data
-        SET title=%s, description=%s, start=%s, end=%s
+        SET title=%s, description=%s, start=%s
         WHERE id=%s
-    """, (data['title'], data['description'], data['start'], data['end'], data['id']))
+    """, (data['title'], data['description'], data['start'], data['id']))
     conn.commit()
     return jsonify({'message': 'Event updated successfully'})
 
