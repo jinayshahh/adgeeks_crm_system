@@ -1766,7 +1766,6 @@ def create_calendar(client_username):
                   f"where creator_username = '{creator_username}' and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
-    print(work_record)
     service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
                                 f"{work_record[2]} story in a month")
     client_username = work_record[3]
@@ -1778,10 +1777,8 @@ def create_calendar(client_username):
     if calendar_entry:
         send_client = True
     calendar_status = work_record[4]
-    print(calendar_status)
     if calendar_status == 'yes':
         creator_username = creator_details[0][1]
-        print(creator_username)
         return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
     else:
         return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
@@ -1802,7 +1799,6 @@ def get_events():
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
-    print(creator_username, client_username)
     mycur.execute(f"SELECT * FROM calendar_data where client_username = '{client_username}' and creator_username = "
                   f"'{creator_username}'")
     events = mycur.fetchall()
@@ -2006,7 +2002,6 @@ def upload_review_client(file_name):
 
 @app.route('/client_approve_task/<file_name>', methods=['POST', 'GET'])
 def client_approve_task(file_name):
-    print(file_name)
     mycur.execute(f"update work_details set client_approve = 'yes' where file_name = '{file_name}' and status_detail = "
                   f"'active'")
     conn.commit()
@@ -2020,7 +2015,6 @@ def client_approve_task(file_name):
     creator_details = mycur.fetchall()
     conn.commit()
     creator_string = creator_details[0][1]
-    print(creator_string)
     final_folder_name = creator_string.replace("Raw", "Final")
     # Construct the final directory path
     final_directory_path = f"static/work/{final_folder_name}"
@@ -2082,6 +2076,39 @@ def client_calendar(client_username):
     # else:
     return render_template("adgeeks_client_calendar.html", creator_details=client_details,
                            service_target_creatives=service_target_creatives, send_client=send_client)
+
+@app.route('/fetch_events_client', methods=['GET'])
+def get_events_client():
+    client_username = session.get('client_username')
+    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+    mycur.execute(f"SELECT * FROM calendar_data where client_username = '{client_username}' and creator_username = "
+                  f"'{creator_username}'")
+    events = mycur.fetchall()
+    conn.commit()
+    result = []
+    for event in events:
+        result.append({
+            'id': event[0],
+            'title': event[1],
+            'description': event[2],
+            'start': event[3].isoformat(),
+        })
+    return jsonify(result)
+
+
+@app.route('/edit_events_client', methods=['PUT'])
+def update_event_client():
+    data = request.get_json()
+    mycur.execute("""
+        UPDATE calendar_data
+        SET title=%s, description=%s, start=%s
+        WHERE id=%s
+    """, (data['title'], data['description'], data['start'], data['id']))
+    conn.commit()
+    return jsonify({'message': 'Event updated successfully'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
