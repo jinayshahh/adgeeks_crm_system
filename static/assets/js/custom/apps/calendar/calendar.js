@@ -522,22 +522,28 @@ var KTAppCalendar = function () {
                 }
             }).then(function (result) {
                 if (result.value) {
-                    fetch('/delete_events', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data.message);
-                        calendar.getEventById(data.id).remove();
-                        viewModal.hide(); // Hide modal
-                    })
-                    calendar.getEventById(data.id).remove();
+                const eventDetails = {
+                    id: data.id,
+                    title: data.title,
+                    start: data.start,
+                    end: data.end
+                };
 
+                fetch('/delete_events', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(eventDetails)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    calendar.getEventById(eventDetails.id).remove();
                     viewModal.hide(); // Hide modal
-                } else if (result.dismiss === 'cancel') {
+                })
+                .catch(error => console.error('Error deleting event:', error));
+            } else if (result.dismiss === 'cancel') {
                     Swal.fire({
                         text: "Your event was not deleted!.",
                         icon: "error",
