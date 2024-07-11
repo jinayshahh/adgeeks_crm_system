@@ -2056,14 +2056,14 @@ def client_calendar(client_username):
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_details[0][3]}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
-    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status FROM work_record "
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, title FROM work_record "
                   f"where creator_username = '{creator_username}' and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
     service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
                                 f"{work_record[2]} story in a month")
-    client_username = work_record[3]
-    session['client_username'] = client_username
+    folder_name = work_record[5]
+    session['folder_name'] = folder_name
     mycur.execute(f"select id from calendar_data where client_username = '{client_username}' and creator_username = '{creator_username}'")
     calendar_entry = mycur.fetchall()
     conn.commit()
@@ -2077,38 +2077,14 @@ def client_calendar(client_username):
     return render_template("adgeeks_client_calendar.html", creator_details=client_details,
                            service_target_creatives=service_target_creatives, send_client=send_client)
 
-@app.route('/fetch_events_client', methods=['GET'])
-def get_events_client():
-    client_username = session.get('client_username')
-    mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
-    creator_username = mycur.fetchone()[0]
-    conn.commit()
-    mycur.execute(f"SELECT * FROM calendar_data where client_username = '{client_username}' and creator_username = "
-                  f"'{creator_username}'")
-    events = mycur.fetchall()
-    conn.commit()
-    result = []
-    for event in events:
-        result.append({
-            'id': event[0],
-            'title': event[1],
-            'description': event[2],
-            'start': event[3].isoformat(),
-        })
-    return jsonify(result)
 
-
-@app.route('/edit_events_client', methods=['PUT'])
-def update_event_client():
-    data = request.get_json()
-    mycur.execute("""
-        UPDATE calendar_data
-        SET title=%s, description=%s, start=%s
-        WHERE id=%s
-    """, (data['title'], data['description'], data['start'], data['id']))
+@app.route("/calendar_review", methods=['POST', 'GET'])
+def calendar_review():
+    folder_name = session.get('folder_name')
+    information_upload = request.form['information']
+    mycur.execute(f"update work_record set calendar_review = '{information_upload}' where title = '{folder_name}'")
     conn.commit()
-    return jsonify({'message': 'Event updated successfully'})
-
+    return "review submitted"
 
 if __name__ == '__main__':
     app.run(debug=True)
