@@ -2084,7 +2084,11 @@ def calendar_review():
     information_upload = request.form['information']
     mycur.execute(f"update work_record set calendar_review = '{information_upload}' where title = '{folder_name}'")
     conn.commit()
-    return "review submitted"
+    mycur.execute(f"select client_username from work_record where title = '{folder_name}'")
+    client_username = mycur.fetchone()[0]
+    conn.commit()
+    print(client_username)
+    return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
 
 if __name__ == '__main__':
     app.run(debug=True)
