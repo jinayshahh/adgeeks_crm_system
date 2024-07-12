@@ -1367,7 +1367,8 @@ def task_schedule(client_id):
                   f"'Completed'")
     work_record = mycur.fetchone()
     conn.commit()
-    if work_record[4] == 'approved':
+    client_username = client_info[0][3]
+    if work_record[6] == 'approved':
         print("ashbdinso")
         work_record = [work_record]
         start_date = client_info[0][25]
@@ -1398,7 +1399,7 @@ def task_schedule(client_id):
     elif work_record[4] == 'yes':
         return redirect(url_for('create_calendar', client_username=client_info[0][3]))
     else:
-        return render_template('adgeeks_creator_schedule_making.html')
+        return render_template('adgeeks_creator_schedule_making.html', client_username=client_username)
 
 
 
@@ -1989,7 +1990,7 @@ def client_upload_files_section():
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work,
                                number_posts=number_posts, number_story=number_story, work_details=final_data)
-    elif creator_details[0][4] == 'yes':
+    elif creator_details[0][4] == 'yes' and creator_details[0][6] != 'approved':
         return redirect(url_for('client_calendar', client_username=client_username))
     else:
         return render_template('adgeeks_no_task.html', client_username=client_username)
@@ -2105,15 +2106,22 @@ def client_calendar(client_username):
 
 @app.route("/calendar_review", methods=['POST', 'GET'])
 def calendar_review():
-    folder_name = session.get('folder_name')
+    client_username = session.get('client_username')
     information_upload = request.form['information']
     mycur.execute(f"update work_record set calendar_review = '{information_upload}', calendar_update = 'no' where "
-                  f"title = '{folder_name}'")
-    conn.commit()
-    mycur.execute(f"select client_username from work_record where title = '{folder_name}'")
-    client_username = mycur.fetchone()[0]
+                  f"client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     conn.commit()
     return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
+
+
+@app.route('/approve_calendar')
+def approve_calendar():
+    client_username = session.get('client_username')
+    mycur.execute(f"UPDATE work_record SET calendar_update = 'approved' where client_username = '{client_username}' "
+                  f"ORDER BY work_id ASC LIMIT 1")
+    conn.commit()
+    return redirect(url_for('client_upload_files_section'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

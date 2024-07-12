@@ -391,7 +391,6 @@ var KTAppCalendar = function () {
                                     if (!allDayEvent) {
                                         const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
                                         const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-                                        const endTime = moment(endTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
 
                                         startDateTime = startDate + 'T' + startTime;
                                     }
@@ -423,6 +422,7 @@ var KTAppCalendar = function () {
                                     .then(response => response.json())
                                     .then(data => {
                                         console.log(updatedEventData);
+                                        location.reload()
                                         form.reset(); // Reset form for demo purposes only
                                     })
 
