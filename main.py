@@ -1762,8 +1762,9 @@ def create_calendar(client_username):
     mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
-    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status FROM work_record "
-                  f"where creator_username = '{creator_username}' and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, calendar_review, "
+                  f"calendar_update FROM work_record where creator_username = '{creator_username}' and client_username "
+                  f"= '{client_username}' ORDER BY work_id ASC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
     service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
@@ -1777,21 +1778,41 @@ def create_calendar(client_username):
     if calendar_entry:
         send_client = True
     calendar_status = work_record[4]
+    calendar_review_client = work_record[5]
+    calendar_update_client = work_record[6]
     if calendar_status == 'yes':
-        creator_username = creator_details[0][1]
-        return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
+        print("gsvuabhdijno")
+        if not calendar_review_client or calendar_update_client == 'yes':
+            creator_username = creator_details[0][1]
+            return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
+        else:
+            return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
+                                   service_target_creatives=service_target_creatives, send_client=send_client,
+                                   calendar_review=calendar_review_client)
     else:
+        print("dtfyguhikpodfshbcu")
         return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
-                               service_target_creatives=service_target_creatives, send_client=send_client)
+                               service_target_creatives=service_target_creatives, send_client=send_client,
+                               calendar_review=calendar_review_client)
 
 @app.route('/send_client_btn')
 def send_client_btn():
     creator_username = session.get('user_name')
     client_username = session.get('client_username')
-    mycur.execute(f"update work_record set calendar_status = 'yes' where client_username = '{client_username}' and "
-                  f"creator_username = '{creator_username}' ORDER BY work_id DESC LIMIT 1")
+    mycur.execute(f"select calendar_review from work_record where client_username = '{client_username}' and "
+                  f"creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+    calendar_review = mycur.fetchone()[0]
     conn.commit()
-    return redirect(url_for('create_calendar', client_username=client_username))
+    if calendar_review:
+        mycur.execute(f"update work_record set calendar_update = 'yes' where client_username = '{client_username}' and "
+                      f"creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+        conn.commit()
+        return redirect(url_for('create_calendar', client_username=client_username))
+    else:
+        mycur.execute(f"update work_record set calendar_status = 'yes' where client_username = '{client_username}' and "
+                      f"creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+        conn.commit()
+        return redirect(url_for('create_calendar', client_username=client_username))
 
 @app.route('/fetch_events', methods=['GET'])
 def get_events():
@@ -2056,8 +2077,9 @@ def client_calendar(client_username):
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_details[0][3]}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
-    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, title FROM work_record "
-                  f"where creator_username = '{creator_username}' and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, title, "
+                  f"calendar_review, calendar_update FROM work_record where creator_username = '{creator_username}' "
+                  f"and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
     service_target_creatives = (f"{work_record[0]} reel(s), {work_record[1]} post(s) and "
@@ -2070,10 +2092,13 @@ def client_calendar(client_username):
     send_client = False
     if calendar_entry:
         send_client = True
-    calendar_status = work_record[4]
+    calendar_update = work_record[7]
     # if calendar_status == 'yes':
     #     return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
     # else:
+    calendar_review = work_record[6]
+    if calendar_review and calendar_update != 'yes':
+        return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
     return render_template("adgeeks_client_calendar.html", creator_details=client_details,
                            service_target_creatives=service_target_creatives, send_client=send_client)
 
@@ -2082,12 +2107,12 @@ def client_calendar(client_username):
 def calendar_review():
     folder_name = session.get('folder_name')
     information_upload = request.form['information']
-    mycur.execute(f"update work_record set calendar_review = '{information_upload}' where title = '{folder_name}'")
+    mycur.execute(f"update work_record set calendar_review = '{information_upload}', calendar_update = 'no' where "
+                  f"title = '{folder_name}'")
     conn.commit()
     mycur.execute(f"select client_username from work_record where title = '{folder_name}'")
     client_username = mycur.fetchone()[0]
     conn.commit()
-    print(client_username)
     return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
 
 if __name__ == '__main__':
