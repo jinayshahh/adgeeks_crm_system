@@ -362,8 +362,6 @@ var KTAppCalendar = function () {
                                 // Enable submit button after loading
                                 submitButton.disabled = false;
 
-                                console.log(data.id)
-
                                 // Create updated event data
                                     const updatedEventData = {
                                         id: data.id,  // Ensure you have the event id here
