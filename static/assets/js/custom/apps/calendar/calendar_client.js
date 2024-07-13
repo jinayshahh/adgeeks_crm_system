@@ -311,89 +311,63 @@ var KTAppCalendar = function () {
 
 
     // Handle edit event
-    const handleEditEvent = () => {
-        // Update modal title
-        modalTitle.innerText = "Review Task";
+    const handleEditEvent = (data) => {
+    // Update modal title
+    modalTitle.innerText = "Review Task";
 
-        modal.show();
+    // Show the modal
+    modal.show();
 
-        // Select datepicker wrapper elements
-        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-
-        // Handle all day toggle
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        allDayToggle.addEventListener('click', e => {
-            if (e.target.checked) {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.add('d-none');
-                });
-            } else {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.remove('d-none');
-                });
-            }
-        });
-
+    if (typeof populateForm === 'function') {
         populateForm(data);
+    } else {
+        console.warn('populateForm function not defined.');
+    }
 
-        // Handle submit form
-        submitButton.addEventListener('click', function (e) {
-            // Prevent default button action
-            e.preventDefault();
+    // Handle submit form
+    const handleSubmit = function (e) {
+        // Prevent default button action
+        e.preventDefault();
 
-            // Validate form before submit
-            if (validator) {
-                validator.validate().then(function (status) {
-                    console.log('validated!');
+        // Validate form before submit
+        if (validator) {
+            validator.validate().then(function (status) {
+                console.log('validated!');
 
-                    if (status == 'Valid') {
-                        // Show loading indication
-                        submitButton.setAttribute('data-kt-indicator', 'on');
+                if (status == 'Valid') {
+                    // Show loading indication
+                    submitButton.setAttribute('data-kt-indicator', 'on');
 
-                        // Disable submit button whilst loading
-                        submitButton.disabled = true;
+                    // Disable submit button whilst loading
+                    submitButton.disabled = true;
 
+                    // Simulate form submission
+                    setTimeout(function () {
                         // Simulate form submission
-                        setTimeout(function () {
-                            // Simulate form submission
-                            submitButton.removeAttribute('data-kt-indicator');
+                        submitButton.removeAttribute('data-kt-indicator');
 
-                            // Show popup confirmation
-                            Swal.fire({
-                                text: "New event added to calendar!",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            }).then(function (result) {
-                                if (result.isConfirmed) {
-                                    modal.hide();
+                        // Show popup confirmation
+                        Swal.fire({
+                            text: "New event added to calendar!",
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        }).then(function (result) {
+                            if (result.isConfirmed) {
+                                modal.hide();
 
-                                    // Enable submit button after loading
-                                    submitButton.disabled = false;
+                                // Enable submit button after loading
+                                submitButton.disabled = false;
 
-                                    // Detect if it is an all-day event
-                                    let allDayEvent = false;
-                                    if (allDayToggle.checked) { allDayEvent = true; }
-                                    if (startTimeFlatpickr.selectedDates.length === 0) { allDayEvent = true; }
+                                console.log(data.id)
 
-                                    // Merge date & time
-                                    var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
-                                    if (!allDayEvent) {
-                                        const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
-
-                                        startDateTime = startDate + 'T' + startTime;
-                                    }
-
-                                    // Create updated event data
+                                // Create updated event data
                                     const updatedEventData = {
                                         id: data.id,  // Ensure you have the event id here
                                         title: eventName.value,
-                                        start: startDateTime,
-                                        allDay: allDayEvent
                                     };
 
                                     // Remove old event
@@ -422,24 +396,31 @@ var KTAppCalendar = function () {
                                 }
                             });
 
-                        }, 2000);
-                    } else {
-                        // Show popup warning
-                        Swal.fire({
-                            text: "Sorry, looks like there are some errors detected, please try again.",
-                            icon: "error",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn btn-primary"
-                            }
-                        });
-                    }
-                });
-            }
-        });
+                    }, 2000);
+                } else {
+                    // Show popup warning
+                    Swal.fire({
+                        text: "Sorry, looks like there are some errors detected, please try again.",
+                        icon: "error",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn btn-primary"
+                        }
+                    });
+                }
+            });
+        } else {
+            console.warn('Validator not defined.');
+        }
+    };
 
-    }
+    // Remove previous event listener if it exists to avoid duplication
+    submitButton.removeEventListener('click', handleSubmit);
+    // Add new event listener
+    submitButton.addEventListener('click', handleSubmit);
+};
+
 
     // Handle view event
     const handleViewEvent = () => {
@@ -630,25 +611,6 @@ var KTAppCalendar = function () {
     // Populate form
     const populateForm = () => {
         eventName.value = data.eventName ? data.eventName : '';
-        startFlatpickr.setDate(data.startDate, true, 'Y-m-d');
-
-        // Handle null end dates
-        const endDate = data.endDate ? data.endDate : moment(data.startDate).format();
-
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-        if (data.allDay) {
-            allDayToggle.checked = true;
-            datepickerWrappers.forEach(dw => {
-                dw.classList.add('d-none');
-            });
-        } else {
-            startTimeFlatpickr.setDate(data.startDate, true, 'Y-m-d H:i');
-            allDayToggle.checked = false;
-            datepickerWrappers.forEach(dw => {
-                dw.classList.remove('d-none');
-            });
-        }
     }
 
     // Format FullCalendar reponses

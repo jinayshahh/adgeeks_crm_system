@@ -2113,7 +2113,8 @@ def calendar_review():
     # mycur.execute(f"update work_record set calendar_review = '{information_upload}', calendar_update = 'no' where "
     #               f"client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     # conn.commit()
-    return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
+    # return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
+    return jsonify({'message': 'Event updated successfully'})
 
 
 @app.route('/approve_calendar')
