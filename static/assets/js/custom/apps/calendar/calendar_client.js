@@ -15,7 +15,6 @@ var KTAppCalendar = function () {
 
     // Add event variables
     var eventName;
-    var startDatepicker;
     var startFlatpickr;
     var startTimepicker;
     var startTimeFlatpickr;
@@ -158,7 +157,7 @@ var KTAppCalendar = function () {
 
     // Initialize datepickers --- more info: https://flatpickr.js.org/
     const initDatepickers = () => {
-        startFlatpickr = flatpickr(startDatepicker, {
+        startFlatpickr = flatpickr({
             enableTime: false,
             dateFormat: "Y-m-d",
         });
@@ -675,7 +674,6 @@ var KTAppCalendar = function () {
             const element = document.getElementById('kt_modal_add_event');
             form = element.querySelector('#kt_modal_add_event_form');
             eventName = form.querySelector('[name="calendar_event_name"]');
-            startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
             startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
             addButton = document.querySelector('[data-kt-calendar="add"]');
             submitButton = form.querySelector('#kt_modal_add_event_submit');
