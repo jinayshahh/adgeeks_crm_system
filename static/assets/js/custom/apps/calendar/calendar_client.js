@@ -16,7 +16,6 @@ var KTAppCalendar = function () {
     // Add event variables
     var eventName;
     var startFlatpickr;
-    var startTimepicker;
     var startTimeFlatpickr;
     var modal;
     var modalTitle;
@@ -163,7 +162,7 @@ var KTAppCalendar = function () {
         });
 
 
-        startTimeFlatpickr = flatpickr(startTimepicker, {
+        startTimeFlatpickr = flatpickr({
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
@@ -674,7 +673,6 @@ var KTAppCalendar = function () {
             const element = document.getElementById('kt_modal_add_event');
             form = element.querySelector('#kt_modal_add_event_form');
             eventName = form.querySelector('[name="calendar_event_name"]');
-            startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
             addButton = document.querySelector('[data-kt-calendar="add"]');
             submitButton = form.querySelector('#kt_modal_add_event_submit');
             cancelButton = form.querySelector('#kt_modal_add_event_cancel');

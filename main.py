@@ -2106,11 +2106,13 @@ def client_calendar(client_username):
 
 @app.route("/calendar_review", methods=['POST', 'GET'])
 def calendar_review():
+    data = request.get_json()
     client_username = session.get('client_username')
-    information_upload = request.form['information']
-    mycur.execute(f"update work_record set calendar_review = '{information_upload}', calendar_update = 'no' where "
-                  f"client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
-    conn.commit()
+    print(data)
+    # information_upload = request.form['information']
+    # mycur.execute(f"update work_record set calendar_review = '{information_upload}', calendar_update = 'no' where "
+    #               f"client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
+    # conn.commit()
     return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
 
 
