@@ -9,7 +9,6 @@ var KTAppCalendar = function () {
         id: '',
         eventName: '',
         startDate: '',
-        endDate: '',
         allDay: false
     };
 
@@ -73,26 +72,41 @@ var KTAppCalendar = function () {
             selectable: true,
             selectMirror: true,
 
-            // Select dates action --- more info: https://fullcalendar.io/docs/select-callback
-            select: function (arg) {
-                formatArgs(arg);
-                handleNewEvent();
-            },
 
             // Click event --- more info: https://fullcalendar.io/docs/eventClick
             eventClick: function (arg) {
-                formatArgs({
-                    id: arg.event.id,
-                    title: arg.event.title,
-                    description: arg.event.extendedProps.description,
-                    location: arg.event.extendedProps.location,
-                    startStr: arg.event.startStr,
-                    endStr: arg.event.endStr,
-                    allDay: arg.event.allDay
-                });
+            // Create the object to pass to formatArgs
+            const eventArgs = {
+                id: arg.event.id,
+                title: arg.event.title,
+                description: arg.event.extendedProps.description,
+                startStr: arg.event.startStr
+            };
 
-                handleViewEvent();
-            },
+            // Log the eventArgs object
+            console.log('formatArgs called with:', arg.event.id);
+
+            // Call formatArgs with the eventArgs object
+            formatArgs(eventArgs);
+
+            // Send the event ID to the server
+            fetch('/log_event_id', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ event_id: arg.event.id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Event ID logged successfully:', data);
+            })
+            .catch(error => console.error('Error logging event ID:', error));
+
+            // Handle the view event
+            handleViewEvent();
+        },
+
 
             editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
@@ -336,6 +350,8 @@ var KTAppCalendar = function () {
 
                 if (status == 'Valid') {
                     // Show loading indication
+                    console.log('check 1');
+
                     submitButton.setAttribute('data-kt-indicator', 'on');
 
                     // Disable submit button whilst loading
@@ -358,39 +374,38 @@ var KTAppCalendar = function () {
                         }).then(function (result) {
                             if (result.isConfirmed) {
                                 modal.hide();
+                                console.log('check 2');
 
                                 // Enable submit button after loading
                                 submitButton.disabled = false;
 
+
                                 // Create updated event data
                                     const updatedEventData = {
-                                        id: data.id,  // Ensure you have the event id here
                                         title: eventName.value,
                                     };
 
-                                    // Remove old event
-                                    calendar.getEventById(data.id).remove();
+                                    console.log("event name:", eventName.value)
 
                                     // Add new event to calendar
                                     calendar.addEvent(updatedEventData);
                                     calendar.render();
 
-                                    // Update event in the database
+                                    console.log("i am a disco dancer")
+
+                                    // Send the event ID to the server
                                     fetch('/calendar_review', {
-                                        method: 'PUT',
+                                        method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
                                         },
-                                        body: JSON.stringify(updatedEventData)
+                                        body: JSON.stringify({ event_review: eventName.value })
                                     })
                                     .then(response => response.json())
                                     .then(data => {
-                                        console.log(updatedEventData);
-                                        location.reload()
-                                        form.reset(); // Reset form for demo purposes only
+                                        console.log('Event ID logged successfully:', data);
                                     })
-
-                                    .catch(error => console.error('Error updating event:', error));
+                                    .catch(error => console.error('Error logging event ID:', error));
                                 }
                             });
 

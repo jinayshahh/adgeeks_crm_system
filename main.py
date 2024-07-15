@@ -2106,7 +2106,24 @@ def client_calendar(client_username):
 
 @app.route("/calendar_review", methods=['POST', 'GET'])
 def calendar_review():
-    # data = request.get_json()
+    event_id = session.get('event_id')
+    data = request.get_json()
+    event_review = data.get('event_review')
+    print(event_id, event_review)
+    mycur.execute(f"UPDATE calendar_data SET client_review = '{event_review}' where id = '{event_id}'")
+    conn.commit()
+    return jsonify({'message': 'Event ID logged successfully'}), 200
+
+
+@app.route("/log_event_id", methods=['POST'])
+def log_event_id():
+    data = request.get_json()
+    event_id = data.get('event_id')
+    session['event_id'] = event_id
+    return jsonify({'message': 'Event ID logged successfully'}), 200
+
+
+# data = request.get_json()
     # client_username = session.get('client_username')
     # print(data)
     # information_upload = request.form['information']
@@ -2114,9 +2131,7 @@ def calendar_review():
     #               f"client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     # conn.commit()
     # return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
-    data = request.get_json()
-    print(data)
-    return jsonify({'message': 'Event updated successfully'})
+
 
 @app.route('/approve_calendar')
 def approve_calendar():
