@@ -404,6 +404,7 @@ var KTAppCalendar = function () {
                                     .then(response => response.json())
                                     .then(data => {
                                         console.log('Event ID logged successfully:', data);
+                                        location.reload();
                                     })
                                     .catch(error => console.error('Error logging event ID:', error));
                                 }
