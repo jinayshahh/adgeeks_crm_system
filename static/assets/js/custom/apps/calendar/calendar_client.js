@@ -136,7 +136,7 @@ var KTAppCalendar = function () {
                     'calendar_event_name': {
                         validators: {
                             notEmpty: {
-                                message: 'Event name is required'
+                                message: 'Review is required'
                             }
                         }
                     },
@@ -350,7 +350,6 @@ var KTAppCalendar = function () {
 
                 if (status == 'Valid') {
                     // Show loading indication
-                    console.log('check 1');
 
                     submitButton.setAttribute('data-kt-indicator', 'on');
 
@@ -374,24 +373,18 @@ var KTAppCalendar = function () {
                         }).then(function (result) {
                             if (result.isConfirmed) {
                                 modal.hide();
-                                console.log('check 2');
 
                                 // Enable submit button after loading
                                 submitButton.disabled = false;
-
 
                                 // Create updated event data
                                     const updatedEventData = {
                                         title: eventName.value,
                                     };
 
-                                    console.log("event name:", eventName.value)
-
                                     // Add new event to calendar
                                     calendar.addEvent(updatedEventData);
                                     calendar.render();
-
-                                    console.log("i am a disco dancer")
 
                                     // Send the event ID to the server
                                     fetch('/calendar_review', {
