@@ -876,14 +876,11 @@ License: For each use you must have a valid license purchased only from above li
 													<!--begin::Modal body-->
 													<div class="modal-body pt-10 pb-15 px-lg-17">
 														<div>
-														<label class="form-label">Service</label>
-														<select class="form-select mb-2" data-control="select2" data-placeholder="Select an option" data-allow-clear="true" multiple="multiple" id="service-select" name="service">
-															<option></option>
-															{% for service in services %}
-															<option value="{{ service }}">{{ service }}</option>
-															{% endfor %}
-														</select>
-														<div class="text-muted fs-7 mb-7">Add services.</div>
+														<label class="d-flex align-items-center fs-5 fw-bold mb-2">
+															<span>Creatives</span>
+														</label>
+														<br>
+														<input type="hidden" id="service-select" name="service" value="Creatives">
 														<div class="d-flex flex-column mb-8 d-none" id="performance-marketing-group">
 															<div class="d-flex flex-column mb-5 fv-row">
 																<label class="required fs-5 fw-semibold mb-2">Funds to be used</label>
@@ -6442,37 +6439,60 @@ function promptRename(folderName, fileName) {
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 		<script>
 			$(document).ready(function() {
-				$('#service-select').select2();
-
-				$('#service-select').on('change', function() {
-					if ($(this).val().includes('Performance marketing')) {
-						$('#performance-marketing-group').removeClass('d-none');
-					} else {
-						$('#performance-marketing-group').addClass('d-none');
-					}
-				});
-			});
-			$(document).ready(function() {
-				$('#service-select').select2();
-
-				$('#service-select').on('change', function() {
-					if ($(this).val().includes('Creatives')) {
+				// Function to check the value and show/hide the Creatives group
+				function checkServiceSelect() {
+					if ($('#service-select').val().includes('Creatives')) {
 						$('#Creatives-group').removeClass('d-none');
 					} else {
 						$('#Creatives-group').addClass('d-none');
 					}
-				});
-			});
-			$(document).ready(function() {
-				$('#service-select').select2();
+				}
 
+				// Check the value on document ready
+				checkServiceSelect();
+
+				// Trigger the change event programmatically
 				$('#service-select').on('change', function() {
-					if ($(this).val().includes('Strategy')) {
+					checkServiceSelect();
+				}).trigger('change');
+			});
+
+			$(document).ready(function() {
+				// Function to check the value and show/hide the Creatives group
+				function checkServiceSelect() {
+					if ($('#service-select').val().includes('Performance marketing')) {
+						$('#performance-marketing-group').removeClass('d-none');
+					} else {
+						$('#performance-marketing-group').addClass('d-none');
+					}
+				}
+
+				// Check the value on document ready
+				checkServiceSelect();
+
+				// Trigger the change event programmatically
+				$('#service-select').on('change', function() {
+					checkServiceSelect();
+				}).trigger('change');
+			});
+
+			$(document).ready(function() {
+				// Function to check the value and show/hide the Creatives group
+				function checkServiceSelect() {
+					if ($('#service-select').val().includes('Strategy')) {
 						$('#Strategy-group').removeClass('d-none');
 					} else {
 						$('#Strategy-group').addClass('d-none');
 					}
-				});
+				}
+
+				// Check the value on document ready
+				checkServiceSelect();
+
+				// Trigger the change event programmatically
+				$('#service-select').on('change', function() {
+					checkServiceSelect();
+				}).trigger('change');
 			});
 		</script>
 		<script>

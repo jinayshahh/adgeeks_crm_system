@@ -1,5 +1,5 @@
 from collections import defaultdict
-from flask import Flask, request, redirect, session, render_template, jsonify, url_for, flash, send_from_directory
+from flask import Flask, request, redirect, session, render_template, jsonify, url_for, flash
 import mysql.connector
 from flask_cors import CORS
 from datetime import datetime, time, timedelta
@@ -7,7 +7,6 @@ import time
 import random
 import string
 import shutil
-import re
 import os
 from werkzeug.utils import secure_filename
 from googleapiclient.discovery import build
@@ -66,9 +65,9 @@ def upload_directory_to_drive(directory_path, parent_id, folder_name):
         if os.path.isfile(item_path):
             # Define MIME type as needed or use 'application/octet-stream' as generic
             upload_file_to_drive(item_path, 'application/octet-stream', folder_id)
-        elif os.path.isdir(item_path):
-            # Recursive call to handle subdirectories
-            upload_directory_to_drive(item_path, folder_id)
+        # elif os.path.isdir(item_path):
+        #     # Recursive call to handle subdirectories
+        #     upload_directory_to_drive(item_path, folder_id)
     # Generate and return the URL to access the folder
     folder_url = f"https://drive.google.com/drive/folders/{folder_id}"
     new_folder_name = folder_name.replace("Final", "Raw")
@@ -211,7 +210,6 @@ def fetch_files(folder_name_fetch):
 @app.route('/tester')
 def tester():
     return render_template("tester.html")
-
 
 
 #
@@ -1196,7 +1194,6 @@ def upload_review(file_name):
     return redirect(url_for('admin_upload_files_section', folder_name=folder_name))
 
 
-
 @app.route('/admin_approve_task/<file_name>', methods=['POST', 'GET'])
 def admin_approve_task(file_name):
     mycur.execute(f"update work_details set admin_approve = 'yes' where file_name = '{file_name}' and status_detail = "
@@ -1356,31 +1353,58 @@ def creator_task_timeline(file_name):
 
 @app.route('/task_schedule/<int:client_id>')
 def task_schedule(client_id):
+    # creator's username
+    session['client_id'] = client_id
     creator_username = session.get('user_name')
+
+    # creator's data
     mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
+
+    # client's data
     mycur.execute(f"SELECT * FROM client_information where client_id = '{client_id}'")
     client_info = mycur.fetchall()
     conn.commit()
+
+    # work record
     mycur.execute(f"SELECT * FROM work_record where client_username = '{client_info[0][3]}' and work_status != "
                   f"'Completed'")
     work_record = mycur.fetchone()
     conn.commit()
+
+    # client's username
     client_username = client_info[0][3]
+
+    # if client approves
     if work_record[6] == 'approved':
-        print("ashbdinso")
+        # formatting the record
         work_record = [work_record]
+
         start_date = client_info[0][25]
-        due_date = start_date + timedelta(days=7)
+
+        # calculating the due date
+        due_date = start_date - timedelta(days=15)
+
+        # formatting the due date
         formatted_due_date = due_date.strftime("%d-%m-%y")
+
+        # fetching the services and formatting them
         services = client_info[0][10].split(', ')
+
+        # making them local
         service_target_creatives = None
         service_target_performance_marketing = None
         service_target_strategy = None
+
+        # fetching the path and name of the folder
         directory_path, folder_name = select_folder(client_info[0][3])
+
+        # storing the folder and client username
         session['folder_name'] = folder_name
         session['client_username'] = client_info[0][3]
+
+        # to make a format for the targets
         for service_check in services:
             if service_check == 'Creatives':
                 service_target_creatives = (f"{client_info[0][14]} reels, {client_info[0][16]} posts and "
@@ -1391,6 +1415,7 @@ def task_schedule(client_id):
                                                         f" months")
             else:
                 service_target_strategy = f"we have to make a {client_info[0][20]} for {client_info[0][3]}"
+
         return render_template("adgeeks_task_schedule.html", creator_details=creator_details,
                                client_info=client_info, work_record=work_record,
                                service_target_creatives=service_target_creatives, folder_name=folder_name,
@@ -1400,7 +1425,6 @@ def task_schedule(client_id):
         return redirect(url_for('create_calendar', client_username=client_info[0][3]))
     else:
         return render_template('adgeeks_creator_schedule_making.html', client_username=client_username)
-
 
 
 @app.route('/task_section', methods=['GET', 'POST'])
@@ -1457,35 +1481,50 @@ def task_folders():
     return render_template("adgeeks_task_folders.html", creator_details=creator_details)
 
 
-@app.route('/upload_files_section/<folder_name>')
-def upload_files_section(folder_name):
+@app.route('/upload_files_section/<service_name>')
+def upload_files_section(service_name):
+    # fetching the folder name and the usernames
+    folder_name = session.get('folder_name')
     client_username = session.get('client_username')
     creator_username = session.get('user_name')
+
+    # work record which is not completed yet
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and "
         f"client_username = '{client_username}' and work_status != 'Completed'")
-    creator_details = [mycur.fetchone()]
+    work_record = [mycur.fetchone()]
     conn.commit()
-    if creator_details[0][26] == 'yes':
+
+    # if all the content is uploaded
+    if work_record[0][26] == 'yes':
         return render_template('folder_complete.html', folder_name=folder_name)
     else:
-        session['folder_name'] = folder_name
         files_fetched_check = fetch_files(folder_name)
         files_fetched = [('None')]
         if files_fetched_check:
             files_fetched = files_fetched_check
-        services = creator_details[0][9].split(', ')
-        number_reels = creator_details[0][19] - creator_details[0][13]
-        number_posts = creator_details[0][20] - creator_details[0][15]
-        number_story = creator_details[0][21] - creator_details[0][17]
+
+        # formating the services for clients
+        services = work_record[0][9].split(', ')
+
+        # target left
+        number_reels = work_record[0][19] - work_record[0][13]
+        number_posts = work_record[0][20] - work_record[0][15]
+        number_story = work_record[0][21] - work_record[0][17]
+
+        # work details
         mycur.execute(f"select * from work_details where creator_username = '{creator_username}' and client_username "
                       f"= '{client_username}' and status_detail = 'active'")
         raw_data = mycur.fetchall()
         conn.commit()
-        print(raw_data)
+
+        # making a list
         merged_data = defaultdict(list)
+
         for item in raw_data:
             merged_data[item[1]].append(item)
+
+        # processing the final data that needs to be used
         final_data = []
         for file_name, items in merged_data.items():
             combined = list(items[0])  # Start with the first item's data
@@ -1494,18 +1533,18 @@ def upload_files_section(folder_name):
                     if item[i] is not None:
                         combined[i] = item[i]  # Replace with non-None values
             final_data.append(tuple(combined))
-        # print(final_data)
 
+        # to get the work approved
         mycur.execute(f"select detail_id from work_details where admin_approve = 'yes' and "
                       f"client_username = '{client_username}' and creator_username = '{creator_username}'")
         approved_work = mycur.fetchall()
         conn.commit()
-        total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
+        total_work = work_record[0][19] + work_record[0][20] + work_record[0][21] - len(approved_work)
         mycur.execute(f"select detail_id from work_details where content_uploaded = 'yes' and "
                       f"client_username = '{client_username}' and creator_username = '{creator_username}'")
         uploaded_work = mycur.fetchall()
         conn.commit()
-        total_uploaded = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(uploaded_work)
+        total_uploaded = work_record[0][19] + work_record[0][20] + work_record[0][21] - len(uploaded_work)
 
         mycur.execute("select content_link from work_details where content_link != 'no link'")
         excluded_files = mycur.fetchall()
@@ -1551,7 +1590,7 @@ def upload_files_section(folder_name):
                             break
                 files_with_details.append(file_info)
                 # print(files_with_details)
-        return render_template("adgeeks_upload_files_section.html", creator_details=creator_details,
+        return render_template("adgeeks_upload_files_section.html", creator_details=work_record,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work, total_uploaded=total_uploaded,
                                number_posts=number_posts, number_story=number_story, work_details=final_data)
@@ -1661,7 +1700,8 @@ def submit_task_review_upload():
     file_name = request.form['file_name']
     creator_username = session.get('user_name')
     client_username = session.get('client_username')
-    mycur.execute("select file_name, detail_id from work_details where detail_id = ( select max(detail_id) from work_details)")
+    mycur.execute(
+        "select file_name, detail_id from work_details where detail_id = ( select max(detail_id) from work_details)")
     change_content = mycur.fetchall()[0]
     conn.commit()
     print(change_content)
@@ -1724,8 +1764,9 @@ def rename_file(folder_name, file_name):
 def uploaded_creator():
     file_name = request.json.get('file_name')
     print(file_name)
-    mycur.execute(f"update work_details set content_uploaded = 'yes' where file_name = '{file_name}' and status_detail = "
-                  f"'active'")
+    mycur.execute(
+        f"update work_details set content_uploaded = 'yes' where file_name = '{file_name}' and status_detail = "
+        f"'active'")
     conn.commit()
     return "Task approved", 200
 
@@ -1734,7 +1775,8 @@ def uploaded_creator():
 def work_over(folder_name):
     final_folder_name = folder_name.replace("Raw", "Final")
     upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
-    mycur.execute(f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed' where title = '{folder_name}'")
+    mycur.execute(
+        f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed' where title = '{folder_name}'")
     conn.commit()
     mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()
@@ -1757,6 +1799,16 @@ def new_task(creator_id):
 #
 #
 #
+@app.route("/view_calendar")
+def view_calendar():
+    client_username = session.get('client_username')
+    print(client_username)
+    mycur.execute(f"SELECT * from client_information where username = '{client_username}'")
+    creator_details = mycur.fetchall()
+    conn.commit()
+    return render_template("adgeeks_view_calendar.html", creator_details=creator_details)
+
+
 @app.route('/create_calendar/<client_username>')
 def create_calendar(client_username):
     # storing the creator username
@@ -1785,7 +1837,8 @@ def create_calendar(client_username):
     session['client_username'] = client_username
 
     # to check if there are any entries
-    mycur.execute(f"select id from calendar_data where client_username = '{client_username}' and creator_username = '{creator_username}'")
+    mycur.execute(
+        f"select id from calendar_data where client_username = '{client_username}' and creator_username = '{creator_username}'")
     calendar_entry = mycur.fetchall()
     conn.commit()
 
@@ -1826,6 +1879,7 @@ def create_calendar(client_username):
                                service_target_creatives=service_target_creatives, send_client=send_client,
                                calendar_review=calendar_data)
 
+
 @app.route('/send_client_btn')
 def send_client_btn():
     # fetching the creator and client usernames
@@ -1851,6 +1905,7 @@ def send_client_btn():
         return redirect(url_for('create_calendar', client_username=client_username))
     else:
         return redirect(url_for('create_calendar', client_username=client_username))
+
 
 @app.route('/fetch_events', methods=['GET'])
 def get_events():
@@ -1881,8 +1936,8 @@ def add_event():
     creator_username = mycur.fetchone()[0]
     conn.commit()
     mycur.execute("INSERT INTO calendar_data (title, description, start, client_username"
-                  ", creator_username) VALUES (%s, %s, %s, %s, %s)",(data['title'], data['description'],
-                  data['start'], client_username, creator_username))
+                  ", creator_username) VALUES (%s, %s, %s, %s, %s)", (data['title'], data['description'],
+                                                                      data['start'], client_username, creator_username))
     conn.commit()
     return jsonify({'message': 'Event added successfully'}), 201
 
@@ -1899,13 +1954,13 @@ def update_event():
     return jsonify({'message': 'Event updated successfully'})
 
 
-
 @app.route('/delete_events', methods=['PUT'])
 def delete_event():
     data = request.get_json()
     mycur.execute("DELETE FROM calendar_data WHERE id=%s", (data['id'],))
     conn.commit()
     return jsonify({'message': 'Event deleted successfully'})
+
 
 #
 #

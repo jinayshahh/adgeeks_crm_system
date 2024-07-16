@@ -269,6 +269,7 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="d-flex flex-wrap flex-stack pt-10 pb-8">
 										<!--begin::Heading-->
 										<h3 class="fw-bold my-2">Project Targets</h3>
+										<a href="/view_calendar" class="btn btn-info hover-scale">View Calendar</a>
 									</div>
 									<!--end::Toolbar-->
 									<!--begin::Timeline-->
@@ -506,11 +507,12 @@ License: For each use you must have a valid license purchased only from above li
 														<div class="d-flex flex-column">
 															<!--begin::Title-->
 															<h4 class="mb-1 text-dark">Target</h4>
-															<!--end::Title-->
-
 															<!--begin::Content-->
 															<span>{{service_target_creatives}}</span>
 															<!--end::Content-->
+															<br>
+															<h4 class="mb-1 text-danger">Due date is {{formatted_due_date}}</h4>
+															<!--end::Title-->
 														</div>
 														<!--end::Wrapper-->
 													</div>
@@ -545,13 +547,6 @@ License: For each use you must have a valid license purchased only from above li
 																	<!--begin::Title-->
 																	<div class="fs-5 fw-semibold mb-2">New tasks from {{client[1]}}:</div>
 																	<!--end::Title-->
-																	<!--begin::Description-->
-																	<div class="d-flex align-items-center mt-1 fs-6">
-																		<!--begin::Info-->
-																		<div class="text-muted me-2 fs-7">Due date is {{formatted_due_date}}</div>
-																		<!--end::Info-->
-																	</div>
-																	<!--end::Description-->
 																</div>
 																<!--end::Timeline heading-->
 																<!--begin::Timeline details-->
@@ -566,33 +561,34 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if work_record %}
 																		{% for work in work_record %}
 																		<div class="min-w-175px pe-2">
-																			<span class="badge badge-light text-muted">{{work[19] - work[13]}} Reels left</span>
+																			<span class="badge badge-danger">{{work[19] - work[13]}} Reels left</span>
 																		</div>
 																		{% endfor %}
 																		{% else %}
 																		<div class="min-w-175px pe-2">
-																			<span class="badge badge-light text-muted">{{client[14]}} Reels</span>
+																			<span class="badge badge-danger">{{client[14]}} Reels</span>
 																		</div>
 																		{% endif %}
 																		<!--end::Label-->
 																		<!--begin::Users-->
 																		<div class="symbol-group symbol-hover flex-nowrap flex-grow-1 pe-2">
-																			<!--begin::User-->
-																			<div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" data-bs-boundary="window" data-bs-placement="top" title="{{client[1]}}">
-																				<img src="static/assets/media/avatars/300-14.jpg" alt="img" />
-																			</div>
-																			<!--end::User-->
+<!--																			&lt;!&ndash;begin::User&ndash;&gt;-->
+<!--																			<div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" data-bs-boundary="window" data-bs-placement="top" title="{{client[1]}}">-->
+<!--																				<img src="static/assets/media/avatars/300-14.jpg" alt="img" />-->
+<!--																			</div>-->
+<!--																			&lt;!&ndash;end::User&ndash;&gt;-->
 																		</div>
 																		<!--end::Users-->
 																		<!--begin::Progress-->
+
 																		<div class="min-w-125px pe-2">
-																			<span class="badge badge-light-primary">Due Date</span>
+<!--																			<span class="badge badge-light-primary">Due Date</span>-->
 																		</div>
 																		<!--end::Progress-->
 																		{% if work_record %}
 																		{% for work in work_record %}
 <!--																		begin::Action-->
-																		<a href="/upload_files_section/{{folder_name}}" class="btn btn-sm btn-light btn-active-light-primary">Upload files</a>
+																		<a href="/upload_files_section/Creatives" class="btn btn-sm btn-primary btn-active-light-primary">Upload files</a>
 <!--																		end::Action-->
 																		{% endfor %}
 																		{% endif %}
@@ -609,33 +605,33 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if work_record %}
 																		{% for work in work_record %}
 																		<div class="min-w-175px pe-2">
-																			<span class="badge badge-light text-muted">{{work[20] - work[15]}} Posts left</span>
+																			<span class="badge badge-danger">{{work[20] - work[15]}} Posts left</span>
 																		</div>
 																		{% endfor %}
 																		{% else %}
 																		<div class="min-w-175px pe-2">
-																			<span class="badge badge-light text-muted">{{client[16]}} Posts</span>
+																			<span class="badge badge-danger">{{client[16]}} Posts</span>
 																		</div>
 																		{% endif %}
 																		<!--end::Label-->
 																		<!--begin::Users-->
 																		<div class="symbol-group symbol-hover flex-nowrap flex-grow-1  pe-2">
-																			<!--begin::User-->
-																			<div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" data-bs-boundary="window" data-bs-placement="top" title="{{client[1]}}">
-																				<img src="static/assets/media/avatars/300-14.jpg" alt="img" />
-																			</div>
-																			<!--end::User-->
+<!--																			&lt;!&ndash;begin::User&ndash;&gt;-->
+<!--																			<div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" data-bs-boundary="window" data-bs-placement="top" title="{{client[1]}}">-->
+<!--																				<img src="static/assets/media/avatars/300-14.jpg" alt="img" />-->
+<!--																			</div>-->
+<!--																			&lt;!&ndash;end::User&ndash;&gt;-->
 																		</div>
 																		<!--end::Users-->
 																		<!--begin::Progress-->
 																		<div class="min-w-125px pe-2">
-																			<span class="badge badge-light-primary">Due Date</span>
+<!--																			<span class="badge badge-light-primary">Due Date</span>-->
 																		</div>
 																		<!--end::Progress-->
 																		{% if work_record %}
 																		{% for work in work_record %}
 <!--																		begin::Action-->
-																		<a href="/upload_files_section/{{folder_name}}" class="btn btn-sm btn-light btn-active-light-primary">Upload files</a>
+																		<a href="/upload_files_section/{{folder_name}}" class="btn btn-sm btn-primary btn-active-light-primary">Upload files</a>
 <!--																		end::Action-->
 																		{% endfor %}
 																		{% endif %}
@@ -652,33 +648,33 @@ License: For each use you must have a valid license purchased only from above li
 																		{% if work_record %}
 																		{% for work in work_record %}
 																		<div class="min-w-175px pe-2">
-																			<span class="badge badge-light text-muted">{{work[21] - work[17]}} Stories left</span>
+																			<span class="badge badge-danger">{{work[21] - work[17]}} Stories left</span>
 																		</div>
 																		{% endfor %}
 																		{% else %}
 																		<div class="min-w-175px pe-2">
-																			<span class="badge badge-light text-muted">{{client[18]}} Stories</span>
+																			<span class="badge badge-danger">{{client[18]}} Stories</span>
 																		</div>
 																		{% endif %}
 																		<!--end::Label-->
 																		<!--begin::Users-->
 																		<div class="symbol-group symbol-hover flex-nowrap flex-grow-1 pe-2">
-																			<!--begin::User-->
-																			<div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" data-bs-boundary="window" data-bs-placement="top" title="{{client[1]}}">
-																				<img src="static/assets/media/avatars/300-14.jpg" alt="img" />
-																			</div>
-																			<!--end::User-->
+<!--																			&lt;!&ndash;begin::User&ndash;&gt;-->
+<!--																			<div class="symbol symbol-circle symbol-25px" data-bs-toggle="tooltip" data-bs-boundary="window" data-bs-placement="top" title="{{client[1]}}">-->
+<!--																				<img src="static/assets/media/avatars/300-14.jpg" alt="img" />-->
+<!--																			</div>-->
+<!--																			&lt;!&ndash;end::User&ndash;&gt;-->
 																		</div>
 																		<!--end::Users-->
 																		<!--begin::Progress-->
 																		<div class="min-w-125px pe-2">
-																			<span class="badge badge-light-primary">Due Date</span>
+<!--																			<span class="badge badge-light-primary">Due Date</span>-->
 																		</div>
 																		<!--end::Progress-->
 																		{% if work_record %}
 																		{% for work in work_record %}
 <!--																		begin::Action-->
-																		<a href="/upload_files_section/{{folder_name}}" class="btn btn-sm btn-light btn-active-light-primary">Upload files</a>
+																		<a href="/upload_files_section/{{folder_name}}" class="btn btn-sm btn-primary btn-active-light-primary">Upload files</a>
 <!--																		end::Action-->
 																		{% endfor %}
 																		{% endif %}
