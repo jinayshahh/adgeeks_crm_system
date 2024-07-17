@@ -385,7 +385,6 @@ var KTAppCalendar = function () {
                                 // Create updated event data
                                     const updatedEventData = {
                                         title: eventName.value,
-                                        description: eventDescription.value,
                                     };
 
                                     // Add new event to calendar
@@ -625,7 +624,6 @@ var KTAppCalendar = function () {
     // Populate form
     const populateForm = () => {
         eventName.value = data.eventName ? data.eventName : '';
-        eventDescription.value = data.eventDescription ? data.eventDescription : '';
     }
 
     // Format FullCalendar reponses
@@ -651,9 +649,6 @@ var KTAppCalendar = function () {
             const element = document.getElementById('kt_modal_add_event');
             form = element.querySelector('#kt_modal_add_event_form');
             eventName = form.querySelector('[name="calendar_event_name"]');
-            eventDescription = form.querySelector('[name="calendar_event_description"]');
-            startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
-            startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
             addButton = document.querySelector('[data-kt-calendar="add"]');
             submitButton = form.querySelector('#kt_modal_add_event_submit');
             cancelButton = form.querySelector('#kt_modal_add_event_cancel');
