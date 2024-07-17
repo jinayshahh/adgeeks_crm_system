@@ -1886,6 +1886,8 @@ def send_client_btn():
     creator_username = session.get('user_name')
     client_username = session.get('client_username')
 
+    print(creator_username, client_username)
+
     # fetching the review
     mycur.execute(f"select calendar_review from work_record where client_username = '{client_username}' and "
                   f"creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
@@ -1904,6 +1906,9 @@ def send_client_btn():
         conn.commit()
         return redirect(url_for('create_calendar', client_username=client_username))
     else:
+        mycur.execute(f"update work_record set calendar_status = 'yes' where client_username = "
+                      f"'{client_username}' and creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+        conn.commit()
         return redirect(url_for('create_calendar', client_username=client_username))
 
 
