@@ -5042,6 +5042,7 @@ License: For each use you must have a valid license purchased only from above li
 							<!--end::Toolbar-->
 							{% if calendar_review %}
 							{% for review in calendar_review %}
+							{% if review[2] != 'no' %}
 							<!--begin::Alert-->
 							<div class="app-container">
 								<div class="alert alert-primary d-flex align-items-center p-5 ">
@@ -5066,6 +5067,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Alert-->
 							</div>
 							<!--begin::Content-->
+							{% endif %}
 							{% endfor %}
 							{% else %}
 							<!--begin::Alert-->

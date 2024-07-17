@@ -1868,8 +1868,11 @@ def create_calendar(client_username):
     if calendar_status == 'yes':
         # to make sure to only give approval page when one of the two conditions are satisfied
         if not calendar_review_client or calendar_update_client == 'yes':
-            creator_username = creator_details[0][1]
-            return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
+            # fetching the client id
+            mycur.execute(f"select creator_id from creator_information where username = '{creator_username}'")
+            creator_id = mycur.fetchone()[0]
+            conn.commit()
+            return render_template('adgeeks_creator_calendar_approval.html', creator_id=creator_id)
         else:
             return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
                                    service_target_creatives=service_target_creatives, send_client=send_client,
