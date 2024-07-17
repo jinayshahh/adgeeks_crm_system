@@ -8,12 +8,14 @@ var KTAppCalendar = function () {
     var data = {
         id: '',
         eventName: '',
+        eventDescription: '',
         startDate: '',
         allDay: false
     };
 
     // Add event variables
     var eventName;
+    var eventDescription;
     var startFlatpickr;
     var startTimeFlatpickr;
     var modal;
@@ -28,6 +30,7 @@ var KTAppCalendar = function () {
     // View event variables
     var viewEventName;
     var viewAllDay;
+    var viewEventDescription;
     var viewEventLocation;
     var viewStartDate;
     var viewEndDate;
@@ -191,6 +194,7 @@ var KTAppCalendar = function () {
             data = {
                 id: '',
                 eventName: '',
+                eventDescription: '',
                 startDate: new Date(),
                 endDate: new Date(),
                 allDay: false
@@ -280,6 +284,7 @@ var KTAppCalendar = function () {
                                     // Add new event to calendar
                                     const eventData = {
                                         title: eventName.value,
+                                        description: eventDescription.value,
                                         start: startDateTime,
                                         allDay: allDayEvent
                                     };
@@ -380,6 +385,7 @@ var KTAppCalendar = function () {
                                 // Create updated event data
                                     const updatedEventData = {
                                         title: eventName.value,
+                                        description: eventDescription.value,
                                     };
 
                                     // Add new event to calendar
@@ -452,6 +458,7 @@ var KTAppCalendar = function () {
         // Populate view data
         viewEventName.innerText = data.eventName;
         viewAllDay.innerText = eventNameMod;
+        viewEventDescription.innerText = data.eventDescription ? data.eventDescription : '--';
         viewStartDate.innerText = startDateMod;
         viewEndDate.innerText = endDateMod;
     }
@@ -618,12 +625,14 @@ var KTAppCalendar = function () {
     // Populate form
     const populateForm = () => {
         eventName.value = data.eventName ? data.eventName : '';
+        eventDescription.value = data.eventDescription ? data.eventDescription : '';
     }
 
     // Format FullCalendar reponses
     const formatArgs = (res) => {
         data.id = res.id;
         data.eventName = res.title;
+        data.eventDescription = res.description;
         data.startDate = res.startStr;
         data.endDate = res.endStr;
         data.allDay = res.allDay;
@@ -642,6 +651,9 @@ var KTAppCalendar = function () {
             const element = document.getElementById('kt_modal_add_event');
             form = element.querySelector('#kt_modal_add_event_form');
             eventName = form.querySelector('[name="calendar_event_name"]');
+            eventDescription = form.querySelector('[name="calendar_event_description"]');
+            startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
+            startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
             addButton = document.querySelector('[data-kt-calendar="add"]');
             submitButton = form.querySelector('#kt_modal_add_event_submit');
             cancelButton = form.querySelector('#kt_modal_add_event_cancel');
@@ -654,6 +666,7 @@ var KTAppCalendar = function () {
             viewModal = new bootstrap.Modal(viewElement);
             viewEventName = viewElement.querySelector('[data-kt-calendar="event_name"]');
             viewAllDay = viewElement.querySelector('[data-kt-calendar="all_day"]');
+            viewEventDescription = viewElement.querySelector('[data-kt-calendar="event_description"]');
             viewEventLocation = viewElement.querySelector('[data-kt-calendar="event_location"]');
             viewStartDate = viewElement.querySelector('[data-kt-calendar="event_start_date"]');
             viewEndDate = viewElement.querySelector('[data-kt-calendar="event_end_date"]');
