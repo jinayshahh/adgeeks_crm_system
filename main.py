@@ -1857,13 +1857,14 @@ def create_calendar(client_username):
     # this is for the review details given by the client
     calendar_data = []
     if calendar_review_client == 'yes':
-        mycur.execute("select title, description, client_review, start from calendar_data where client_username = "
+        mycur.execute("select title, description, client_review, start, id from calendar_data where client_username = "
                       f"'{client_username}' and client_review != 'None'")
-        calendar_data = mycur.fetchall()
+        calendar_data_raw = mycur.fetchall()
         conn.commit()
-
+        for review in calendar_data_raw:
+            if review[2] != 'no':
+                calendar_data.append(review)
         print(calendar_data)
-
     # this is yes when the client interacts with the calendar
     if calendar_status == 'yes':
         # to make sure to only give approval page when one of the two conditions are satisfied
@@ -1881,6 +1882,18 @@ def create_calendar(client_username):
         return render_template("adgeeks_creator_calendar.html", creator_details=creator_details,
                                service_target_creatives=service_target_creatives, send_client=send_client,
                                calendar_review=calendar_data)
+
+
+@app.route('/change_review', methods=['POST', 'GET'])
+def change_review():
+    task_id = request.form['task_id']
+    task_description = request.form['calendar_event_description']
+    task_start = request.form['calendar_event_start_date']
+    mycur.execute(f"UPDATE calendar_data SET description = '{task_description}', start = '{task_start}', "
+                  f"client_review = 'no' where id = '{task_id}'")
+    conn.commit()
+    client_username = session.get('client_username')
+    return redirect(url_for('create_calendar', client_username=client_username))
 
 
 @app.route('/send_client_btn')
