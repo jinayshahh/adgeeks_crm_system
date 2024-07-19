@@ -622,9 +622,9 @@ var KTAppCalendar = function () {
     }
 
     // Populate form
-    const populateForm = () => {
-        eventName.value = data.eventName ? data.eventName : '';
-    }
+//    const populateForm = () => {
+//        eventName.value = data.eventName ? data.eventName : '';
+//    }
 
     // Format FullCalendar reponses
     const formatArgs = (res) => {
