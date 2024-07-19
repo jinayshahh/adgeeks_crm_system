@@ -5085,7 +5085,7 @@ License: For each use you must have a valid license purchased only from above li
 															<span class="text-gray-600 fw-bold fs-6">{{review[1]}}</span>
 														</td>
 														<td class="text-end pe-0">
-															<span class="text-gray-600 fw-bold fs-6">{{review[3]}}</span>
+															<span class="text-gray-600 fw-bold fs-6">{{ review[3].strftime('%Y/%m/%d') }}</span>
 														</td>
 														<td class="text-end pe-0">
 															<span class="text-gray-600 fw-bold fs-6">{{review[2]}}</span>
@@ -5098,7 +5098,7 @@ License: For each use you must have a valid license purchased only from above li
 																	data-task-name="{{review[0]}}"
 																	data-task-desc="{{review[1]}}"
 																	data-review-date="{{review[2]}}"
-																	data-event-start-date="{{review[3]}}"
+																	data-event-start-date="{{ review[3].strftime('%Y/%m/%d') }}"
 																	data-task-id="{{review[4]}}">
 																Change review
 															</button>
@@ -5427,7 +5427,7 @@ License: For each use you must have a valid license purchased only from above li
 														<label class="fs-6 fw-semibold mb-2 required">Event Start Date</label>
 														<!--end::Label-->
 														<!--begin::Input-->
-														<input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date_new" />
+														<input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date_new"/>
 														<!--end::Input-->
 													</div>
 													<div class="fv-row mb-9">
