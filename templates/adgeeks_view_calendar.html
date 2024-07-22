@@ -5029,8 +5029,9 @@ License: For each use you must have a valid license purchased only from above li
 									<!--end::Page title-->
 									<!--begin::Actions-->
 									{% for client in creator_details %}
-									<div class="d-flex align-items-center gap-2 gap-lg-3">
-										<a href="/task_schedule/{{client[0]}}" class="btn btn-sm fw-bold btn-primary">Go back</a>
+									<div class="d-flex my-4">
+										<a href="/task_schedule/{{client[0]}}" class="btn btn-sm fw-bold btn-info">View history</a>
+										<a href="/task_schedule/{{client[0]}}" class="btn btn-sm fw-bold btn-primary" style="margin-left: 15px">Go back</a>
 									</div>
 									{% endfor %}
 									<!--end::Actions-->

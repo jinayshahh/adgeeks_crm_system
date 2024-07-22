@@ -1355,16 +1355,20 @@ def creator_task_timeline(file_name):
 def task_schedule(client_id):
     # creator's username
     session['client_id'] = client_id
-    creator_username = session.get('user_name')
-
-    # creator's data
-    mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
-    creator_details = mycur.fetchall()
-    conn.commit()
 
     # client's data
     mycur.execute(f"SELECT * FROM client_information where client_id = '{client_id}'")
     client_info = mycur.fetchall()
+    conn.commit()
+
+    # fetching the creator name
+    mycur.execute(f"SELECT creator_username FROM assign_admin WHERE client_username = '{client_info[0][3]}'")
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+
+    # creator's data
+    mycur.execute(f"SELECT * from creator_information where username = '{creator_username}'")
+    creator_details = mycur.fetchall()
     conn.commit()
 
     # work record
@@ -1809,6 +1813,11 @@ def view_calendar():
     return render_template("adgeeks_view_calendar.html", creator_details=creator_details)
 
 
+@app.route('/calendar_history')
+def calendar_history():
+    pass
+
+
 @app.route('/create_calendar/<client_username>')
 def create_calendar(client_username):
     # storing the creator username
@@ -1864,7 +1873,7 @@ def create_calendar(client_username):
         for review in calendar_data_raw:
             if review[2] != 'no':
                 calendar_data.append(review)
-        print(calendar_data)
+
     # this is yes when the client interacts with the calendar
     if calendar_status == 'yes':
         # to make sure to only give approval page when one of the two conditions are satisfied
@@ -1886,12 +1895,28 @@ def create_calendar(client_username):
 
 @app.route('/change_review', methods=['POST', 'GET'])
 def change_review():
+    # fetching task details
     task_id = request.form['task_id']
     task_description = request.form['calendar_event_description']
     task_start = request.form['calendar_event_start_date']
+
+    # updating data
     mycur.execute(f"UPDATE calendar_data SET description = '{task_description}', start = '{task_start}', "
                   f"client_review = 'no' where id = '{task_id}'")
     conn.commit()
+
+    # fetch the data
+    mycur.execute(f"SELECT * FROM calendar_data where id = '{task_id}'")
+    calendar_data = mycur.fetchall()
+    conn.commit()
+
+    # adding update to history
+    mycur.execute("INSERT INTO calendar_history(calendar_history_title, "
+                  "calendar_history_description, calendar_history_start, calendar_history_creator_username, "
+                  f"calendar_history_client_username, calendar_history_info) VALUES ('{calendar_data[0][1]}', "
+                  f"'{calendar_data[0][2]}', '{calendar_data[0][3]}', '{calendar_data[0][4]}', '{calendar_data[0][5]}', 'Updated')")
+    conn.commit()
+
     client_username = session.get('client_username')
     return redirect(url_for('create_calendar', client_username=client_username))
 
@@ -1951,35 +1976,81 @@ def get_events():
 
 @app.route('/creation_events', methods=['POST'])
 def add_event():
+    # fetching the data for event
     data = request.get_json()
+
+    # fetching the creator's username
     client_username = session.get('client_username')
+
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
+
+    # inserting data in calendar_data
     mycur.execute("INSERT INTO calendar_data (title, description, start, client_username"
                   ", creator_username) VALUES (%s, %s, %s, %s, %s)", (data['title'], data['description'],
                                                                       data['start'], client_username, creator_username))
     conn.commit()
+
+    # inserting data in calendar_data
+    mycur.execute("INSERT INTO calendar_history (calendar_history_title, "
+                  "calendar_history_description, calendar_history_start, calendar_history_creator_username, "
+                  "calendar_history_client_username) VALUES (%s, %s, %s, %s, %s)",
+                  (data['title'], data['description'], data['start'], client_username, creator_username))
+    conn.commit()
+
     return jsonify({'message': 'Event added successfully'}), 201
 
 
 @app.route('/edit_events', methods=['PUT'])
 def update_event():
+    # fetching data
     data = request.get_json()
+
+    # updating data
     mycur.execute("""
         UPDATE calendar_data
         SET title=%s, description=%s, start=%s
         WHERE id=%s
     """, (data['title'], data['description'], data['start'], data['id']))
     conn.commit()
+
+    # fetch the data
+    mycur.execute(f"SELECT * FROM calendar_data where id = '{data['id']}'")
+    calendar_data = mycur.fetchall()
+    conn.commit()
+
+    # adding update to history
+    mycur.execute("INSERT INTO calendar_history(calendar_history_title, "
+                  "calendar_history_description, calendar_history_start, calendar_history_creator_username, "
+                  f"calendar_history_client_username, calendar_history_info) VALUES ('{data['title']}', '{data['description']}', "
+                  f"'{data['start']}', '{calendar_data[0][4]}', '{calendar_data[0][5]}', 'Event updated by {calendar_data[0][4]}')")
+    conn.commit()
+
     return jsonify({'message': 'Event updated successfully'})
 
 
 @app.route('/delete_events', methods=['PUT'])
 def delete_event():
+    # fetching data
     data = request.get_json()
+
+    # deleting the data
     mycur.execute("DELETE FROM calendar_data WHERE id=%s", (data['id'],))
     conn.commit()
+
+    # fetch the data
+    mycur.execute(f"SELECT * FROM calendar_data where id = '{data['id']}'")
+    calendar_data = mycur.fetchall()
+    conn.commit()
+
+    # adding update to history
+    mycur.execute("INSERT INTO calendar_history(calendar_history_title, "
+                  "calendar_history_description, calendar_history_start, calendar_history_creator_username, "
+                  f"calendar_history_client_username, calendar_history_info) VALUES ('{calendar_data[0][1]}', "
+                  f"'{calendar_data[0][2]}', '{calendar_data[0][3]}', '{calendar_data[0][4]}', '{calendar_data[0][4]}', 'Deleted This Event')")
+    conn.commit()
+
     return jsonify({'message': 'Event deleted successfully'})
 
 
@@ -2255,12 +2326,22 @@ def calendar_review():
     mycur.execute(f"UPDATE calendar_data SET client_review = '{event_review}' where id = '{event_id}'")
     conn.commit()
 
+    # fetch the data
+    mycur.execute(f"SELECT * FROM calendar_data where id = '{event_id}'")
+    calendar_data = mycur.fetchall()
+    conn.commit()
+
+    # adding update to history
+    mycur.execute("INSERT INTO calendar_history(calendar_history_title, "
+                  "calendar_history_description, calendar_history_start, calendar_history_creator_username, "
+                  f"calendar_history_client_username, calendar_history_info) VALUES ('{calendar_data[0][1]}', 'Review: {event_review}', "
+                  f"'{calendar_data[0][3]}', '{calendar_data[0][4]}', '{calendar_data[0][5]}', 'Review given by {calendar_data[0][5]}')")
+    conn.commit()
+
     # to fetch the usernames of client and creator
     mycur.execute(f"select client_username, creator_username from calendar_data where id = '{event_id}'")
     usernames = mycur.fetchall()
     conn.commit()
-
-    print(usernames)
 
     # in order to show the "send the review" button
     mycur.execute(f"UPDATE work_record SET calendar_review = 'out' where client_username = '{usernames[0][0]}' and "
