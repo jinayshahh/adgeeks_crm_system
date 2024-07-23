@@ -1810,12 +1810,42 @@ def view_calendar():
     mycur.execute(f"SELECT * from client_information where username = '{client_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
+
+    # fetching creator username
+    mycur.execute(f"SELECT creator_username from assign_admin where client_username = '{client_username}'")
+    creator_username = mycur.fetchone()[0]
+    conn.commit()
+
+    # storing the creator's username
+    session['creator_username'] = creator_username
+
     return render_template("adgeeks_view_calendar.html", creator_details=creator_details)
 
 
 @app.route('/calendar_history')
 def calendar_history():
-    pass
+    # fetching the usernames
+    creator_username = session.get('creator_username')
+    client_username = session.get('client_username')
+
+    print(creator_username, client_username)
+
+    # data for the sidebar
+    mycur.execute(
+        f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{creator_username}'")
+    creator_details = mycur.fetchone()
+    conn.commit()
+
+    # fetching the history
+    mycur.execute(f"SELECT * FROM calendar_history where calendar_history_creator_username = '{creator_username}' "
+                  f"and calendar_history_client_username = '{client_username}'")
+    calendar_history = mycur.fetchall()
+    conn.commit()
+
+    print(type(calendar_history[0][3]))
+
+    return render_template("adgeeks_calendar_history.html", creator_details=creator_details,
+                           calendar_history=calendar_history)
 
 
 @app.route('/create_calendar/<client_username>')
