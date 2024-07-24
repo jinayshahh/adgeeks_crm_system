@@ -83,7 +83,7 @@ License: For each use you must have a valid license purchased only from above li
 									<!--begin:Menu item-->
 									<div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
 										<!--begin:Menu link-->
-											<span class="menu-title">Admin</span>
+											<span class="menu-title">Dashboard</span>
 										<!--end:Menu link-->
 									</div>
 									<!--end:Menu item-->
@@ -146,7 +146,7 @@ License: For each use you must have a valid license purchased only from above li
 												</span>
 												<!--end::Svg Icon-->
 											</span>
-											<span class="menu-title">Dashboards</span>
+											<span class="menu-title">Dashboard</span>
 										</a>
 										<!--end:Menu link-->
 									</div>
@@ -195,9 +195,11 @@ License: For each use you must have a valid license purchased only from above li
 														<span class="bullet bullet-dot"></span>
 													</span>
 													<span class="menu-title">{{client[0][1]}}</span>
+													{% if client[0][30] == 'yes' %}
 													<span class="menu-badge">
-														<span class="badge badge-success">3</span>
+														<span class="badge badge-success">-></span>
 													</span>
+													{% endif %}
 												</a>
 												<!--end:Menu link-->
 											</div>
@@ -241,9 +243,11 @@ License: For each use you must have a valid license purchased only from above li
 												<!--end::Svg Icon-->
 											</span>
 											<span class="menu-title">Reviews</span>
+											{% if creator[12] == 'yes' %}
 											<span class="menu-badge">
-												<span class="badge badge-success">3</span>
+												<span class="badge badge-success">-></span>
 											</span>
+											{% endif %}
 										</a>
 										<!--end:Menu link-->
 									</div>
@@ -402,11 +406,11 @@ License: For each use you must have a valid license purchased only from above li
 																			</svg>
 																		</span>
 																		<!--end::Svg Icon-->
-																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="32" data-kt-countup-prefix="₹">0</div>
+																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="32">0</div>
 																	</div>
 																	<!--end::Number-->
 																	<!--begin::Label-->
-																	<div class="fw-semibold fs-6 text-gray-400">Balance</div>
+																	<div class="fw-semibold fs-6 text-gray-400">Clients</div>
 																	<!--end::Label-->
 																</div>
 																<!--end::Stat-->
@@ -422,11 +426,11 @@ License: For each use you must have a valid license purchased only from above li
 																			</svg>
 																		</span>
 																		<!--end::Svg Icon-->
-																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="2" data-kt-countup-prefix="₹">0</div>
+																		<div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="21">0</div>
 																	</div>
 																	<!--end::Number-->
 																	<!--begin::Label-->
-																	<div class="fw-semibold fs-6 text-gray-400">Total Winnings</div>
+																	<div class="fw-semibold fs-6 text-gray-400">Completed Projects</div>
 																	<!--end::Label-->
 																</div>
 																<!--end::Stat-->
@@ -442,11 +446,11 @@ License: For each use you must have a valid license purchased only from above li
 																			</svg>
 																		</span>
 																		<!--end::Svg Icon-->
-																		<div class="fw-bold fs-2" data-kt-countup="true" data-kt-countup-value="4" data-kt-countup-prefix="₹">0</div>
+																		<div class="fw-bold fs-2" data-kt-countup="true" data-kt-countup-value="14">0</div>
 																	</div>
 																	<!--end::Number-->
 																	<!--begin::Label-->
-																	<div class="fw-semibold fs-6 text-gray-400">Total Losses</div>
+																	<div class="fw-semibold fs-6 text-gray-400">Pending projects</div>
 																	<!--end::Label-->
 																</div>
 																<!--end::Stat-->
@@ -454,17 +458,17 @@ License: For each use you must have a valid license purchased only from above li
 															<!--end::Stats-->
 														</div>
 														<!--end::Wrapper-->
-														<!--begin::Progress-->
-														<div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
-															<div class="d-flex justify-content-between w-100 mt-auto mb-2">
-																<span class="fw-semibold fs-6 text-gray-400">Profile Compleation</span>
-																<span class="fw-bold fs-6">50%</span>
-															</div>
-															<div class="h-5px mx-3 w-100 bg-light mb-3">
-																<div class="bg-success rounded h-5px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-															</div>
-														</div>
-														<!--end::Progress-->
+<!--														&lt;!&ndash;begin::Progress&ndash;&gt;-->
+<!--														<div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">-->
+<!--															<div class="d-flex justify-content-between w-100 mt-auto mb-2">-->
+<!--																<span class="fw-semibold fs-6 text-gray-400">Profile Compleation</span>-->
+<!--																<span class="fw-bold fs-6">50%</span>-->
+<!--															</div>-->
+<!--															<div class="h-5px mx-3 w-100 bg-light mb-3">-->
+<!--																<div class="bg-success rounded h-5px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>-->
+<!--															</div>-->
+<!--														</div>-->
+<!--														&lt;!&ndash;end::Progress&ndash;&gt;-->
 													</div>
 													<!--end::Stats-->
 												</div>
@@ -488,21 +492,21 @@ License: For each use you must have a valid license purchased only from above li
 <!--													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_worksection">Work</a>-->
 <!--												</li>-->
 <!--												&lt;!&ndash;end::Nav item&ndash;&gt;-->
-												<!--begin::Nav item-->
-												<li class="nav-item mt-2">
-													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_performancesection">performance marketing</a>
-												</li>
-												<!--end::Nav item-->
-												<!--begin::Nav item-->
-												<li class="nav-item mt-2">
-													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_creativesection">Creatives</a>
-												</li>
-												<!--end::Nav item-->
-												<!--begin::Nav item-->
-												<li class="nav-item mt-2">
-													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_strategysection">Strategies</a>
-												</li>
-												<!--end::Nav item-->
+<!--												&lt;!&ndash;begin::Nav item&ndash;&gt;-->
+<!--												<li class="nav-item mt-2">-->
+<!--													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_performancesection">performance marketing</a>-->
+<!--												</li>-->
+<!--												&lt;!&ndash;end::Nav item&ndash;&gt;-->
+<!--												&lt;!&ndash;begin::Nav item&ndash;&gt;-->
+<!--												<li class="nav-item mt-2">-->
+<!--													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_creativesection">Creatives</a>-->
+<!--												</li>-->
+<!--												&lt;!&ndash;end::Nav item&ndash;&gt;-->
+<!--												&lt;!&ndash;begin::Nav item&ndash;&gt;-->
+<!--												<li class="nav-item mt-2">-->
+<!--													<a class="nav-link text-active-primary ms-0 me-10 py-5" href="/admin_creator_details_strategysection">Strategies</a>-->
+<!--												</li>-->
+<!--												&lt;!&ndash;end::Nav item&ndash;&gt;-->
 											</ul>
 											<!--begin::Navs-->
 										</div>

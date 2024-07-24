@@ -330,7 +330,18 @@ def password_changed():
 #
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template("adgeeks_admin_dashboard.html")
+    # fetching creator's data
+    mycur.execute("select creator_id from creator_information")
+    creator_id = mycur.fetchall()
+    conn.commit()
+    print(creator_id)
+
+    # fetching client's data
+    mycur.execute("select client_id from client_information")
+    client_id = mycur.fetchall()
+    conn.commit()
+    print(client_id)
+    return render_template("adgeeks_admin_dashboard.html", creators=creator_id, clients=client_id)
 
 
 @app.route('/admin_target_section_individual/<creator_username>')
@@ -2026,7 +2037,7 @@ def add_event():
     mycur.execute("INSERT INTO calendar_history (calendar_history_title, "
                   "calendar_history_description, calendar_history_start, calendar_history_creator_username, "
                   "calendar_history_client_username) VALUES (%s, %s, %s, %s, %s)",
-                  (data['title'], data['description'], data['start'], client_username, creator_username))
+                  (data['title'], data['description'], data['start'], creator_username, client_username))
     conn.commit()
 
     return jsonify({'message': 'Event added successfully'}), 201

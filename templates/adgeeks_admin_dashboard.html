@@ -196,6 +196,11 @@ License: For each use you must have a valid license purchased only from above li
 												<!--end::Svg Icon-->
 											</span>
 											<span class="menu-title">My clients</span>
+											{% if clients %}
+											<span class="menu-badge">
+												<span class="badge badge-success">{{clients | length }}</span>
+											</span>
+											{% endif %}
 										</a>
 										<!--end:Menu link-->
 									</div>
@@ -203,7 +208,7 @@ License: For each use you must have a valid license purchased only from above li
 									<!--begin:Menu item-->
 									<div class="menu-item">
 										<!--begin:Menu link-->
-										<a class="menu-link" href="/admin_creator_panel" target="blank">
+										<a class="menu-link" href="/admin_creator_panel">
 											<span class="menu-icon">
 												<!--begin::Svg Icon | path: icons/duotune/abstract/abs027.svg-->
 												<span class="svg-icon svg-icon-2">
@@ -215,9 +220,11 @@ License: For each use you must have a valid license purchased only from above li
 												<!--end::Svg Icon-->
 											</span>
 											<span class="menu-title">My creators</span>
+											{% if creators %}
 											<span class="menu-badge">
-												<span class="badge badge-success">3</span>
+												<span class="badge badge-success">{{creators | length }}</span>
 											</span>
+											{% endif %}
 										</a>
 										<!--end:Menu link-->
 									</div>
