@@ -117,22 +117,23 @@ month_final = {}
 
 def make_folder(username):
     mycur.execute(
-        f"select username, months, start_date, end_date from client_information where username = '{username}'")
+        f"select username, months, start_date, end_date, services from client_information where username = '{username}'")
     client_details = mycur.fetchall()
     conn.commit()
     month_service = client_details[0][1]
-    # month_start = client_details[0][1]
-    # formatted_start_date = month_start.strftime("%Y-%m-%d")
-    # month_end = client_details[0][2]
-    # formatted_end_date = month_end.strftime("%Y-%m-%d")
-    # print(formatted_start_date, formatted_end_date)
-    for i in range(1, month_service + 1):
-        month_raw[i] = os.path.join(app.config['UPLOAD_TASK'], f"{client_details[0][0]} Raw month {i}")
-        if not os.path.exists(month_raw[i]):
-            os.makedirs(month_raw[i])
-        month_final[i] = os.path.join(app.config['UPLOAD_TASK'], f"{client_details[0][0]} Final month {i}")
-        if not os.path.exists(month_final[i]):
-            os.makedirs(month_final[i])
+
+    # Assuming services is a string that looks like "Performance marketing, Creatives, Strategy"
+    services = client_details[0][4]
+
+    # Check if "Creatives" is in the services string
+    if "Creatives" in services:
+        for i in range(1, month_service + 1):
+            month_raw[i] = os.path.join(app.config['UPLOAD_TASK'], f"{client_details[0][0]} Raw month {i}")
+            if not os.path.exists(month_raw[i]):
+                os.makedirs(month_raw[i])
+            month_final[i] = os.path.join(app.config['UPLOAD_TASK'], f"{client_details[0][0]} Final month {i}")
+            if not os.path.exists(month_final[i]):
+                os.makedirs(month_final[i])
     return
 
 
