@@ -260,6 +260,11 @@ License: For each use you must have a valid license purchased only from above li
 						<!--end::sidebar menu-->
 						<!--begin::Footer-->
 						<div class="app-sidebar-footer flex-column-auto pt-2 pb-6 px-6" id="kt_app_sidebar_footer">
+							{% if admin_login %}
+							<a href="/admin_dashboard" class="btn btn-flex flex-center btn-success overflow-hidden text-nowrap px-0 h-40px w-100" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click" title="This will take you back to the admin controls">
+								<span class="btn-label">Log in as admin</span>
+							</a>
+							{% else %}
 							<a href="https://preview.keenthemes.com/html/metronic/docs" class="btn btn-flex flex-center btn-custom btn-primary overflow-hidden text-nowrap px-0 h-40px w-100" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click" title="200+ in-house components and 3rd-party plugins">
 								<span class="btn-label">Log out</span>
 								<!--begin::Svg Icon | path: icons/duotune/general/gen005.svg-->
@@ -274,6 +279,7 @@ License: For each use you must have a valid license purchased only from above li
 								</span>
 								<!--end::Svg Icon-->
 							</a>
+							{% endif %}
 						</div>
 						<!--end::Footer-->
 					</div>

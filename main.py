@@ -27,6 +27,8 @@ SCOPES = ['https://www.googleapis.com/auth/drive']
 SERVICE_ACCOUNT_FILES = 'service_account.json'
 PARENT_FOLDER_ID = "1oD3gUD2PYT5ZL5D74r7cezh5Sz8IyIW7"
 
+admin_login = False
+
 
 def authenticate():
     creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILES, scopes=SCOPES)
@@ -221,6 +223,7 @@ def tester():
 #
 @app.route('/', methods=['GET', 'POST'])
 def log_in():
+    global admin_login
     error = None
     if request.method == 'POST':
         input_login_username = request.form['Username']
@@ -231,6 +234,7 @@ def log_in():
         if user_password:
             if user_password[0][3] == input_login_password:
                 if user_password[0][4] == "Admin":
+                    admin_login = True
                     return redirect("/admin_dashboard")
                 elif user_password[0][4] == "client":
                     return redirect(url_for('client_dashboard', user_name=input_login_username))
@@ -331,18 +335,22 @@ def password_changed():
 #
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    # fetching creator's data
-    mycur.execute("select creator_id from creator_information")
-    creator_id = mycur.fetchall()
-    conn.commit()
-    print(creator_id)
+    # just to make sure the credentials are correct
+    if admin_login:
+        # fetching creator's data
+        mycur.execute("select creator_id from creator_information")
+        creator_id = mycur.fetchall()
+        conn.commit()
+        print(creator_id)
 
-    # fetching client's data
-    mycur.execute("select client_id from client_information")
-    client_id = mycur.fetchall()
-    conn.commit()
-    print(client_id)
-    return render_template("adgeeks_admin_dashboard.html", creators=creator_id, clients=client_id)
+        # fetching client's data
+        mycur.execute("select client_id from client_information")
+        client_id = mycur.fetchall()
+        conn.commit()
+        print(client_id)
+        return render_template("adgeeks_admin_dashboard.html", creators=creator_id, clients=client_id)
+    else:
+        return redirect("/")
 
 
 @app.route('/admin_target_section_individual/<creator_username>')
@@ -1248,6 +1256,13 @@ def roll_out(folder_name):
 #
 #
 
+@app.route('/creator_dashboard_admin/<user_name>')
+def admin_switch(user_name):
+    global admin_login
+    admin_login = True
+    return redirect(url_for('creator_dashboard', user_name=user_name))
+
+
 @app.route('/creator_dashboard/<user_name>')
 def creator_dashboard(user_name):
     session['user_name'] = user_name
@@ -1273,7 +1288,7 @@ def creator_dashboard(user_name):
                     client_info_list.append(client_info)
                     print(client_info_list)
             return render_template("adgeeks_creator_dashboard.html", creator_details=creator_details,
-                                   client_info_list=client_info_list)
+                                   client_info_list=client_info_list, admin_login=admin_login)
     else:
         flash('creator not found!', 'error')
         return redirect(url_for('log_in'))
