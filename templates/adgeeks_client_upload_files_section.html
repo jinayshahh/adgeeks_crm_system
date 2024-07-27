@@ -482,6 +482,7 @@ License: For each use you must have a valid license purchased only from above li
 									</div>
 									<!--end::Toolbar-->
 									{% for creator in creator_details %}
+									{% if creator[1] %}
 									<!--begin::Card-->
 									<div class="card card-flush">
 										<!--begin::Card header-->
@@ -715,6 +716,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--end::Card body-->
 									</div>
 									<!--end::Card-->
+									{% endif %}
 									{% endfor %}
 									<!--begin::Upload template-->
 									<table class="d-none">

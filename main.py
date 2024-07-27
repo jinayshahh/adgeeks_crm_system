@@ -160,7 +160,6 @@ def select_folder(username):
     if 0 < current_month <= month_service:
         directory_path_folder = f"static/work/{client_details[0][0]} Raw month {current_month}"
         folder_name = f"{client_details[0][0]} Raw month {current_month}"
-        print(directory_path_folder, folder_name)
         return directory_path_folder, folder_name
     else:
         print("Current date is not within the service period.")
@@ -1226,8 +1225,7 @@ def admin_approve_task(file_name):
 
 @app.route('/roll_out/<folder_name>')
 def roll_out(folder_name):
-    print("run")
-    upload_directory_to_drive(f'static/work/{folder_name}', PARENT_FOLDER_ID, folder_name)
+    # upload_directory_to_drive(f'static/work/{folder_name}', PARENT_FOLDER_ID, folder_name)
     mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
     username_list = mycur.fetchall()
     conn.commit()
@@ -1412,7 +1410,6 @@ def task_schedule(client_id):
     if work_record[6] == 'approved':
         # formatting the record
         work_record = [work_record]
-        print(work_record)
 
         start_date = client_info[0][25]
 
@@ -1448,7 +1445,7 @@ def task_schedule(client_id):
                                                         f" months")
             else:
                 service_target_strategy = f"we have to make a {client_info[0][20]} for {client_info[0][3]}"
-        print("this is it")
+
         return render_template("adgeeks_task_schedule.html", creator_details=creator_details,
                                client_info=client_info, work_record=work_record,
                                service_target_creatives=service_target_creatives, folder_name=folder_name,
@@ -1514,11 +1511,10 @@ def task_folders():
     return render_template("adgeeks_task_folders.html", creator_details=creator_details)
 
 
-@app.route('/upload_files_section/<folder_name>')
-def upload_files_section(folder_name):
+@app.route('/upload_files_section/<service_name>')
+def upload_files_section(service_name):
     # fetching the folder name and the usernames
-    # folder_name = session.get('folder_name')
-    print(folder_name)
+    folder_name = session.get('folder_name')
     client_username = session.get('client_username')
     creator_username = session.get('user_name')
 
@@ -1552,8 +1548,6 @@ def upload_files_section(folder_name):
         raw_data = mycur.fetchall()
         conn.commit()
 
-        print(raw_data)
-
         # making a list
         merged_data = defaultdict(list)
 
@@ -1569,8 +1563,6 @@ def upload_files_section(folder_name):
                     if item[i] is not None:
                         combined[i] = item[i]  # Replace with non-None values
             final_data.append(tuple(combined))
-
-        print(final_data)
 
         # to get the work approved
         mycur.execute(f"select detail_id from work_details where admin_approve = 'yes' and "
@@ -1601,7 +1593,6 @@ def upload_files_section(folder_name):
                     'uploaded_work': None
                 }
                 for work in final_data:
-                    print(file)
                     if work[1] == file:
                         if work[14] == 'yes':
                             print("1")
@@ -1628,7 +1619,7 @@ def upload_files_section(folder_name):
                             file_info['client_review'] = work[6]
                             break
                 files_with_details.append(file_info)
-                print(files_with_details)
+                # print(files_with_details)
         return render_template("adgeeks_upload_files_section.html", creator_details=work_record,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work, total_uploaded=total_uploaded,
@@ -1666,8 +1657,7 @@ def upload_details(file_name):
                   f'and client_username = "{client_username}" and detail_id < "{last_id}" and file_name = "{file_name}"')
     conn.commit()
     folder_name = session.get('folder_name')
-    print(folder_name)
-    return redirect(url_for('upload_files_section', folder_name=folder_name))
+    return redirect(url_for('upload_files_section', service_name='Creatives'))
 
 
 @app.route('/upload_task', methods=['POST'])
@@ -1730,9 +1720,7 @@ def submit_task(client_username):
                   f'"{client_form_posts_creative_data}", story_count = "{client_form_story_creative_data}"'
                   f' where client_username = "{client_username}" and work_status != "Completed" ORDER BY work_id ASC LIMIT 1')
     conn.commit()
-    folder_name = session.get('folder_name')
-    print(folder_name)
-    return redirect(url_for('upload_files_section', folder_name=folder_name))
+    return redirect(url_for('upload_files_section', service_name='Creatives'))
 
 
 @app.route('/submit_task_review', methods=['POST'])
@@ -1753,7 +1741,7 @@ def submit_task_review_upload():
     mycur.execute(f"UPDATE work_details set status_detail = 'passive' where file_name = '{file_name}'")
     conn.commit()
     folder_name = session.get('folder_name')
-    return redirect(url_for('upload_files_section', folder_name=folder_name))
+    return redirect(url_for('upload_files_section', service_name='Creatives'))
 
 
 @app.route('/work_upload_details/<client_username>')
@@ -1781,7 +1769,7 @@ def delete_file(folder_name, file_name):
         flash('File successfully deleted!', 'success')
     except Exception as e:
         flash(str(e), 'error')
-    return redirect(url_for('upload_files_section', folder_name=folder_name))
+    return redirect(url_for('upload_files_section', service_name='Creatives'))
 
 
 @app.route('/rename_file/<folder_name>/<file_name>', methods=['POST'])
@@ -1814,8 +1802,8 @@ def uploaded_creator():
 
 @app.route('/work_over/<folder_name>', methods=['POST', 'GET'])
 def work_over(folder_name):
-    final_folder_name = folder_name.replace("Raw", "Final")
-    upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
+    # final_folder_name = folder_name.replace("Raw", "Final")
+    # upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
     mycur.execute(
         f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed' where title = '{folder_name}'")
     conn.commit()
@@ -2186,6 +2174,8 @@ def client_upload_files_section():
     creator_details = mycur.fetchall()
     conn.commit()
 
+    print(creator_details)
+
     if creator_details[0][25] == 'yes':
         folder_name = creator_details[0][1]
         files_fetched_check = fetch_files(folder_name)
@@ -2237,6 +2227,7 @@ def client_upload_files_section():
                         file_info['reviews'] = work[6]
                         break
             files_with_details.append(file_info)
+            print(files_with_details)
         return render_template("adgeeks_client_upload_files_section.html", creator_details=creator_details,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work,
@@ -2440,8 +2431,8 @@ def send_review():
 @app.route('/approve_calendar')
 def approve_calendar():
     client_username = session.get('client_username')
-    mycur.execute(f"UPDATE work_record SET calendar_status = no calendar_update = 'approved' where client_username = "
-                  f"'{client_username}' ORDER BY work_id ASC LIMIT 1")
+    mycur.execute(f"UPDATE work_record SET calendar_status = 'done', calendar_update = 'approved' where client_username = '{client_username}' "
+                  f"ORDER BY work_id ASC LIMIT 1")
     conn.commit()
     return redirect(url_for('client_upload_files_section'))
 
