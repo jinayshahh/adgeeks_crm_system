@@ -519,30 +519,30 @@ def admin_client_details_update_form(client_id):
             if client_form_payment_period:
                 client_form_payment_period_data = client_form_payment_period
             else:
-                client_form_payment_period_data = client[22]
+                client_form_payment_period_data = client[23]
             client_form_payment_amount = request.form['payment_amount']
             if client_form_payment_amount:
                 client_form_payment_amount_data = client_form_payment_amount
             else:
-                client_form_payment_amount_data = client[23]
+                client_form_payment_amount_data = client[24]
             client_form_start_date = request.form['start_date']
             if client_form_start_date:
                 client_form_start_date_data = client_form_start_date
             else:
-                client_form_start_date_data = client[24]
+                client_form_start_date_data = client[25]
             client_form_end_date = request.form['end_date']
             if client_form_end_date:
                 client_form_end_date_data = client_form_end_date
             else:
-                client_form_end_date_data = client[25]
+                client_form_end_date_data = client[26]
                 # Update client information in the database
             uploaded_file_path = request.form.get('uploaded_file_path', '')
             if uploaded_file_path:
-                delete_image(client[21])
+                delete_image(client[22])
                 uploaded_file_path_data = uploaded_file_path
             else:
-                uploaded_file_path_data = client[21]
-            print(uploaded_file_path_data)
+                uploaded_file_path_data = client[22]
+            print("this is a file path:", uploaded_file_path_data)
             mycur.execute("""
                     UPDATE client_information SET
                         full_name = %s,
