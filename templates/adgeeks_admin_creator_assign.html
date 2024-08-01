@@ -494,6 +494,7 @@ License: For each use you must have a valid license purchased only from above li
 														</thead>
 														<!--end::Table head-->
 														<!--begin::Table body-->
+														{% if service_match %}
 														{% for client in client_details %}
 														<tbody class="fw-semibold text-gray-600">
 															<!--begin::Table row-->
@@ -547,6 +548,7 @@ License: For each use you must have a valid license purchased only from above li
 															<!--end::Table row-->
 														</tbody>
 														{% endfor %}
+														{% endif %}
 														<!--end::Table body-->
 													</table>
 													<!--end::Table-->

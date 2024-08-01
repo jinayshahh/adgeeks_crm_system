@@ -242,7 +242,7 @@ def log_in():
                     return redirect(url_for('creator_dashboard', user_name=input_login_username))
             else:
                 error = "Incorrect credentials. Please try again."
-    return render_template("adgeeks_login.html", error=error)
+    return render_template('adgeeks_login.html', error=error)
 
 
 @app.route('/change_password_username', methods=['GET', 'POST'])
@@ -261,7 +261,6 @@ def change_password_username():
     return render_template("adgeeks_username.html", error=error)
 
 
-# Function to generate OTP
 def generate_otp():
     otp = ''.join(random.choices(string.digits, k=6))
     return otp
@@ -959,9 +958,9 @@ def admin_creator_details_work_review_section():
     return render_template("adgeeks_admin_creator_details_work_review_section.html")
 
 
-@app.route('/admin_creator_details_task_section')
-def admin_creator_details_task_section():
-    return render_template("adgeeks_admin_creator_details_task_section.html")
+@app.route('/admin_creator_details_task_section/<creator_id>')
+def admin_creator_details_task_section(creator_id):
+    return render_template("adgeeks_admin_creator_details_task_section.html", creator_id=creator_id)
 
 
 @app.route('/admin_creator_details_work_view_section')
@@ -1041,10 +1040,30 @@ def admin_creator_creation_form():
 
 @app.route('/admin_creator_assign/<int:creator_id>')
 def admin_creator_assign(creator_id):
+    # fetching the services of creator
+    mycur.execute(f"SELECT creator_type from creator_information where creator_id = '{creator_id}'")
+    creator_type = mycur.fetchone()
+    conn.commit()
+
+    print(creator_type)
+
     mycur.execute("SELECT * FROM adgeeks_crm_system.client_information")
     client_details = mycur.fetchall()
     conn.commit()
-    return render_template("adgeeks_admin_creator_assign.html", client_details=client_details, creator_id=creator_id)
+
+    service_match = False
+
+    for creator in creator_type:
+        services = client_details[0][10]  # Assuming this is the string "Creatives, Strategy"
+        services_list = services.split(", ")
+        for service in services_list:
+            if creator == service:
+                print("yes")
+                service_match = True
+            else:
+                print("no")
+    return render_template("adgeeks_admin_creator_assign.html", client_details=client_details,
+                           creator_id=creator_id, service_match=service_match)
 
 
 @app.route('/admin_creator_assign_button/<int:creator_id>', methods=['POST'])
@@ -2431,8 +2450,9 @@ def send_review():
 @app.route('/approve_calendar')
 def approve_calendar():
     client_username = session.get('client_username')
-    mycur.execute(f"UPDATE work_record SET calendar_status = 'done', calendar_update = 'approved' where client_username = '{client_username}' "
-                  f"ORDER BY work_id ASC LIMIT 1")
+    mycur.execute(
+        f"UPDATE work_record SET calendar_status = 'done', calendar_update = 'approved' where client_username = '{client_username}' "
+        f"ORDER BY work_id ASC LIMIT 1")
     conn.commit()
     return redirect(url_for('client_upload_files_section'))
 
