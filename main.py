@@ -882,11 +882,17 @@ def admin_creator_details_update_form(creator_id):
             else:
                 creator_form_user_name_data = creator[2]
 
+            mycur.execute(f"UPDATE adgeeks_paswords SET username = '{creator_form_user_name_data}'")
+            conn.commit()
+
             creator_form_password = request.form['password']
             if creator_form_password:
                 creator_form_password_data = creator_form_password
             else:
                 creator_form_password_data = creator[3]
+
+            mycur.execute(f"UPDATE adgeeks_paswords SET password = '{creator_form_password_data}'")
+            conn.commit()
 
             creator_form_email = request.form['email']
             if creator_form_email:
@@ -917,6 +923,9 @@ def admin_creator_details_update_form(creator_id):
                 creator_form_creator_type_data = creator_form_creator_type
             else:
                 creator_form_creator_type_data = creator[8]
+
+            mycur.execute(f"UPDATE adgeeks_paswords SET access_level = '{creator_form_creator_type_data}'")
+            conn.commit()
 
             creator_form_access_level = request.form['access_level']
             if creator_form_access_level:
@@ -1045,8 +1054,6 @@ def admin_creator_assign(creator_id):
     creator_type = mycur.fetchone()
     conn.commit()
 
-    print(creator_type)
-
     mycur.execute("SELECT * FROM adgeeks_crm_system.client_information")
     client_details = mycur.fetchall()
     conn.commit()
@@ -1058,10 +1065,9 @@ def admin_creator_assign(creator_id):
         services_list = services.split(", ")
         for service in services_list:
             if creator == service:
-                print("yes")
                 service_match = True
             else:
-                print("no")
+                pass
     return render_template("adgeeks_admin_creator_assign.html", client_details=client_details,
                            creator_id=creator_id, service_match=service_match)
 
@@ -1073,14 +1079,11 @@ def admin_creator_assign_button(creator_id):
         action = data.get('action')
         client_id = data.get('client_id')
 
-        print(creator_id)
         mycur.execute(f"SELECT * FROM creator_information WHERE creator_id={creator_id}")
         creator_details = mycur.fetchone()
         conn.commit()
-        print(creator_details)
 
         if action == 'unassign':
-            print("assign")
             print("Client ID:", client_id)
 
             mycur.execute(f"SELECT * FROM adgeeks_crm_system.client_information WHERE client_id = {client_id}")
@@ -1289,16 +1292,19 @@ def creator_dashboard(user_name):
     conn.commit()
     if creator_details:
         creator_details = [creator_details]
+        print(creator_details)
         mycur.execute("SELECT assigned_client from creator_information where assigned_client = 'yes'")
         client_assigned = mycur.fetchall()
         conn.commit()
         if client_assigned:
+            print("check")
             mycur.execute(f"SELECT client_username, services from assign_admin where "
                           f"creator_username = '{creator_details[0][2]}'")
             assign_info = mycur.fetchall()
             conn.commit()
             client_info_list = []
             if assign_info:
+                print("check")
                 for assign in assign_info:
                     mycur.execute(f"SELECT * FROM client_information where username = '{assign[0]}'")
                     client_info = mycur.fetchall()
@@ -1314,6 +1320,8 @@ def creator_dashboard(user_name):
 
 @app.route('/creator_details_task_section/<int:creator_id>')
 def creator_details_task_section(creator_id):
+    # storing the creator_id
+    session['creator_id'] = creator_id
     mycur.execute(f"SELECT * FROM adgeeks_crm_system.creator_information WHERE creator_id = '{creator_id}'")
     creator_details = mycur.fetchone()
     conn.commit()
@@ -1394,6 +1402,50 @@ def creator_task_timeline(file_name):
     except:
         folder_name = session.get('folder_name')
         return render_template('error-500.html', folder_name=folder_name)
+
+
+@app.route('/project_details/<int:client_id>')
+def project_details(client_id):
+    # client's data
+    mycur.execute(f"SELECT * FROM client_information where client_id = '{client_id}'")
+    client_info = mycur.fetchall()
+    conn.commit()
+
+    client_username = client_info[0][1]
+
+    # checking is the creator has approved
+    mycur.execute(f"SELECT creator_approval FROM assign_admin where client_username = '{client_username}'")
+    creator_accepted = mycur.fetchone()[0]
+    conn.commit()
+    return render_template('project_details.html', client_info=client_info, creator_approval=creator_accepted)
+
+
+@app.route('/creator_approval/<client_username>')
+def creator_approval(client_username):
+    mycur.execute(f"Update assign_admin set creator_approval = 'yes' where client_username = '{client_username}'")
+    conn.commit()
+
+    mycur.execute(f"select client_id from client_information where username = '{client_username}'")
+    client_id = mycur.fetchone()[0]
+    conn.commit()
+    return redirect(url_for("project_details", client_id=client_id))
+
+
+@app.route('/creator_decline/<client_username>')
+def creator_decline(client_username):
+    # fetching creator_id from session
+    creator_id = session.get("creator_id")
+
+    mycur.execute(f"UPDATE client_information SET assigned_creator = 'no' WHERE username = '{client_username}'")
+    conn.commit()
+    mycur.execute(f"DELETE FROM assign_admin WHERE client_username = '{client_username}'")
+    conn.commit()
+    return redirect(url_for('creator_details_task_section', creator_id=creator_id))
+
+
+@app.route('/start_work/<client_id>')
+def start_work(client_id):
+    return redirect(url_for('task_schedule', client_id=client_id))
 
 
 @app.route('/task_schedule/<int:client_id>')
