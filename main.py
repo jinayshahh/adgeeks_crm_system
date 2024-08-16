@@ -2117,11 +2117,8 @@ def get_events():
 
 @app.route('/creation_events', methods=['POST'])
 def add_event():
-    print("yes yes this is yes")
     # fetching the data for event
     data = request.get_json()
-
-    print(data)
 
     # fetching the creator's username
     client_username = session.get('client_username')

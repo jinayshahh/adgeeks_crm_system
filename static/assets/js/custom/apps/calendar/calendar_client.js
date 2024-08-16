@@ -53,77 +53,70 @@ var KTAppCalendar = function () {
             .catch(error => console.error('Error fetching events:', error));
     }
 
+    // Function to initialize the calendar app
     var initCalendarApp = function () {
 
-        // Define variables
-        var calendarEl = document.getElementById('kt_calendar_app');
-        var todayDate = moment().startOf('day');
-        var YM = todayDate.format('YYYY-MM');
-        var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
-        var TODAY = todayDate.format('YYYY-MM-DD');
-        var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
-
-        // Init calendar --- more info: https://fullcalendar.io/docs/initialize-globals
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            initialDate: TODAY,
-            navLinks: true, // can click day/week names to navigate views
-            selectable: true,
-            selectMirror: true,
-
-
-            // Click event --- more info: https://fullcalendar.io/docs/eventClick
-            eventClick: function (arg) {
-            // Create the object to pass to formatArgs
-            const eventArgs = {
-                id: arg.event.id,
-                title: arg.event.title,
-                description: arg.event.extendedProps.description,
-                startStr: arg.event.startStr
-            };
-
-            // Log the eventArgs object
-            console.log('formatArgs called with:', arg.event.id);
-
-            // Call formatArgs with the eventArgs object
-            formatArgs(eventArgs);
-
-            // Send the event ID to the server
-            fetch('/log_event_id', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ event_id: arg.event.id })
-            })
+        // Fetch the initial date from the server
+        fetch('/get_initial_date')
             .then(response => response.json())
             .then(data => {
-                console.log('Event ID logged successfully:', data);
+                // Define variables
+                var calendarEl = document.getElementById('kt_calendar_app');
+                var todayDate = moment().startOf('day');
+                var YM = todayDate.format('YYYY-MM');
+                var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+                var TODAY = data.initial_date || todayDate.format('YYYY-MM-DD'); // Use the fetched date, or fallback to today
+                var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+
+                // Init calendar --- more info: https://fullcalendar.io/docs/initialize-globals
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    initialDate: TODAY, // Use the fetched date here
+                    navLinks: true, // can click day/week names to navigate views
+                    selectable: true,
+                    selectMirror: true,
+
+                    // Select dates action --- more info: https://fullcalendar.io/docs/select-callback
+                    select: function (arg) {
+                        formatArgs(arg);
+                        handleNewEvent();
+                    },
+
+                    // Click event --- more info: https://fullcalendar.io/docs/eventClick
+                    eventClick: function (arg) {
+                        formatArgs({
+                            id: arg.event.id,
+                            title: arg.event.title,
+                            description: arg.event.extendedProps.description,
+                            location: arg.event.extendedProps.location,
+                            startStr: arg.event.startStr,
+                            endStr: arg.event.endStr,
+                            allDay: arg.event.allDay
+                        });
+
+                        handleViewEvent();
+                    },
+
+                    editable: true,
+                    dayMaxEvents: true, // allow "more" link when too many events
+                    events: fetchEvents(),
+
+                    // Handle changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
+                    datesSet: function(){
+                        // do some stuff
+                    }
+                });
+
+                calendar.render();
             })
-            .catch(error => console.error('Error logging event ID:', error));
+            .catch(error => console.error('Error fetching initial date:', error));
+    };
 
-            // Handle the view event
-            handleViewEvent();
-        },
-
-
-            editable: true,
-            dayMaxEvents: true, // allow "more" link when too many events
-            events: fetchEvents(),
-
-            // Handle changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
-            datesSet: function(){
-                // do some stuff
-            }
-        });
-
-        calendar.render();
-    }
-
+    // Initialize the calendar app when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         initCalendarApp();
     });
