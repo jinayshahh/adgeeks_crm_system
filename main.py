@@ -1895,10 +1895,25 @@ def new_task(creator_id):
 #
 #
 #
-# trying calendar
+# calendar
 #
 #
 #
+
+@app.route('/get_initial_date', methods=['GET'])
+def get_initial_date():
+    client_username = session.get('client_username')
+    mycur.execute(f"SELECT start_date FROM client_information WHERE username = '{client_username}'")
+    result = mycur.fetchone()  # Fetch a single result
+    conn.commit()
+    if result:
+        # Assuming result[0] is a datetime object
+        return jsonify({"initial_date": result[0].strftime('%Y-%m-%d')})
+    else:
+        return jsonify({"initial_date": None})
+
+
+
 @app.route("/view_calendar")
 def view_calendar():
     client_username = session.get('client_username')

@@ -19,8 +19,6 @@ var KTAppCalendar = function () {
     var eventDescription;
     var startDatepicker;
     var startFlatpickr;
-    var startTimepicker;
-    var startTimeFlatpickr;
     var modal;
     var modalTitle;
     var form;
@@ -56,65 +54,74 @@ var KTAppCalendar = function () {
             .catch(error => console.error('Error fetching events:', error));
     }
 
+    // Function to initialize the calendar app
     var initCalendarApp = function () {
 
-        // Define variables
-        var calendarEl = document.getElementById('kt_calendar_app');
-        var todayDate = moment().startOf('day');
-        var YM = todayDate.format('YYYY-MM');
-        var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
-        var TODAY = todayDate.format('YYYY-MM-DD');
-        var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+        // Fetch the initial date from the server
+        fetch('/get_initial_date')
+            .then(response => response.json())
+            .then(data => {
+                // Define variables
+                var calendarEl = document.getElementById('kt_calendar_app');
+                var todayDate = moment().startOf('day');
+                var YM = todayDate.format('YYYY-MM');
+                var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+                var TODAY = data.initial_date || todayDate.format('YYYY-MM-DD'); // Use the fetched date, or fallback to today
+                var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
 
-        // Init calendar --- more info: https://fullcalendar.io/docs/initialize-globals
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            initialDate: TODAY,
-            navLinks: true, // can click day/week names to navigate views
-            selectable: true,
-            selectMirror: true,
+                // Init calendar --- more info: https://fullcalendar.io/docs/initialize-globals
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    initialDate: TODAY, // Use the fetched date here
+                    navLinks: true, // can click day/week names to navigate views
+                    selectable: true,
+                    selectMirror: true,
 
-            // Select dates action --- more info: https://fullcalendar.io/docs/select-callback
-            select: function (arg) {
-                formatArgs(arg);
-                handleNewEvent();
-            },
+                    // Select dates action --- more info: https://fullcalendar.io/docs/select-callback
+                    select: function (arg) {
+                        formatArgs(arg);
+                        handleNewEvent();
+                    },
 
-            // Click event --- more info: https://fullcalendar.io/docs/eventClick
-            eventClick: function (arg) {
-                formatArgs({
-                    id: arg.event.id,
-                    title: arg.event.title,
-                    description: arg.event.extendedProps.description,
-                    location: arg.event.extendedProps.location,
-                    startStr: arg.event.startStr,
-                    endStr: arg.event.endStr,
-                    allDay: arg.event.allDay
+                    // Click event --- more info: https://fullcalendar.io/docs/eventClick
+                    eventClick: function (arg) {
+                        formatArgs({
+                            id: arg.event.id,
+                            title: arg.event.title,
+                            description: arg.event.extendedProps.description,
+                            location: arg.event.extendedProps.location,
+                            startStr: arg.event.startStr,
+                            endStr: arg.event.endStr,
+                            allDay: arg.event.allDay
+                        });
+
+                        handleViewEvent();
+                    },
+
+                    editable: true,
+                    dayMaxEvents: true, // allow "more" link when too many events
+                    events: fetchEvents(),
+
+                    // Handle changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
+                    datesSet: function(){
+                        // do some stuff
+                    }
                 });
 
-                handleViewEvent();
-            },
+                calendar.render();
+            })
+            .catch(error => console.error('Error fetching initial date:', error));
+    };
 
-            editable: true,
-            dayMaxEvents: true, // allow "more" link when too many events
-            events: fetchEvents(),
-
-            // Handle changing calendar views --- more info: https://fullcalendar.io/docs/datesSet
-            datesSet: function(){
-                // do some stuff
-            }
-        });
-
-        calendar.render();
-    }
-
+    // Initialize the calendar app when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         initCalendarApp();
     });
+
 
 
     // Init validator
@@ -166,13 +173,6 @@ var KTAppCalendar = function () {
             dateFormat: "Y-m-d",
         });
 
-
-        startTimeFlatpickr = flatpickr(startTimepicker, {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-        });
-
     }
 
     // Handle add button
@@ -200,20 +200,6 @@ var KTAppCalendar = function () {
 
         // Select datepicker wrapper elements
         const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-
-        // Handle all day toggle
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        allDayToggle.addEventListener('click', e => {
-            if (e.target.checked) {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.add('d-none');
-                });
-            } else {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.remove('d-none');
-                });
-            }
-        });
 
         populateForm(data);
 
@@ -257,14 +243,11 @@ var KTAppCalendar = function () {
 
                                     // Detect if it is an all-day event
                                     let allDayEvent = false;
-                                    if (allDayToggle.checked) { allDayEvent = true; }
-                                    if (startTimeFlatpickr.selectedDates.length === 0) { allDayEvent = true; }
 
                                     // Merge date & time
                                     var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
                                     if (!allDayEvent) {
                                         const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
 
                                         startDateTime = startDate + 'T' + startTime;
                                     }
@@ -327,20 +310,6 @@ var KTAppCalendar = function () {
         // Select datepicker wrapper elements
         const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
 
-        // Handle all day toggle
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        allDayToggle.addEventListener('click', e => {
-            if (e.target.checked) {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.add('d-none');
-                });
-            } else {
-                datepickerWrappers.forEach(dw => {
-                    dw.classList.remove('d-none');
-                });
-            }
-        });
-
         populateForm(data);
 
         // Handle submit form
@@ -383,14 +352,11 @@ var KTAppCalendar = function () {
 
                                     // Detect if it is an all-day event
                                     let allDayEvent = false;
-                                    if (allDayToggle.checked) { allDayEvent = true; }
-                                    if (startTimeFlatpickr.selectedDates.length === 0) { allDayEvent = true; }
 
                                     // Merge date & time
                                     var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
                                     if (!allDayEvent) {
                                         const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
-                                        const startTime = moment(startTimeFlatpickr.selectedDates[0]).format('HH:mm:ss');
 
                                         startDateTime = startDate + 'T' + startTime;
                                     }
@@ -645,20 +611,6 @@ var KTAppCalendar = function () {
         // Handle null end dates
         const endDate = data.endDate ? data.endDate : moment(data.startDate).format();
 
-        const allDayToggle = form.querySelector('#kt_calendar_datepicker_allday');
-        const datepickerWrappers = form.querySelectorAll('[data-kt-calendar="datepicker"]');
-        if (data.allDay) {
-            allDayToggle.checked = true;
-            datepickerWrappers.forEach(dw => {
-                dw.classList.add('d-none');
-            });
-        } else {
-            startTimeFlatpickr.setDate(data.startDate, true, 'Y-m-d H:i');
-            allDayToggle.checked = false;
-            datepickerWrappers.forEach(dw => {
-                dw.classList.remove('d-none');
-            });
-        }
     }
 
     // Format FullCalendar reponses
@@ -686,7 +638,6 @@ var KTAppCalendar = function () {
             eventName = form.querySelector('[name="calendar_event_name"]');
             eventDescription = form.querySelector('[name="calendar_event_description"]');
             startDatepicker = form.querySelector('#kt_calendar_datepicker_start_date');
-            startTimepicker = form.querySelector('#kt_calendar_datepicker_start_time');
             addButton = document.querySelector('[data-kt-calendar="add"]');
             submitButton = form.querySelector('#kt_modal_add_event_submit');
             cancelButton = form.querySelector('#kt_modal_add_event_cancel');
