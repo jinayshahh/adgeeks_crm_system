@@ -243,13 +243,12 @@ var KTAppCalendar = function () {
 
                                     // Detect if it is an all-day event
                                     let allDayEvent = false;
-
                                     // Merge date & time
                                     var startDateTime = moment(startFlatpickr.selectedDates[0]).format();
                                     if (!allDayEvent) {
                                         const startDate = moment(startFlatpickr.selectedDates[0]).format('YYYY-MM-DD');
 
-                                        startDateTime = startDate + 'T' + startTime;
+                                        startDateTime = startDate;
                                     }
 
                                     // Add new event to calendar
