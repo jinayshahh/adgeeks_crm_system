@@ -88,18 +88,37 @@ var KTAppCalendar = function () {
 
                     // Click event --- more info: https://fullcalendar.io/docs/eventClick
                     eventClick: function (arg) {
-                        formatArgs({
-                            id: arg.event.id,
-                            title: arg.event.title,
-                            description: arg.event.extendedProps.description,
-                            location: arg.event.extendedProps.location,
-                            startStr: arg.event.startStr,
-                            endStr: arg.event.endStr,
-                            allDay: arg.event.allDay
-                        });
+                    // Create the object to pass to formatArgs
+                    const eventArgs = {
+                        id: arg.event.id,
+                        title: arg.event.title,
+                        description: arg.event.extendedProps.description,
+                        startStr: arg.event.startStr
+                    };
 
-                        handleViewEvent();
-                    },
+                    // Log the eventArgs object
+                    console.log('formatArgs called with:', arg.event.id);
+
+                    // Call formatArgs with the eventArgs object
+                    formatArgs(eventArgs);
+
+                    // Send the event ID to the server
+                    fetch('/log_event_id', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ event_id: arg.event.id })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Event ID logged successfully:', data);
+                    })
+                    .catch(error => console.error('Error logging event ID:', error));
+
+                    // Handle the view event
+                    handleViewEvent();
+                },
 
                     editable: true,
                     dayMaxEvents: true, // allow "more" link when too many events

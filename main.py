@@ -2496,6 +2496,7 @@ def calendar_review():
 
 @app.route("/log_event_id", methods=['POST'])
 def log_event_id():
+    print("this is /log_event_id")
     data = request.get_json()
     event_id = data.get('event_id')
     session['event_id'] = event_id
