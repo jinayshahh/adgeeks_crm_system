@@ -5042,6 +5042,70 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Toolbar container-->
 							</div>
 							<!--end::Toolbar-->
+							{% if calendar_review %}
+							<div class="app-container">
+								<!--begin::Tables widget 14-->
+								<div class="card card-flush h-md-100">
+									<!--begin::Header-->
+									<div class="card-header pt-7">
+										<!--begin::Title-->
+										<h3 class="card-title align-items-start flex-column">
+											<span class="card-label fw-bold text-gray-800">Reviews</span>
+										</h3>
+										<!--end::Title-->
+									</div>
+									<!--end::Header-->
+									<!--begin::Body-->
+									<div class="card-body pt-6">
+										<!--begin::Table container-->
+										<div class="table-responsive">
+											<!--begin::Table-->
+											<table class="table table-row-dashed align-middle gs-0 gy-3 my-0">
+												<!--begin::Table head-->
+												<thead>
+													<tr class="fs-7 fw-bold text-gray-400 border-bottom-0">
+														<th class="p-0 pb-3 text-start">Type</th>
+														<th class="p-0 pb-3 text-end pe-7">Description</th>
+														<th class="p-0 pb-3 text-end pe-7">Date</th>
+														<th class="p-0 pb-3 text-end pe-7">Review</th>
+													</tr>
+												</thead>
+												<!--end::Table head-->
+												<!--begin::Table body-->
+												<tbody>
+												{% for review in calendar_review %}
+													<tr>
+														<td>
+															<div class="d-flex align-items-center">
+																<div class="d-flex justify-content-start flex-column">
+																	<span class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6">{{review[0]}}</span>
+																</div>
+															</div>
+														</td>
+														<td class="text-end pe-0">
+															<span class="text-gray-600 fw-bold fs-6">{{review[1]}}</span>
+														</td>
+														<td class="text-end pe-0">
+															<span class="text-gray-600 fw-bold fs-6">{{ review[3].strftime('%Y/%m/%d') }}</span>
+														</td>
+														<td class="text-end pe-0">
+															<span class="text-gray-600 fw-bold fs-6">{{review[2]}}</span>
+														</td>
+													</tr>
+												{% endfor %}
+												</tbody>
+												<!--end::Table body-->
+											</table>
+										</div>
+										<!--end::Table-->
+									</div>
+
+									<!--end: Card Body-->
+								</div>
+								<!--end::Tables widget 14-->
+							</div>
+							{% endif %}
+							<br>
 							<!--begin::Content-->
 							<div id="kt_app_content" class="app-content flex-column-fluid">
 								<!--begin::Content container-->

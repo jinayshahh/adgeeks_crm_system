@@ -2414,8 +2414,8 @@ def client_calendar(client_username):
     conn.commit()
 
     # fetching data from work_record
-    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, title, "
-                  f"calendar_review, calendar_update FROM work_record where creator_username = '{creator_username}' "
+    mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, calendar_review, "
+                  f"title, calendar_update FROM work_record where creator_username = '{creator_username}' "
                   f"and client_username = '{client_username}' ORDER BY work_id ASC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
@@ -2431,28 +2431,44 @@ def client_calendar(client_username):
     session['folder_name'] = folder_name
 
     # fetching the review
-    calendar_review = work_record[6]
+    review_calendar = work_record[5]
 
-    print(calendar_review)
+    print(review_calendar)
 
     # to switch the button from approve to "send the review"
     send_client = True
 
-    if calendar_review == 'out':
+    if review_calendar == 'out':
         send_client = False
 
     # to fetch if creator has made changes
     calendar_update = work_record[7]
+    calendar_review_client = work_record[5]
+    print(calendar_review_client)
+
+    # this is for the review details given by the client
+    calendar_data = []
+    if calendar_review_client == 'out':
+        mycur.execute("select title, description, client_review, start, id from calendar_data where client_username = "
+                      f"'{client_username}' and client_review != 'None'")
+        calendar_data_raw = mycur.fetchall()
+        conn.commit()
+        print("this is the raw data", calendar_data_raw)
+        for review in calendar_data_raw:
+            if review[2] != 'no':
+                calendar_data.append(review)
 
     # if calendar_status == 'yes':
     #     return render_template('adgeeks_creator_calendar_approval.html', creator_username=creator_username)
     # else:
 
     # to open the approval page
-    if calendar_review == 'yes' and calendar_update != 'yes':
+    print("this is the calendar data:", calendar_data)
+    if review_calendar == 'yes' and calendar_update != 'yes':
         return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
     return render_template("adgeeks_client_calendar.html", creator_details=client_details,
-                           service_target_creatives=service_target_creatives, send_client=send_client)
+                           service_target_creatives=service_target_creatives, send_client=send_client,
+                           calendar_review=calendar_data)
 
 
 @app.route("/calendar_review", methods=['POST', 'GET'])
