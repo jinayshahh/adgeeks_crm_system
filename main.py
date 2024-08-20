@@ -140,10 +140,13 @@ def make_folder(username):
 
 
 def select_folder(username):
+    # fetching the client's information
     mycur.execute(
         f"select username, months, start_date, end_date, work_status from client_information where username = '{username}'")
     client_details = mycur.fetchall()
     conn.commit()
+
+    # tags to the info
     month_service = client_details[0][1]
     month_start = client_details[0][2]
     today_date_format = datetime.now()  # or datetime(2024, 6, 30) for testing with a specific date
@@ -1413,11 +1416,20 @@ def project_details(client_id):
 
     client_username = client_info[0][1]
 
-    # checking is the creator has approved
-    mycur.execute(f"SELECT creator_approval FROM assign_admin where client_username = '{client_username}'")
-    creator_accepted = mycur.fetchone()[0]
+    # checking if the calendar is approved
+    mycur.execute(f"SELECT calendar_update from work_record where client_username='{client_username}'")
+    calendar_approved = mycur.fetchall()
     conn.commit()
-    return render_template('project_details.html', client_info=client_info, creator_approval=creator_accepted)
+
+    for approval in calendar_approved:
+        if approval[0] == 'approved':
+            return redirect(url_for('start_work', client_id=client_id))
+    else:
+        # checking is the creator has approved
+        mycur.execute(f"SELECT creator_approval FROM assign_admin where client_username = '{client_username}'")
+        creator_accepted = mycur.fetchone()[0]
+        conn.commit()
+        return render_template('project_details.html', client_info=client_info, creator_approval=creator_accepted)
 
 
 @app.route('/creator_approval/<client_username>')
