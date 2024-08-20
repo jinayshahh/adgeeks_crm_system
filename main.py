@@ -149,11 +149,13 @@ def select_folder(username):
     # tags to the info
     month_service = client_details[0][1]
     month_start = client_details[0][2]
-    today_date_format = datetime.now()  # or datetime(2024, 6, 30) for testing with a specific date
+
+    # today_date_format = datetime.now()  # or datetime(2024, 6, 30) for testing with a specific date
+    today_date_format = datetime(2024, 9, 20)  # or datetime(2024, 6, 30) for testing with a specific date
+
     mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status = 'Completed'")
     no_folders = mycur.fetchall()
     conn.commit()
-    print(len(no_folders), "this")
     if len(no_folders) == 0:
         current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month
                          + 1)
@@ -1601,12 +1603,16 @@ def upload_files_section(service_name):
     client_username = session.get('client_username')
     creator_username = session.get('user_name')
 
+    print(folder_name, client_username, creator_username)
+
     # work record which is not completed yet
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and "
         f"client_username = '{client_username}' and work_status != 'Completed'")
     work_record = [mycur.fetchone()]
     conn.commit()
+
+    print(work_record, "this is the work record")
 
     # if all the content is uploaded
     if work_record[0][26] == 'yes':
