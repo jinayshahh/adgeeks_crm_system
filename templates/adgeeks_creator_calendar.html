@@ -5029,7 +5029,7 @@ License: For each use you must have a valid license purchased only from above li
 									<!--end::Page title-->
 									<!--begin::Actions-->
 									<div class="d-flex align-items-center gap-2 gap-lg-3">
-										{% if not calendar_review %}
+										{% if send_client and not calendar_review %}
 										<!--begin::Primary button-->
 										<a href="/send_client_btn" class="btn btn-sm fw-bold btn-success">send to client</a>
 										<!--end::Primary button-->

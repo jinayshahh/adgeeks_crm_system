@@ -13,6 +13,7 @@ from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload
 import pytz
+from dateutil.relativedelta import relativedelta
 
 # Set the timezone to Indian Standard Time
 indian_tz = pytz.timezone('Asia/Kolkata')
@@ -1345,7 +1346,6 @@ def creator_details_task_section(creator_id):
                         f" client_username = '{assign[0]}'")
                     status_work = mycur.fetchall()
                     conn.commit()
-                    print(status_work)
                     mycur.execute(
                         f"update client_information set work_status = '{status_work[0][0]}' where username = '{assign[0]}'")
                     conn.commit()
@@ -1353,7 +1353,7 @@ def creator_details_task_section(creator_id):
                     client_info = mycur.fetchall()
                     conn.commit()
                     client_info_list.append(client_info)
-            print(client_info_list)
+            print(client_info_list, "this is the list")
             return render_template("adgeeks_creator_details_task_section.html",
                                    creator_details=creator_details, creator_id=creator_id,
                                    todays_date=todays_date, client_info_list=client_info_list,
@@ -1417,19 +1417,34 @@ def project_details(client_id):
     conn.commit()
 
     client_username = client_info[0][1]
+    month_work = client_info[0][25]
 
-    # checking if the calendar is approved
-    mycur.execute(f"SELECT calendar_update from work_record where client_username='{client_username}'")
-    calendar_approved = mycur.fetchall()
+    # fetching the creator months on this project
+    mycur.execute(f'select creator_month from assign_admin where client_username = "{client_username}"')
+    creator_months = mycur.fetchall()[0][0]
     conn.commit()
 
-    for approval in calendar_approved:
-        if approval[0] == 'approved':
-            return redirect(url_for('start_work', client_id=client_id))
+    if creator_months < 1:
+        # checking if the calendar is approved
+        mycur.execute(f"SELECT calendar_update from work_record where client_username='{client_username}' and work_status "
+                      f"!= 'Completed'")
+        calendar_approved = mycur.fetchall()
+        conn.commit()
+
+        for approval in calendar_approved:
+            if approval[0] == 'approved':
+                return redirect(url_for('start_work', client_id=client_id))
+            else:
+                # checking is the creator has approved
+                mycur.execute(f"SELECT creator_approval FROM assign_admin where client_username = '{client_username}'")
+                creator_accepted = mycur.fetchone()[0]
+                conn.commit()
+                return render_template('project_details.html', client_info=client_info, creator_approval=creator_accepted)
     else:
-        # checking is the creator has approved
-        mycur.execute(f"SELECT creator_approval FROM assign_admin where client_username = '{client_username}'")
-        creator_accepted = mycur.fetchone()[0]
+        creator_accepted = 'yes'
+        month_ahead = month_work + relativedelta(months=1)
+        print(month_ahead)  # Output will be: 2024-10-01 00:00:00
+        mycur.execute(f"update client_information set start_date = '{month_ahead}' where client_id = '{client_id}'")
         conn.commit()
         return render_template('project_details.html', client_info=client_info, creator_approval=creator_accepted)
 
@@ -1891,22 +1906,48 @@ def uploaded_creator():
 
 @app.route('/work_over/<folder_name>', methods=['POST', 'GET'])
 def work_over(folder_name):
+    # uploading on drive
     # final_folder_name = folder_name.replace("Raw", "Final")
     # upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
+
+    # updating status to completed
     mycur.execute(
         f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed' where title = '{folder_name}'")
     conn.commit()
-    mycur.execute(f"select creator_username from work_record where title = '{folder_name}'")
+
+    # fetching usernames as well as id
+    mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()
     conn.commit()
+
     mycur.execute(f"select creator_id from creator_information where username = '{creator_name[0][0]}'")
     creator_id = mycur.fetchall()
     conn.commit()
+
+    # updating the calendar entries
+    mycur.execute(f"update calendar_data set status = 'yes' where client_username = '{creator_name[0][1]}'")
+    conn.commit()
+
     return redirect(url_for('creator_details_task_section', creator_id=creator_id[0][0]))
 
 
-@app.route('/new_task/<creator_id>', methods=['POST', 'GET'])
-def new_task(creator_id):
+@app.route('/new_task/<client_username>', methods=['POST', 'GET'])
+def new_task(client_username):
+    # fetching the details for month completed
+    mycur.execute(f"select creator_month, creator_username from assign_admin where client_username = '{client_username}'")
+    assign_details = mycur.fetchall()
+    conn.commit()
+
+    # fetching the creator id
+    mycur.execute(f"select creator_id from creator_information where username = '{assign_details[0][1]}'")
+    creator_id = mycur.fetchall()[0][0]
+    conn.commit()
+
+    # updating the month number
+    mycur.execute(f"UPDATE assign_admin set creator_month = '{assign_details[0][0] + 1}' where client_username = "
+                  f"'{client_username}'")
+    conn.commit()
+
     return render_template('adgeeks_new_task.html', creator_id=creator_id)
 
 
@@ -2006,9 +2047,12 @@ def create_calendar(client_username):
 
     # to check if there are any entries
     mycur.execute(
-        f"select id from calendar_data where client_username = '{client_username}' and creator_username = '{creator_username}'")
+        f"select id from calendar_data where client_username = '{client_username}' and creator_username = "
+        f"'{creator_username}' and status != 'yes'")
     calendar_entry = mycur.fetchall()
     conn.commit()
+
+    print(calendar_entry)
 
     # if there are no entries
     send_client = False
@@ -2016,6 +2060,8 @@ def create_calendar(client_username):
     # if there are entries
     if calendar_entry:
         send_client = True
+
+    print(send_client, "this is the status")
 
     # to fetch the data from sql
     calendar_status = work_record[4]
