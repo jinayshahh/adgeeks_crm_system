@@ -1530,6 +1530,8 @@ def task_schedule(client_id):
         # fetching the path and name of the folder
         directory_path, folder_name = select_folder(client_info[0][3])
 
+        print(directory_path, folder_name)
+
         # storing the folder and client username
         session['folder_name'] = folder_name
         session['client_username'] = client_info[0][3]
@@ -1948,6 +1950,10 @@ def new_task(client_username):
                   f"'{client_username}'")
     conn.commit()
 
+    # updating the month status in client_information
+    mycur.execute(f"update client_information set work_status = 'month {assign_details[0][0] + 1}' where username = "
+                  f"'{client_username}'")
+
     return render_template('adgeeks_new_task.html', creator_id=creator_id)
 
 
@@ -2052,16 +2058,12 @@ def create_calendar(client_username):
     calendar_entry = mycur.fetchall()
     conn.commit()
 
-    print(calendar_entry)
-
     # if there are no entries
     send_client = False
 
     # if there are entries
     if calendar_entry:
         send_client = True
-
-    print(send_client, "this is the status")
 
     # to fetch the data from sql
     calendar_status = work_record[4]
@@ -2082,7 +2084,7 @@ def create_calendar(client_username):
     # this is yes when the client interacts with the calendar
     if calendar_status == 'yes':
         # to make sure to only give approval page when one of the two conditions are satisfied
-        if not calendar_review_client or calendar_update_client == 'yes':
+        if calendar_review_client == 'no' or calendar_update_client == 'yes':
             # fetching the client id
             mycur.execute(f"select creator_id from creator_information where username = '{creator_username}'")
             creator_id = mycur.fetchone()[0]
@@ -2136,14 +2138,17 @@ def send_client_btn():
 
     # fetching the review
     mycur.execute(f"select calendar_review from work_record where client_username = '{client_username}' and "
-                  f"creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+                  f"creator_username = '{creator_username}' and calendar_update != 'approved' ORDER BY work_id ASC LIMIT 1")
     calendar_review_status = mycur.fetchone()[0]
     conn.commit()
+
+    print(calendar_review_status, "this is the calendar_review_status")
 
     if calendar_review_status == 'yes':
         # changing the review to no and update to yes
         mycur.execute(f"update work_record set calendar_update = 'yes', calendar_review = 'no' where client_username = "
-                      f"'{client_username}' and creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+                      f"'{client_username}' and creator_username = '{creator_username}' and calendar_update != 'approved'"
+                      f" ORDER BY work_id ASC LIMIT 1")
         conn.commit()
 
         # removing the review from the calendar
@@ -2153,7 +2158,8 @@ def send_client_btn():
         return redirect(url_for('create_calendar', client_username=client_username))
     else:
         mycur.execute(f"update work_record set calendar_status = 'yes' where client_username = "
-                      f"'{client_username}' and creator_username = '{creator_username}' ORDER BY work_id ASC LIMIT 1")
+                      f"'{client_username}' and creator_username = '{creator_username}' and calendar_update != 'approved'"
+                      f"  ORDER BY work_id ASC LIMIT 1")
         conn.commit()
         return redirect(url_for('create_calendar', client_username=client_username))
 
@@ -2314,13 +2320,18 @@ def client_dashboard(user_name):
 
 @app.route('/client_upload_files_section')
 def client_upload_files_section():
+    # fetching the client's username
     client_username = session.get('client_username')
+
+    # fetching creator's username
     mycur.execute(f'select creator_username from assign_admin where client_username = "{client_username}"')
     creator_username = mycur.fetchone()[0]
     conn.commit()
+
+    # fetching creator's details
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = "
-        f"'{client_username}'")
+        f"'{client_username}' and work_status != 'Completed'")
     creator_details = mycur.fetchall()
     conn.commit()
 
@@ -2599,7 +2610,8 @@ def send_review():
 def approve_calendar():
     client_username = session.get('client_username')
     mycur.execute(
-        f"UPDATE work_record SET calendar_status = 'done', calendar_update = 'approved' where client_username = '{client_username}' "
+        f"UPDATE work_record SET calendar_status = 'done', calendar_update = 'approved' where "
+        f"client_username = '{client_username}' and  calendar_update != 'approved'"
         f"ORDER BY work_id ASC LIMIT 1")
     conn.commit()
     return redirect(url_for('client_upload_files_section'))
