@@ -143,7 +143,7 @@ def make_folder(username):
 def select_folder(username):
     # fetching the client's information
     mycur.execute(
-        f"select username, months, start_date, end_date, work_status from client_information where username = '{username}'")
+        f"select username, months, current_month, end_date, work_status from client_information where username = '{username}'")
     client_details = mycur.fetchall()
     conn.commit()
 
@@ -154,9 +154,10 @@ def select_folder(username):
     # today_date_format = datetime.now()  # or datetime(2024, 6, 30) for testing with a specific date
     today_date_format = datetime(2024, 9, 20)  # or datetime(2024, 6, 30) for testing with a specific date
 
-    mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status = 'Completed'")
+    mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status != 'Completed'")
     no_folders = mycur.fetchall()
     conn.commit()
+
     if len(no_folders) == 0:
         current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month
                          + 1)
@@ -1444,7 +1445,8 @@ def project_details(client_id):
         creator_accepted = 'yes'
         month_ahead = month_work + relativedelta(months=1)
         print(month_ahead)  # Output will be: 2024-10-01 00:00:00
-        mycur.execute(f"update client_information set start_date = '{month_ahead}' where client_id = '{client_id}'")
+        mycur.execute(f"update client_information set current_month = '{month_ahead}', work_status = 'start' "
+                      f"where client_id = '{client_id}'")
         conn.commit()
         return render_template('project_details.html', client_info=client_info, creator_approval=creator_accepted)
 
@@ -1502,6 +1504,8 @@ def task_schedule(client_id):
                   f"'Completed'")
     work_record = mycur.fetchone()
     conn.commit()
+
+    print(work_record)
 
     # client's username
     client_username = client_info[0][3]
@@ -1968,7 +1972,7 @@ def new_task(client_username):
 @app.route('/get_initial_date', methods=['GET'])
 def get_initial_date():
     client_username = session.get('client_username')
-    mycur.execute(f"SELECT start_date FROM client_information WHERE username = '{client_username}'")
+    mycur.execute(f"SELECT current_month FROM client_information WHERE username = '{client_username}'")
     result = mycur.fetchone()  # Fetch a single result
     conn.commit()
     if result:
