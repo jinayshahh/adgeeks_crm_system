@@ -1975,6 +1975,7 @@ def get_initial_date():
     mycur.execute(f"SELECT current_month FROM client_information WHERE username = '{client_username}'")
     result = mycur.fetchone()  # Fetch a single result
     conn.commit()
+
     if result:
         # Assuming result[0] is a datetime object
         return jsonify({"initial_date": result[0].strftime('%Y-%m-%d')})
@@ -2041,7 +2042,7 @@ def create_calendar(client_username):
     # fetching work data
     mycur.execute(f"SELECT total_reels, total_posts, total_stories, client_username, calendar_status, calendar_review, "
                   f"calendar_update FROM work_record where creator_username = '{creator_username}' and client_username "
-                  f"= '{client_username}' ORDER BY work_id ASC LIMIT 1")
+                  f"= '{client_username}' and work_status != 'Completed' ORDER BY work_id ASC LIMIT 1")
     work_record = mycur.fetchone()
     conn.commit()
 
@@ -2161,7 +2162,7 @@ def send_client_btn():
         conn.commit()
         return redirect(url_for('create_calendar', client_username=client_username))
     else:
-        mycur.execute(f"update work_record set calendar_status = 'yes' where client_username = "
+        mycur.execute(f"update work_record set calendar_status = 'yes', calendar_update = 'yes' where client_username = "
                       f"'{client_username}' and creator_username = '{creator_username}' and calendar_update != 'approved'"
                       f"  ORDER BY work_id ASC LIMIT 1")
         conn.commit()
