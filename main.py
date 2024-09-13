@@ -157,13 +157,11 @@ def select_folder(username):
     mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status != 'Completed'")
     no_folders = mycur.fetchall()
     conn.commit()
-
     if len(no_folders) == 0:
-        current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month
+        current_month = ((today_date_format.year - month_start.year * 12) + month_start.month - today_date_format.month
                          + 1)
     else:
-        current_month = ((today_date_format.year - month_start.year) * 12 + today_date_format.month - month_start.month
-                         + 1 + len(no_folders))
+        current_month = (1 + len(no_folders))
     if 0 < current_month <= month_service:
         directory_path_folder = f"static/work/{client_details[0][0]} Raw month {current_month}"
         folder_name = f"{client_details[0][0]} Raw month {current_month}"
@@ -306,7 +304,6 @@ def resend_otp():
 def new_password():
     error = None
     change_password_username = session.get('change_password_username')
-    print(change_password_username)
     if request.method == 'POST':
         reset_password = request.form['password']
         confirm_password = request.form['confirm-password']
@@ -347,13 +344,11 @@ def admin_dashboard():
         mycur.execute("select creator_id from creator_information")
         creator_id = mycur.fetchall()
         conn.commit()
-        print(creator_id)
 
         # fetching client's data
         mycur.execute("select client_id from client_information")
         client_id = mycur.fetchall()
         conn.commit()
-        print(client_id)
         return render_template("adgeeks_admin_dashboard.html", creators=creator_id, clients=client_id)
     else:
         return redirect("/")
@@ -364,7 +359,6 @@ def admin_target_section_individual(creator_username):
     mycur.execute(f"SELECT * FROM work_record where creator_username = '{creator_username}' and admin_roll_out = 'no'")
     work_records = mycur.fetchall()
     conn.commit()
-    print(work_records)
     return render_template("adgeeks_admin_target_section_individual.html", work_records=work_records)
 
 
@@ -373,7 +367,6 @@ def admin_target_section_all():
     mycur.execute(f"SELECT * FROM work_record")
     work_records = mycur.fetchall()
     conn.commit()
-    print(work_records)
     return render_template("adgeeks_admin_target_section_all.html", work_records=work_records)
 
 
@@ -432,7 +425,6 @@ def admin_client_details(client_id):
     conn.commit()
     if client_details:
         client_details = [client_details]
-        print(client_details)
         return render_template("adgeeks_admin_client_details.html", client_details=client_details)
     else:
         flash('Client not found!', 'error')
@@ -446,7 +438,6 @@ def admin_client_details_update(client_id):
     conn.commit()
     if client_details:
         client_details = [client_details]
-        print(client_details)
         return render_template("adgeeks_admin_client_details_update.html", client_details=client_details)
     else:
         flash('Client not found!', 'error')
@@ -461,7 +452,6 @@ def admin_client_details_update_form(client_id):
         client_details = mycur.fetchone()
         client_details = [client_details]
         conn.commit()
-        print(client_details)
         for client in client_details:
             client_form_full_name = request.form['full_name']
             if client_form_full_name:
@@ -548,7 +538,6 @@ def admin_client_details_update_form(client_id):
                 uploaded_file_path_data = uploaded_file_path
             else:
                 uploaded_file_path_data = client[22]
-            print("this is a file path:", uploaded_file_path_data)
             mycur.execute("""
                     UPDATE client_information SET
                         full_name = %s,
@@ -747,7 +736,7 @@ def admin_client_creation_form():
                       " mobile_number, city, address, gst_number, services, performance_budget, performance_months,"
                       " info_performance, reels_creative, info_reels, posts_creative, info_posts, story_creative, "
                       "info_story, strategy, overview_strategy, invoice, months, amount, start_date, end_date, "
-                      "assigned_creator, client_status) VALUES "
+                      "assigned_creator, client_status, current_month) VALUES "
                       f"('{client_id}', '{client_form_full_name}', '{client_form_company_name}', "
                       f"'{client_form_user_name}', '{client_form_password}', '{client_form_email}', "
                       f"'{client_form_mobileno}', '{client_form_city}', '{client_form_address}',"
@@ -759,13 +748,13 @@ def admin_client_creation_form():
                       f"'{client_form_story_creative_data}', '{client_form_info_creative_story_data}', "
                       f"'{client_form_strategy_data}', '{client_form_overview_strategy_data}', '{uploaded_file_path}'"
                       f", '{client_form_payment_period_data}', '{client_form_payment_amount_data}', "
-                      f"'{client_form_start_date_data}', '{client_form_end_date_data}', 'N/A', '{client_form_status}')")
+                      f"'{client_form_start_date_data}', '{client_form_end_date_data}', 'N/A', '{client_form_status}',"
+                      f"'{client_form_start_date_data}')")
         conn.commit()
         mycur.execute(f"INSERT INTO adgeeks_passwords (id_passwords, type, username, password, access_level) VALUES "
                       f"('{password_id}', 'Client', '{client_form_user_name}', '{client_form_password}', 'client')")
         conn.commit()
         make_folder(client_form_user_name)
-        print(range(int(client_form_payment_period_data)))
         for _ in range(int(client_form_payment_period_data)):
             mycur.execute("SELECT work_id FROM work_record ORDER BY work_id DESC LIMIT 1")
             last_creator_id = mycur.fetchone()
@@ -792,7 +781,6 @@ def admin_creator_panel():
     mycur.execute("SELECT * FROM adgeeks_crm_system.creator_information WHERE creator_status != 'Delete'")
     creator_details = mycur.fetchall()
     conn.commit()
-    print(creator_details)
     return render_template("adgeeks_admin_creator_panel.html", creator_details=creator_details)
 
 
@@ -846,7 +834,6 @@ def admin_creator_details(creator_id):
     conn.commit()
     if creator_details:
         creator_details = [creator_details]
-        print(creator_details)
         return render_template("adgeeks_admin_creator_details.html", creator_details=creator_details)
     else:
         flash('creator not found!', 'error')
@@ -860,7 +847,6 @@ def admin_creator_details_update(creator_id):
     conn.commit()
     if creator_details:
         creator_details = [creator_details]
-        print(creator_details)
         return render_template("adgeeks_admin_creator_details_update.html", creator_details=creator_details)
     else:
         flash('creator not found!', 'error')
@@ -875,7 +861,6 @@ def admin_creator_details_update_form(creator_id):
         creator_details = mycur.fetchone()
         creator_details = [creator_details]
         conn.commit()
-        print(creator_details)
         for creator in creator_details:
             creator_form_full_name = request.form['full_name']
             if creator_form_full_name:
@@ -889,7 +874,7 @@ def admin_creator_details_update_form(creator_id):
             else:
                 creator_form_user_name_data = creator[2]
 
-            mycur.execute(f"UPDATE adgeeks_paswords SET username = '{creator_form_user_name_data}'")
+            mycur.execute(f"UPDATE adgeeks_passwords SET username = '{creator_form_user_name_data}'")
             conn.commit()
 
             creator_form_password = request.form['password']
@@ -1091,7 +1076,6 @@ def admin_creator_assign_button(creator_id):
         conn.commit()
 
         if action == 'unassign':
-            print("Client ID:", client_id)
 
             mycur.execute(f"SELECT * FROM adgeeks_crm_system.client_information WHERE client_id = {client_id}")
             client_details = mycur.fetchone()
@@ -1126,9 +1110,6 @@ def admin_creator_assign_button(creator_id):
             return jsonify(success=True, message=action)
 
         elif action == 'assign':
-            print("unassign")
-            print("Client ID:", client_id)
-
             mycur.execute(f"SELECT * FROM adgeeks_crm_system.client_information WHERE client_id = {client_id}")
             client_details = mycur.fetchone()
             conn.commit()
@@ -1161,7 +1142,6 @@ def admin_upload_files_section(folder_name):
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
     creator_details = [mycur.fetchone()]
     conn.commit()
-    print(creator_details)
     session['folder_name'] = folder_name
     files_fetched_check = fetch_files(folder_name)
     files_fetched = [('None')]
@@ -1193,7 +1173,6 @@ def admin_upload_files_section(folder_name):
     approved_work = mycur.fetchall()
     conn.commit()
     total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
-    print(creator_details[0][19], creator_details[0][20], creator_details[0][21], len(approved_work))
     files_with_details = []
     for file in files_fetched:
         file_info = {
@@ -1299,25 +1278,21 @@ def creator_dashboard(user_name):
     conn.commit()
     if creator_details:
         creator_details = [creator_details]
-        print(creator_details)
         mycur.execute("SELECT assigned_client from creator_information where assigned_client = 'yes'")
         client_assigned = mycur.fetchall()
         conn.commit()
         if client_assigned:
-            print("check")
             mycur.execute(f"SELECT client_username, services from assign_admin where "
                           f"creator_username = '{creator_details[0][2]}'")
             assign_info = mycur.fetchall()
             conn.commit()
             client_info_list = []
             if assign_info:
-                print("check")
                 for assign in assign_info:
                     mycur.execute(f"SELECT * FROM client_information where username = '{assign[0]}'")
                     client_info = mycur.fetchall()
                     conn.commit()
                     client_info_list.append(client_info)
-                    print(client_info_list)
             return render_template("adgeeks_creator_dashboard.html", creator_details=creator_details,
                                    client_info_list=client_info_list, admin_login=admin_login)
     else:
@@ -1354,7 +1329,6 @@ def creator_details_task_section(creator_id):
                     client_info = mycur.fetchall()
                     conn.commit()
                     client_info_list.append(client_info)
-            print(client_info_list, "this is the list")
             return render_template("adgeeks_creator_details_task_section.html",
                                    creator_details=creator_details, creator_id=creator_id,
                                    todays_date=todays_date, client_info_list=client_info_list,
@@ -1380,7 +1354,6 @@ def creator_task_timeline(file_name):
             conn.commit()
             if work_details:
                 combined_details = work_details_old + work_details
-                print(combined_details)
                 mycur.execute(
                     f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{work_details[0][3]}'")
                 creator_details = mycur.fetchone()
@@ -1402,7 +1375,6 @@ def creator_task_timeline(file_name):
                 f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{work_details[0][3]}'")
             creator_details = mycur.fetchone()
             conn.commit()
-            print(work_details)
             return render_template("adgeeks_creator_task_timeline.html", creator_details=creator_details,
                                    work_details=work_details)
     except:
@@ -1444,7 +1416,6 @@ def project_details(client_id):
     else:
         creator_accepted = 'yes'
         month_ahead = month_work + relativedelta(months=1)
-        print(month_ahead)  # Output will be: 2024-10-01 00:00:00
         mycur.execute(f"update client_information set current_month = '{month_ahead}', work_status = 'start' "
                       f"where client_id = '{client_id}'")
         conn.commit()
@@ -1505,7 +1476,6 @@ def task_schedule(client_id):
     work_record = mycur.fetchone()
     conn.commit()
 
-    print(work_record)
 
     # client's username
     client_username = client_info[0][3]
@@ -1534,7 +1504,6 @@ def task_schedule(client_id):
         # fetching the path and name of the folder
         directory_path, folder_name = select_folder(client_info[0][3])
 
-        print(directory_path, folder_name)
 
         # storing the folder and client username
         session['folder_name'] = folder_name
@@ -1569,7 +1538,6 @@ def task_section():
     mycur.execute(f"SELECT * FROM work_record where creator_username = '{creator_username}'")
     work_records = mycur.fetchall()
     conn.commit()
-    print(work_records)
     return render_template("adgeeks_task_section.html", work_records=work_records)
 
 
@@ -1592,7 +1560,6 @@ def target_section_initial_form():
                       f"client_information, month, start_date where username = '{client_username}'")
         client_info = mycur.fetchall()
         conn.commit()
-        print(client_info)
         mycur.execute(
             "INSERT INTO work_record (work_id, title, description, creator_username, client_username, "
             "services, total_reels, total_posts, total_stories) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -1632,8 +1599,6 @@ def upload_files_section(service_name):
         f"client_username = '{client_username}' and work_status != 'Completed'")
     work_record = [mycur.fetchone()]
     conn.commit()
-
-    print(work_record, "this is the work record")
 
     # if all the content is uploaded
     if work_record[0][26] == 'yes':
@@ -1705,31 +1670,26 @@ def upload_files_section(service_name):
                 for work in final_data:
                     if work[1] == file:
                         if work[14] == 'yes':
-                            print("1")
                             file_info['uploaded_work'] = 'yes'
                             break
                         elif work[12] == 'yes':
-                            print("3")
                             file_info['details'] = work[4]
                             file_info['reviews'] = work[5]
                             file_info['client_approve'] = 'yes'
                             file_info['client_review'] = work[6]
                             break
                         elif work[10] == 'yes':
-                            print("2")
                             file_info['details'] = work[4]
                             file_info['reviews'] = work[5]
                             file_info['approve'] = 'yes'
                             file_info['client_review'] = work[6]
                             break
                         else:
-                            print("4")
                             file_info['details'] = work[4]
                             file_info['reviews'] = work[5]
                             file_info['client_review'] = work[6]
                             break
                 files_with_details.append(file_info)
-                # print(files_with_details)
         return render_template("adgeeks_upload_files_section.html", creator_details=work_record,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work, total_uploaded=total_uploaded,
@@ -1749,7 +1709,6 @@ def upload_details(file_name):
         detail_id = 1
     client_username = session.get('client_username')
     creator_username = session.get('user_name')
-    print(current_time_in_india)
     mycur.execute(f"INSERT INTO work_details (detail_id, file_name, additional_details, client_username, "
                   f"creator_username, status_detail) VALUES ('{detail_id}', '{file_name}', "
                   f"'{information_upload}', '{client_username}', '{creator_username}', 'active')")
@@ -1843,7 +1802,6 @@ def submit_task_review_upload():
         "select file_name, detail_id from work_details where detail_id = ( select max(detail_id) from work_details)")
     change_content = mycur.fetchall()[0]
     conn.commit()
-    print(change_content)
     mycur.execute(f"INSERT INTO work_details (detail_id, file_name, client_username, "
                   f"creator_username, status_detail, content_link) VALUES ('{int(change_content[1]) + 1}', '{change_content[0]}', "
                   f"'{client_username}', '{creator_username}', 'active', '{file_name}')")
@@ -1864,9 +1822,7 @@ def work_upload_details(client_username):
     mycur.execute(f"select * from client_information  where username = '{client_username}'")
     client_details = mycur.fetchall()
     conn.commit()
-    print(client_details)
     services = client_details[0][10].split(', ')
-    print(services)
     return render_template("adgeeks_work_upload_details.html", creator_details=creator_details,
                            client_details=client_details, services=services)
 
@@ -1902,7 +1858,6 @@ def rename_file(folder_name, file_name):
 @app.route('/uploaded_creator', methods=['POST'])
 def uploaded_creator():
     file_name = request.json.get('file_name')
-    print(file_name)
     mycur.execute(
         f"update work_details set content_uploaded = 'yes' where file_name = '{file_name}' and status_detail = "
         f"'active'")
@@ -1987,7 +1942,6 @@ def get_initial_date():
 @app.route("/view_calendar")
 def view_calendar():
     client_username = session.get('client_username')
-    print(client_username)
     mycur.execute(f"SELECT * from client_information where username = '{client_username}'")
     creator_details = mycur.fetchall()
     conn.commit()
@@ -2009,8 +1963,6 @@ def calendar_history():
     creator_username = session.get('creator_username')
     client_username = session.get('client_username')
 
-    print(creator_username, client_username)
-
     # data for the sidebar
     mycur.execute(
         f"SELECT * FROM adgeeks_crm_system.creator_information WHERE username = '{creator_username}'")
@@ -2022,8 +1974,6 @@ def calendar_history():
                   f"and calendar_history_client_username = '{client_username}'")
     calendar_history = mycur.fetchall()
     conn.commit()
-
-    print(type(calendar_history[0][3]))
 
     return render_template("adgeeks_calendar_history.html", creator_details=creator_details,
                            calendar_history=calendar_history)
@@ -2139,15 +2089,11 @@ def send_client_btn():
     creator_username = session.get('user_name')
     client_username = session.get('client_username')
 
-    print(creator_username, client_username)
-
     # fetching the review
     mycur.execute(f"select calendar_review from work_record where client_username = '{client_username}' and "
                   f"creator_username = '{creator_username}' and calendar_update != 'approved' ORDER BY work_id ASC LIMIT 1")
     calendar_review_status = mycur.fetchone()[0]
     conn.commit()
-
-    print(calendar_review_status, "this is the calendar_review_status")
 
     if calendar_review_status == 'yes':
         # changing the review to no and update to yes
@@ -2315,7 +2261,6 @@ def client_dashboard(user_name):
                     creator_info = mycur.fetchall()
                     conn.commit()
                     creator_info_list.append(creator_info)
-                    print(creator_info_list)
             return render_template("adgeeks_client_dashboard.html", creator_details=client_details,
                                    client_info_list=creator_info_list)
     else:
@@ -2340,7 +2285,6 @@ def client_upload_files_section():
     creator_details = mycur.fetchall()
     conn.commit()
 
-    print(creator_details)
 
     if creator_details[0][25] == 'yes':
         folder_name = creator_details[0][1]
@@ -2393,7 +2337,6 @@ def client_upload_files_section():
                         file_info['reviews'] = work[6]
                         break
             files_with_details.append(file_info)
-            print(files_with_details)
         return render_template("adgeeks_client_upload_files_section.html", creator_details=creator_details,
                                files=files_with_details, folder_name=folder_name, services=services,
                                number_reels=number_reels, total_work=total_work,
@@ -2513,8 +2456,6 @@ def client_calendar(client_username):
     # fetching the review
     review_calendar = work_record[5]
 
-    print(review_calendar)
-
     # to switch the button from approve to "send the review"
     send_client = True
 
@@ -2524,7 +2465,6 @@ def client_calendar(client_username):
     # to fetch if creator has made changes
     calendar_update = work_record[7]
     calendar_review_client = work_record[5]
-    print(calendar_review_client)
 
     # this is for the review details given by the client
     calendar_data = []
@@ -2533,7 +2473,6 @@ def client_calendar(client_username):
                       f"'{client_username}' and client_review != 'None'")
         calendar_data_raw = mycur.fetchall()
         conn.commit()
-        print("this is the raw data", calendar_data_raw)
         for review in calendar_data_raw:
             if review[2] != 'no':
                 calendar_data.append(review)
@@ -2543,7 +2482,6 @@ def client_calendar(client_username):
     # else:
 
     # to open the approval page
-    print("this is the calendar data:", calendar_data)
     if review_calendar == 'yes' and calendar_update != 'yes':
         return render_template('adgeeks_client_review_uploaded.html', client_username=client_username)
     return render_template("adgeeks_client_calendar.html", creator_details=client_details,
@@ -2559,8 +2497,6 @@ def calendar_review():
     # getting the data so that we can fetch the review
     data = request.get_json()
     event_review = data.get('event_review')
-
-    print(event_id, event_review)
 
     # write down the review given by client in sql
     mycur.execute(f"UPDATE calendar_data SET client_review = '{event_review}' where id = '{event_id}'")
@@ -2592,7 +2528,6 @@ def calendar_review():
 
 @app.route("/log_event_id", methods=['POST'])
 def log_event_id():
-    print("this is /log_event_id")
     data = request.get_json()
     event_id = data.get('event_id')
     session['event_id'] = event_id
