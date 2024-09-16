@@ -154,14 +154,16 @@ def select_folder(username):
     # today_date_format = datetime.now()  # or datetime(2024, 6, 30) for testing with a specific date
     today_date_format = datetime(2024, 9, 20)  # or datetime(2024, 6, 30) for testing with a specific date
 
-    mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status != 'Completed'")
+    mycur.execute(f"select work_id from work_record where client_username = '{username}' and work_status = 'Completed'")
     no_folders = mycur.fetchall()
     conn.commit()
     if len(no_folders) == 0:
-        current_month = ((today_date_format.year - month_start.year * 12) + month_start.month - today_date_format.month
-                         + 1)
+        current_month = 1
     else:
-        current_month = (1 + len(no_folders))
+        current_month = len(no_folders) + 1
+
+    print(current_month, len(no_folders))
+
     if 0 < current_month <= month_service:
         directory_path_folder = f"static/work/{client_details[0][0]} Raw month {current_month}"
         folder_name = f"{client_details[0][0]} Raw month {current_month}"
@@ -1476,7 +1478,6 @@ def task_schedule(client_id):
     work_record = mycur.fetchone()
     conn.commit()
 
-
     # client's username
     client_username = client_info[0][3]
 
@@ -1503,7 +1504,6 @@ def task_schedule(client_id):
 
         # fetching the path and name of the folder
         directory_path, folder_name = select_folder(client_info[0][3])
-
 
         # storing the folder and client username
         session['folder_name'] = folder_name
@@ -1591,14 +1591,13 @@ def upload_files_section(service_name):
     client_username = session.get('client_username')
     creator_username = session.get('user_name')
 
-    print(folder_name, client_username, creator_username)
-
     # work record which is not completed yet
     mycur.execute(
         f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and "
         f"client_username = '{client_username}' and work_status != 'Completed'")
     work_record = [mycur.fetchone()]
     conn.commit()
+    print(work_record, folder_name)
 
     # if all the content is uploaded
     if work_record[0][26] == 'yes':
@@ -1608,6 +1607,8 @@ def upload_files_section(service_name):
         files_fetched = [('None')]
         if files_fetched_check:
             files_fetched = files_fetched_check
+
+        print(files_fetched)
 
         # formating the services for clients
         services = work_record[0][9].split(', ')
@@ -1645,8 +1646,8 @@ def upload_files_section(service_name):
         approved_work = mycur.fetchall()
         conn.commit()
         total_work = work_record[0][19] + work_record[0][20] + work_record[0][21] - len(approved_work)
-        mycur.execute(f"select detail_id from work_details where content_uploaded = 'yes' and "
-                      f"client_username = '{client_username}' and creator_username = '{creator_username}'")
+        mycur.execute(f"select detail_id from work_details where content_uploaded = 'yes' and status_detail = 'active'"
+                      f" and client_username = '{client_username}' and creator_username = '{creator_username}'")
         uploaded_work = mycur.fetchall()
         conn.commit()
         total_uploaded = work_record[0][19] + work_record[0][20] + work_record[0][21] - len(uploaded_work)
@@ -1879,6 +1880,10 @@ def work_over(folder_name):
     # fetching usernames as well as id
     mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()
+    conn.commit()
+
+    mycur.execute(
+        f"UPDATE work_record SET status_detail = 'passive' where client_username = '{creator_name[0][1]}'")
     conn.commit()
 
     mycur.execute(f"select creator_id from creator_information where username = '{creator_name[0][0]}'")
