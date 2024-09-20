@@ -1140,8 +1140,9 @@ def admin_upload_files_section(folder_name):
     client_username = username_list[0][1]
     mycur.execute(f"UPDATE work_record set status_admin = 'no' where client_username = '{client_username}'")
     conn.commit()
+    print(folder_name)
     mycur.execute(
-        f"SELECT * FROM work_record WHERE creator_username = '{creator_username}' and client_username = '{client_username}'")
+        f"SELECT * FROM work_record WHERE title = '{folder_name}'")
     creator_details = [mycur.fetchone()]
     conn.commit()
     session['folder_name'] = folder_name
@@ -1170,11 +1171,12 @@ def admin_upload_files_section(folder_name):
                 if item[i] is not None:
                     combined[i] = item[i]  # Replace with non-None values
         final_data.append(tuple(combined))
-    mycur.execute(f'select detail_id from work_details where admin_approve = "yes" and '
+    mycur.execute(f'select detail_id from work_details where admin_approve = "yes" and status_detail = "active" and '
                   f'creator_username = "{creator_username}" and client_username = "{client_username}"')
     approved_work = mycur.fetchall()
     conn.commit()
     total_work = creator_details[0][19] + creator_details[0][20] + creator_details[0][21] - len(approved_work)
+    print(creator_details[0][19], creator_details[0][20], creator_details[0][21], len(approved_work))
     files_with_details = []
     for file in files_fetched:
         file_info = {
@@ -1330,7 +1332,9 @@ def creator_details_task_section(creator_id):
                     mycur.execute(f"SELECT * FROM client_information where username = '{assign[0]}'")
                     client_info = mycur.fetchall()
                     conn.commit()
-                    client_info_list.append(client_info)
+                    print(client_info[0][31].month)
+                    if client_info[0][31].month + 1 != client_info[0][26].month:
+                        client_info_list.append(client_info)
             return render_template("adgeeks_creator_details_task_section.html",
                                    creator_details=creator_details, creator_id=creator_id,
                                    todays_date=todays_date, client_info_list=client_info_list,
@@ -1872,26 +1876,39 @@ def work_over(folder_name):
     # final_folder_name = folder_name.replace("Raw", "Final")
     # upload_directory_to_drive(f'static/work/{final_folder_name}', PARENT_FOLDER_ID, final_folder_name)
 
-    # updating status to completed
-    mycur.execute(
-        f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed' where title = '{folder_name}'")
-    conn.commit()
-
     # fetching usernames as well as id
-    mycur.execute(f"select creator_username, client_username from work_record where title = '{folder_name}'")
+    mycur.execute(f"select creator_username, client_username, completed_months, months from work_record where title = '{folder_name}'")
     creator_name = mycur.fetchall()
     conn.commit()
 
+    creator_username = creator_name[0][0]
+    client_username = creator_name[0][1]
+    completed_months = creator_name[0][2]
+    total_months = creator_name[0][3]
+
+    if total_months != completed_months:
+        # updating status to completed
+        mycur.execute(
+            f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Start new month', completed_months = "
+            f"'{completed_months + 1}' where title = '{folder_name}'")
+        conn.commit()
+    else:
+        # updating status to completed
+        mycur.execute(
+            f"UPDATE work_record SET uploaded_all = 'yes', work_status = 'Completed', completed_months = "
+            f"'{completed_months + 1}' where title = '{folder_name}'")
+        conn.commit()
+
     mycur.execute(
-        f"UPDATE work_record SET status_detail = 'passive' where client_username = '{creator_name[0][1]}'")
+        f"UPDATE work_details SET status_detail = 'passive' where client_username = '{client_username}'")
     conn.commit()
 
-    mycur.execute(f"select creator_id from creator_information where username = '{creator_name[0][0]}'")
+    mycur.execute(f"select creator_id from creator_information where username = '{creator_username}'")
     creator_id = mycur.fetchall()
     conn.commit()
 
     # updating the calendar entries
-    mycur.execute(f"update calendar_data set status = 'yes' where client_username = '{creator_name[0][1]}'")
+    mycur.execute(f"update calendar_data set status = 'yes' where client_username = '{client_username}'")
     conn.commit()
 
     return redirect(url_for('creator_details_task_section', creator_id=creator_id[0][0]))
